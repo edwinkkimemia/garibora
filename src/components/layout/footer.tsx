@@ -66,10 +66,7 @@ export function Footer() {
             <li className="flex items-center gap-2"><Mail className="size-4 shrink-0 text-gold" /> hello@garibora.ke</li>
             <li className="flex items-center gap-2"><Clock className="size-4 shrink-0 text-gold" /> Mon–Sat, 8am–6pm EAT</li>
           </ul>
-          <div className="mt-4 flex gap-2">
-            <span className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-bold text-white">M-PESA</span>
-            <span className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white">Stripe</span>
-          </div>
+          <p className="mt-4 text-xs leading-relaxed text-slate-400">Buyer protection: always verify the logbook on NTSA TIMS and transfer ownership together. Never pay before viewing.</p>
         </div>
       </div>
       <div className="border-t border-white/10">

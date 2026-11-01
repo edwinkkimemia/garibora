@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ShieldCheck, FileCheck, CarFront } from "lucide-react";
+import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { InsuranceEstimator } from "@/components/finance/insurance-estimator";
 import { Button } from "@/components/ui/button";
@@ -50,9 +51,9 @@ export default function InsurancePage() {
             <p className="flex items-center gap-2 font-extrabold"><ShieldCheck className="size-5 text-gold-light" /> Get covered today</p>
             <p className="mt-1 text-sm text-slate-300">Send your logbook + ID. A licensed partner issues your sticker and cover note — free quote, no obligation.</p>
           </div>
-          <div className="flex gap-2">
-            <a href={whatsappLink(siteConfig.whatsappNumber, "Hi GariBora! I need insurance. My car is a … valued at KSh …")} target="_blank" rel="noreferrer"><Button className="bg-gold text-navy hover:bg-gold-dark hover:text-white">WhatsApp us</Button></a>
-            <Link href="/cars"><Button variant="outline" className="border-white/30 text-white hover:bg-white/10">Browse cars</Button></Link>
+          <div className="flex flex-wrap gap-2">
+            <a href={whatsappLink(siteConfig.whatsappNumber, "Hi GariBora! I need insurance. My car is a … valued at KSh …")} target="_blank" rel="noreferrer"><Button className="bg-[#25D366] text-white hover:bg-[#1eb85a]"><WhatsAppIcon />WhatsApp us</Button></a>
+            <Link href="/cars"><Button className="bg-gold text-navy hover:bg-gold-dark hover:text-white">Browse cars</Button></Link>
           </div>
         </div>
       </div>
