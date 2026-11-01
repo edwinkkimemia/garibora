@@ -11,7 +11,7 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 export default function RegisterPage() {
   const [state, action, pending] = useActionState(registerAction, { error: "" } as { error?: string });
   return (
-    <div className="container grid max-w-md py-12">
+    <div className="container grid max-w-md py-8">
       <Breadcrumbs items={[{ label: "Sign up" }]} />
       <Card>
         <CardHeader><CardTitle className="text-2xl">Create your account</CardTitle>

@@ -7,7 +7,7 @@ export const metadata = { title: "Contact us" };
 
 export default function ContactPage() {
   return (
-    <div className="container max-w-xl py-10">
+    <div className="container max-w-xl py-8">
       <Breadcrumbs items={[{ label: "Contact" }]} />
       <h1 className="text-3xl font-extrabold">Talk to us</h1>
       <p className="mt-1 text-muted-foreground">Kiambu Road, Nairobi • +254 700 000 000 • hello@garibora.ke</p>

@@ -217,6 +217,93 @@ const cars: SeedCar[] = [
   },
 ];
 
+// ---------- Volume stock: deterministic generator (~96 extra listings) ----------
+// Keeps every category, town and budget band populated. Idempotent: titles are
+// deterministic and the seeder skips any title that already exists.
+type GenBase = {
+  make: string; model: string; grades: [string, string, string];
+  body: BodyType; fuel: FuelType; gear: Transmission; condition: CarCondition;
+  years: [number, number, number]; basePrice: number; engineCc: number; drive: string;
+};
+
+const GEN_POOL = [
+  "photo-1621007947382-bb3c3994e3fb", "photo-1549317661-bd32c8ce0db2",
+  "photo-1552519507-da3b142c6e3d", "photo-1541899481282-d53bffe3c35d",
+  "photo-1535732820275-9ffd998cac22", "photo-1594502184342-2e12f877aa73",
+  "photo-1547038577-da80abbc4f19", "photo-1502877338535-766e1452684a",
+  "photo-1583121274602-3e2820c69888", "photo-1553440569-bcc63803a83d",
+  "photo-1542362567-b07e54358753", "photo-1618843479313-40f8afb4b4d8",
+  "photo-1580273916550-e323be2ae537", "photo-1555215695-3004980ad54e",
+  "photo-1533473353331-0135ef1b58bf", "photo-1503376780353-7e6692767b70",
+];
+const GEN_COLORS = ["Silver", "Black", "White", "Wine Red", "Grey", "Blue", "Pearl White", "Gun Metallic"];
+const GEN_TOWNS = ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret", "Thika", "Kiambu", "Machakos", "Nyeri", "Meru"];
+const GEN_DEALERS = ["kamau", "coast", "lake", "rift"];
+const GEN_BLURBS: ((b: GenBase, grade: string, town: string) => string)[] = [
+  (b, grade, town) => `${b.make} ${b.model} ${grade}, original paint, accident-free. Duty paid, ready logbook. Viewing in ${town} — call or WhatsApp to arrange.`,
+  (b, grade, town) => `Well kept ${b.model} ${grade} with service history. New tyres, cold AC, clean interior. Priced to sell — viewing in ${town}.`,
+  (b, grade, town) => `Ex-Japan ${b.model} ${grade}, genuine mileage with auction sheet available on request. Duty paid, ready transfer in ${town}.`,
+];
+
+const GEN_BASES: GenBase[] = [
+  { make: "Toyota", model: "Probox", grades: ["DX", "GL", "WXB"], body: BodyType.WAGON, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 980000, engineCc: 1500, drive: "2WD" },
+  { make: "Toyota", model: "Succeed", grades: ["UL", "UL-X", "TX"], body: BodyType.WAGON, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 950000, engineCc: 1500, drive: "2WD" },
+  { make: "Toyota", model: "Corolla Axio", grades: ["G", "G WXB", "Luxel"], body: BodyType.SEDAN, fuel: FuelType.HYBRID, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 1650000, engineCc: 1500, drive: "2WD" },
+  { make: "Toyota", model: "Vitz", grades: ["F", "U", "Jewela"], body: BodyType.HATCHBACK, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 1050000, engineCc: 1300, drive: "2WD" },
+  { make: "Toyota", model: "Rush", grades: ["G", "X", "S"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2018, 2019, 2020], basePrice: 1950000, engineCc: 1500, drive: "2WD" },
+  { make: "Toyota", model: "Harrier", grades: ["Premium", "Elegance", "Progress"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 3400000, engineCc: 2000, drive: "2WD" },
+  { make: "Toyota", model: "Noah", grades: ["Si", "G", "X"], body: BodyType.VAN, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 2100000, engineCc: 2000, drive: "2WD" },
+  { make: "Toyota", model: "Mark X", grades: ["250G", "250G S-Package", "350S"], body: BodyType.SEDAN, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 1850000, engineCc: 2500, drive: "2WD" },
+  { make: "Toyota", model: "Dyna 2-Ton", grades: ["Standard", "Full-Justlow", "Double Cab"], body: BodyType.TRUCK, fuel: FuelType.DIESEL, gear: Transmission.MANUAL, condition: CarCondition.LOCALLY_USED, years: [2015, 2016, 2017], basePrice: 1900000, engineCc: 4000, drive: "2WD" },
+  { make: "Nissan", model: "Tiida", grades: ["15M", "15G", "Axis"], body: BodyType.HATCHBACK, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 850000, engineCc: 1500, drive: "2WD" },
+  { make: "Nissan", model: "Bluebird Sylphy", grades: ["X", "G", "XV"], body: BodyType.SEDAN, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 1150000, engineCc: 1800, drive: "2WD" },
+  { make: "Nissan", model: "Serena", grades: ["Highway Star", "X", "Rider"], body: BodyType.VAN, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 1750000, engineCc: 2000, drive: "2WD" },
+  { make: "Nissan", model: "Juke", grades: ["15RS", "15RX", "Nismo"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 1350000, engineCc: 1500, drive: "2WD" },
+  { make: "Nissan", model: "March", grades: ["S", "G", "Bolero"], body: BodyType.HATCHBACK, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 750000, engineCc: 1200, drive: "2WD" },
+  { make: "Nissan", model: "Atlas 3-Ton", grades: ["Standard", "Wide", "Double Cab"], body: BodyType.TRUCK, fuel: FuelType.DIESEL, gear: Transmission.MANUAL, condition: CarCondition.LOCALLY_USED, years: [2014, 2015, 2016], basePrice: 1700000, engineCc: 4500, drive: "2WD" },
+  { make: "Honda", model: "Vezel", grades: ["Hybrid X", "Hybrid Z", "G"], body: BodyType.SUV, fuel: FuelType.HYBRID, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 2350000, engineCc: 1500, drive: "2WD" },
+  { make: "Honda", model: "CR-V", grades: ["EX", "EX Masterpiece", "ZX"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 2200000, engineCc: 2000, drive: "AWD" },
+  { make: "Honda", model: "Stream", grades: ["RSZ", "X", "ZS"], body: BodyType.VAN, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.LOCALLY_USED, years: [2014, 2015, 2016], basePrice: 1250000, engineCc: 1800, drive: "2WD" },
+  { make: "Mazda", model: "Demio", grades: ["13S", "XD", "15S"], body: BodyType.HATCHBACK, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 950000, engineCc: 1300, drive: "2WD" },
+  { make: "Mazda", model: "Axela", grades: ["15S", "20S", "XD"], body: BodyType.SEDAN, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 1450000, engineCc: 1500, drive: "2WD" },
+  { make: "Mazda", model: "CX-3", grades: ["XD", "XD Proactive", "20S"], body: BodyType.SUV, fuel: FuelType.DIESEL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 1850000, engineCc: 1500, drive: "2WD" },
+  { make: "Subaru", model: "Impreza", grades: ["1.6i-L", "2.0i-S", "Sport"], body: BodyType.SEDAN, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 1350000, engineCc: 1600, drive: "AWD" },
+  { make: "Subaru", model: "Legacy Touring", grades: ["B-Sport", "Limited", "XT"], body: BodyType.WAGON, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.LOCALLY_USED, years: [2014, 2015, 2016], basePrice: 1400000, engineCc: 2500, drive: "AWD" },
+  { make: "Mitsubishi", model: "Outlander", grades: ["G", "M", "PHEV"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 1950000, engineCc: 2000, drive: "4WD" },
+  { make: "Mitsubishi", model: "Delica D:5", grades: ["G-Power", "M", "Roadest"], body: BodyType.VAN, fuel: FuelType.DIESEL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 2400000, engineCc: 2300, drive: "4WD" },
+  { make: "Suzuki", model: "Alto", grades: ["L", "VXL", "Works"], body: BodyType.HATCHBACK, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 720000, engineCc: 660, drive: "2WD" },
+  { make: "Suzuki", model: "Escudo", grades: ["1.6", "1.4T", "S-Limited"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 1650000, engineCc: 1600, drive: "4WD" },
+  { make: "Volkswagen", model: "Golf", grades: ["TSI Trendline", "TSI Comfortline", "GTI"], body: BodyType.HATCHBACK, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 1450000, engineCc: 1200, drive: "2WD" },
+  { make: "Volkswagen", model: "Tiguan", grades: ["TSI", "TDI", "R-Line"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 2100000, engineCc: 1400, drive: "2WD" },
+  { make: "Audi", model: "A4", grades: ["1.8T", "2.0T", "S-Line"], body: BodyType.SEDAN, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 2300000, engineCc: 1800, drive: "2WD" },
+  { make: "BMW", model: "320i", grades: ["Base", "M Sport", "Luxury"], body: BodyType.SEDAN, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 2200000, engineCc: 2000, drive: "2WD" },
+  { make: "Land Rover", model: "Defender 110", grades: ["County", "XS", "Adventure"], body: BodyType.SUV, fuel: FuelType.DIESEL, gear: Transmission.MANUAL, condition: CarCondition.LOCALLY_USED, years: [2014, 2015, 2016], basePrice: 4200000, engineCc: 2200, drive: "4WD" },
+];
+
+GEN_BASES.forEach((b, bi) => {
+  b.years.forEach((year, vi) => {
+    const n = bi * 3 + vi;
+    const grade = b.grades[vi];
+    const town = GEN_TOWNS[n % GEN_TOWNS.length];
+    cars.push({
+      title: `${year} ${b.make} ${b.model} ${grade}`,
+      dealer: GEN_DEALERS[n % GEN_DEALERS.length],
+      make: b.make, model: b.model, year,
+      price: Math.round((b.basePrice * (1 + (1 - vi) * 0.06)) / 10000) * 10000,
+      mileage: (2026 - year) * 13000 + vi * 7000 + (bi % 5) * 900,
+      transmission: b.gear, fuelType: b.fuel, bodyType: b.body,
+      condition: b.condition, location: town,
+      description: GEN_BLURBS[n % GEN_BLURBS.length](b, grade, town),
+      featured: false, verified: n % 2 === 0,
+      engineCc: b.engineCc, drive: b.drive, color: GEN_COLORS[n % GEN_COLORS.length],
+      images: [
+        `https://images.unsplash.com/${GEN_POOL[n % GEN_POOL.length]}?q=80&w=1200&auto=format&fit=crop`,
+        `https://images.unsplash.com/${GEN_POOL[(n + 7) % GEN_POOL.length]}?q=80&w=1200&auto=format&fit=crop`,
+      ],
+    });
+  });
+});
+
 const extraDealers = [
   {
     key: "coast", email: "coast@garibora.ke", name: "Coast Auto Mall", slug: "coast-auto-mall",

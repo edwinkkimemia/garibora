@@ -1,18 +1,19 @@
 import Link from "next/link";
-import { Search, MessageCircle, ClipboardCheck, KeyRound } from "lucide-react";
+import { Search, ClipboardCheck, KeyRound } from "lucide-react";
+import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { Button } from "@/components/ui/button";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 const steps = [
   { icon: Search, t: "1. Search & compare", d: "Filter by make, price in KES, year, mileage, location. Save favourites." },
-  { icon: MessageCircle, t: "2. Chat on WhatsApp", d: "Contact the seller instantly. Ask for logbook + duty receipt photos." },
+  { icon: WhatsAppIcon, t: "2. Chat on WhatsApp", d: "Contact the seller instantly. Ask for logbook + duty receipt photos." },
   { icon: ClipboardCheck, t: "3. Inspect & verify", d: "View in daylight, check NTSA TIMS, test-drive. Look for the Verified badge." },
   { icon: KeyRound, t: "4. Pay & transfer", d: "Pay via bank/M-Pesa to the logbook owner, then transfer on NTSA together." },
 ];
 
 export default function HowItWorksPage() {
   return (
-    <div className="container max-w-4xl py-10">
+    <div className="container max-w-4xl py-8">
       <Breadcrumbs items={[{ label: "How it works" }]} />
       <h1 className="text-4xl font-extrabold">How GariBora works</h1>
       <div className="mt-8 grid gap-4 md:grid-cols-2">

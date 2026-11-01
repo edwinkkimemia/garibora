@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ShieldCheck, BadgeCheck, MessageCircle, Banknote, Star, ArrowRight, ClipboardCheck, KeyRound, Search, Quote } from "lucide-react";
+import { ShieldCheck, BadgeCheck, Banknote, Star, ArrowRight, ClipboardCheck, KeyRound, Search, Quote } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { SearchBar } from "@/components/home/search-bar";
 import { CarCard } from "@/components/cars/car-card";
@@ -163,7 +163,7 @@ export default async function HomePage() {
           <div className="mt-6 grid gap-4 md:grid-cols-4">
             {[
               { icon: Search, t: "Search & compare", d: "Filter by price in KES, year, mileage and town." },
-              { icon: MessageCircle, t: "Chat on WhatsApp", d: "Talk to the seller directly. No gatekeepers." },
+              { icon: WhatsAppIcon, t: "Chat on WhatsApp", d: "Talk to the seller directly. No gatekeepers." },
               { icon: ClipboardCheck, t: "Inspect & verify", d: "Check NTSA TIMS, duty papers and test-drive." },
               { icon: KeyRound, t: "Pay & transfer", d: "Pay the logbook owner, transfer together." },
             ].map((s, i) => (

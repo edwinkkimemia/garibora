@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function ForgotPasswordPage() {
   return (
-    <div className="container grid max-w-md py-12">
+    <div className="container grid max-w-md py-8">
       <Breadcrumbs items={[{ label: "Reset password" }]} />
       <Card>
         <CardHeader><CardTitle>Reset password</CardTitle>

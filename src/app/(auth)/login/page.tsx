@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [busy, setBusy] = useState(false);
 
   return (
-    <div className="container grid max-w-md py-12">
+    <div className="container grid max-w-md py-8">
       <Breadcrumbs items={[{ label: "Log in" }]} />
       <Card>
         <CardHeader>
