@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { registerAction } from "@/lib/actions";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export default function RegisterPage() {
   const [state, action, pending] = useActionState(registerAction, { error: "" } as { error?: string });
   return (
     <div className="container grid max-w-md py-12">
+      <Breadcrumbs items={[{ label: "Sign up" }]} />
       <Card>
         <CardHeader><CardTitle className="text-2xl">Create your account</CardTitle>
         <p className="text-sm text-muted-foreground">Buy, save favourites, or sell your car.</p></CardHeader>

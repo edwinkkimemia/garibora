@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Search, MessageCircle, ClipboardCheck, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 const steps = [
   { icon: Search, t: "1. Search & compare", d: "Filter by make, price in KES, year, mileage, location. Save favourites." },
@@ -12,6 +13,7 @@ const steps = [
 export default function HowItWorksPage() {
   return (
     <div className="container max-w-4xl py-10">
+      <Breadcrumbs items={[{ label: "How it works" }]} />
       <h1 className="text-4xl font-extrabold">How GariBora works</h1>
       <div className="mt-8 grid gap-4 md:grid-cols-2">
         {steps.map((s) => (

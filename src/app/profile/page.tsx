@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export const metadata = { title: "Profile" };
 
@@ -11,6 +12,7 @@ export default async function ProfilePage() {
   const user = await prisma.user.findUnique({ where: { id: session.user.id }, include: { dealerProfile: true } }).catch(() => null);
   return (
     <div className="container max-w-xl py-8">
+      <Breadcrumbs items={[{ label: "Profile" }]} />
       <h1 className="text-3xl font-extrabold">Profile</h1>
       <Card className="mt-5"><CardHeader><CardTitle>{user?.name}</CardTitle></CardHeader>
         <CardContent className="space-y-1 text-sm">

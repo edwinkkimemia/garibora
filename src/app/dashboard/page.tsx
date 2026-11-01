@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -15,6 +16,7 @@ export default async function DashboardPage() {
   ]);
   return (
     <div>
+      <Breadcrumbs items={[{ label: "Dashboard" }]} />
       <h1 className="text-2xl font-extrabold">Karibu, {session?.user?.name?.split(" ")[0] ?? "member"} 👋</h1>
       <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[["Active listings", active, "/dashboard/listings"], ["Sold", sold, "/dashboard/listings"], ["Inquiries received", inquiries, "/dashboard/inquiries"], ["Saved cars", favorites, "/favorites"]].map(([t, v, href]) => (

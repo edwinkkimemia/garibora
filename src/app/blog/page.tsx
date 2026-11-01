@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import prisma from "@/lib/prisma";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const metadata = { title: "Insights — car buying guides Kenya" };
@@ -10,6 +11,7 @@ export default async function BlogPage() {
   const posts = await prisma.post.findMany({ where: { published: true }, orderBy: { createdAt: "desc" } }).catch(() => []);
   return (
     <div className="container py-8">
+      <Breadcrumbs items={[{ label: "Insights" }]} />
       <h1 className="text-3xl font-extrabold">Insights & buying guides</h1>
       <p className="mt-1 text-muted-foreground">Duty, prices and what to check before you pay.</p>
       <div className="mt-6 grid gap-5 md:grid-cols-3">

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export default function LoginPage() {
   const sp = useSearchParams();
@@ -15,6 +16,7 @@ export default function LoginPage() {
 
   return (
     <div className="container grid max-w-md py-12">
+      <Breadcrumbs items={[{ label: "Log in" }]} />
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Welcome back</CardTitle>

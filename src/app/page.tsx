@@ -47,31 +47,27 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* HERO — search only */}
+      {/* HERO — search + trust pills, compact so Featured peeks above the fold */}
       <section className="relative overflow-hidden bg-navy text-white">
-        <div className="absolute inset-0 opacity-45">
+        <div className="absolute inset-0 opacity-90">
           <Image src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1600&auto=format&fit=crop" alt="Premium sports car" fill className="object-cover" priority />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-navy/55 via-navy/65 to-navy" />
-        <div className="relative container py-16 text-center md:py-24">
-          <div className="mx-auto max-w-4xl text-left"><SearchBar /></div>
-        </div>
-      </section>
-
-      {/* TRUST */}
-      <section className="border-b bg-white">
-        <div className="container grid grid-cols-2 gap-4 py-6 md:grid-cols-4">
-          {[
-            { icon: BadgeCheck, t: "Verified dealers", d: "ID + yard location checked" },
-            { icon: ClipboardCheck, t: "Inspection badge", d: "Duty & condition reviewed" },
-            { icon: WhatsAppIcon, t: "WhatsApp fast", d: "Chat sellers instantly" },
-            { icon: Banknote, t: "KES transparent", d: "No hidden charges" },
-          ].map((f) => (
-            <div key={f.t} className="flex items-center gap-3">
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-navy text-gold-light"><f.icon className="size-5" /></span>
-              <div><p className="text-sm font-bold">{f.t}</p><p className="text-xs text-muted-foreground">{f.d}</p></div>
-            </div>
-          ))}
+        <div className="absolute inset-0 bg-gradient-to-b from-navy/10 via-navy/25 to-navy" />
+        <div className="relative container py-16 md:py-24">
+          <div className="mx-auto max-w-4xl"><SearchBar /></div>
+          <ul className="mx-auto mt-4 grid max-w-4xl grid-cols-2 gap-2 md:grid-cols-4">
+            {[
+              { icon: BadgeCheck, t: "Verified dealers", d: "ID + yard checked" },
+              { icon: ClipboardCheck, t: "Inspection badge", d: "Duty & condition reviewed" },
+              { icon: WhatsAppIcon, t: "WhatsApp fast", d: "Chat sellers instantly" },
+              { icon: Banknote, t: "KES transparent", d: "No hidden charges" },
+            ].map((f) => (
+              <li key={f.t} className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-left backdrop-blur-sm">
+                <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-gold text-navy"><f.icon className="size-4" /></span>
+                <span className="min-w-0"><span className="block truncate text-[13px] font-bold leading-tight">{f.t}</span><span className="block truncate text-[11px] leading-tight text-slate-200">{f.d}</span></span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

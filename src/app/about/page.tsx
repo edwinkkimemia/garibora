@@ -1,6 +1,9 @@
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+
 export default function AboutPage() {
   return (
     <div className="container max-w-3xl py-10">
+      <Breadcrumbs items={[{ label: "About" }]} />
       <h1 className="text-4xl font-extrabold">Gari bora. Deal clear.</h1>
       <p className="mt-4 leading-relaxed text-muted-foreground">
         GariBora is Kenya&apos;s premium car marketplace. We started with a simple frustration: buying a car in Nairobi

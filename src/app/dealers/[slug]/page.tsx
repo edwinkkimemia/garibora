@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { CarCard } from "@/components/cars/car-card";
 import { ShieldCheck } from "lucide-react";
 
@@ -9,6 +10,7 @@ export default async function DealerDetailPage({ params }: { params: Promise<{ s
   if (!dealer) notFound();
   return (
     <div className="container py-8">
+      <Breadcrumbs items={[{ label: "Dealers", href: "/dealers" }, { label: dealer.businessName }]} />
       <h1 className="flex items-center gap-2 text-3xl font-extrabold">{dealer.businessName} <ShieldCheck className="size-6 text-green-600" /></h1>
       <p className="mt-1 text-muted-foreground">{dealer.location} • ★ {dealer.rating.toFixed(1)} • {dealer.cars.length} cars in stock</p>
       <p className="mt-3 max-w-2xl text-sm">{dealer.description}</p>

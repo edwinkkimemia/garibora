@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import prisma from "@/lib/prisma";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -8,6 +9,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   if (!post || !post.published) notFound();
   return (
     <article className="container max-w-3xl py-8">
+      <Breadcrumbs items={[{ label: "Insights", href: "/blog" }, { label: post.title.length > 40 ? post.title.slice(0, 40) + "…" : post.title }]} />
       <h1 className="text-3xl font-extrabold md:text-4xl">{post.title}</h1>
       <p className="mt-2 text-muted-foreground">{post.excerpt}</p>
       {post.coverUrl && <div className="relative mt-6 aspect-[16/8] overflow-hidden rounded-2xl"><Image src={post.coverUrl} alt={post.title} fill className="object-cover" sizes="800px" /></div>}

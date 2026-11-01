@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { CarCard } from "@/components/cars/car-card";
 import { FiltersPanel } from "@/components/cars/filters-panel";
 import { searchCars } from "@/lib/queries";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { carFilterSchema } from "@/lib/validations";
 import { baseMetadata } from "@/lib/seo";
 import Link from "next/link";
@@ -25,6 +26,7 @@ export default async function CarsPage({ searchParams }: { searchParams: Promise
 
   return (
     <div className="container py-8">
+      <Breadcrumbs items={[{ label: "Cars" }]} />
       <h1 className="text-3xl font-extrabold">Cars for sale in Kenya</h1>
       <p className="mt-1 text-muted-foreground">{total} verified results • Prices in KES</p>
       <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">

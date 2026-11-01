@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ShieldCheck, Star } from "lucide-react";
 import prisma from "@/lib/prisma";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -11,6 +12,7 @@ export default async function DealersPage() {
   const dealers = await prisma.dealer.findMany({ where: { verified: true }, orderBy: { rating: "desc" }, take: 24 }).catch(() => []);
   return (
     <div className="container py-8">
+      <Breadcrumbs items={[{ label: "Dealers" }]} />
       <h1 className="text-3xl font-extrabold">Verified dealers</h1>
       <p className="mt-1 text-muted-foreground">ID-checked yards with physical location and trade history.</p>
       <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">

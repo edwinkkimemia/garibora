@@ -10,6 +10,7 @@ import { InquiryForm } from "@/components/cars/inquiry-form";
 import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getCarById, getSimilarCars } from "@/lib/queries";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { formatKES, formatMileage, whatsappLink } from "@/lib/utils";
 import { baseMetadata, carJsonLd } from "@/lib/seo";
 import { auth } from "@/lib/auth";
@@ -62,7 +63,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
   return (
     <div className="container py-8">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(carJsonLd({ title: car.title, description: car.description, images: car.images.map((i) => i.url), price: car.price, year: car.year, make: car.make, model: car.model, mileage: car.mileage, url: `${siteConfig.url}/cars/${car.slug}` })) }} />
-      <Link href="/cars" className="text-sm text-muted-foreground hover:text-foreground">← Back to search</Link>
+      <Breadcrumbs items={[{ label: "Cars", href: "/cars" }, { label: `${car.year} ${car.make} ${car.model}` }]} />
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap gap-2">

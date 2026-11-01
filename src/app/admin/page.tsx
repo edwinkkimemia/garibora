@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { redirect } from "next/navigation";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export const metadata = { title: "Admin" };
 
@@ -20,6 +21,7 @@ export default async function AdminPage() {
 
   return (
     <div className="container py-8">
+      <Breadcrumbs items={[{ label: "Admin" }]} />
       <h1 className="text-3xl font-extrabold">Admin</h1>
       <div className="mt-5 grid gap-4 sm:grid-cols-4">
         {[["Users", users], ["Pending review", pending], ["Total cars", cars], ["Dealers", dealers]].map(([t, v]) => (

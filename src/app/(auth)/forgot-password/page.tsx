@@ -1,11 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import Link from "next/link";
 
 export default function ForgotPasswordPage() {
   return (
     <div className="container grid max-w-md py-12">
+      <Breadcrumbs items={[{ label: "Reset password" }]} />
       <Card>
         <CardHeader><CardTitle>Reset password</CardTitle>
         <p className="text-sm text-muted-foreground">Enter your email — we&apos;ll send a reset link (email integration: Resend/Postmark).</p></CardHeader>

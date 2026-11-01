@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/card";
 import { formatKES } from "@/lib/utils";
 import { markSoldAction, deleteListingAction } from "@/lib/actions";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export default async function ListingsPage() {
   const session = await auth();
@@ -15,6 +16,7 @@ export default async function ListingsPage() {
   }).catch(() => []);
   return (
     <div>
+      <Breadcrumbs items={[{ label: "Dashboard", href: "/dashboard" }, { label: "My listings" }]} />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-extrabold">My listings ({cars.length})</h1>
         <Link href="/sell"><Button size="sm">＋ New</Button></Link>

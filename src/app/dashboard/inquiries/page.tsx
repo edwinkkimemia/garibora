@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export default async function InquiriesPage() {
   const session = await auth();
@@ -11,6 +12,7 @@ export default async function InquiriesPage() {
   }).catch(() => []);
   return (
     <div>
+      <Breadcrumbs items={[{ label: "Dashboard", href: "/dashboard" }, { label: "Inquiries" }]} />
       <h1 className="text-2xl font-extrabold">Inquiries ({inquiries.length})</h1>
       <div className="mt-5 grid gap-3">
         {inquiries.map((q) => (
