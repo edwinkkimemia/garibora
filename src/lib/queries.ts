@@ -65,9 +65,13 @@ export async function getCarById(idOrSlug: string) {
   });
 }
 
-export async function getSimilarCars(carId: string, make: string, bodyType: string) {
+export async function getSimilarCars(carId: string, make: string, bodyType: string, listingType?: string) {
   return prisma.car.findMany({
-    where: { status: "ACTIVE", id: { not: carId }, OR: [{ make }, { bodyType: bodyType as never }] },
+    where: {
+      status: "ACTIVE", id: { not: carId },
+      listingType: listingType === "RENT" ? { in: ["RENT", "BOTH"] } : { in: ["SALE", "BOTH"] },
+      OR: [{ make }, { bodyType: bodyType as never }],
+    },
     take: 4,
     include: { images: true },
     orderBy: { createdAt: "desc" },

@@ -398,7 +398,8 @@ async function main() {
     });
   }
 
-  // Flag hire stock (monetization: rentals) — deterministic, idempotent
+  // Flag hire stock (monetization: rentals) — hire-only, kept fully
+  // separate from sale stock. Deterministic + idempotent.
   const rentals: [string, number][] = [
     ["2017 Nissan Note e-Power Medalist", 4500],
     ["2017 Honda Fit Hybrid F-Package", 4000],
@@ -412,9 +413,33 @@ async function main() {
     ["2016 Toyota Fielder G 1.5 Hybrid", 5500],
     ["2015 Subaru Forester XT 2.0T", 8000],
     ["2021 Toyota Hilux Double Cab 2.8 GD-6", 13000],
+    // Extra hire fleet from volume stock
+    ["2017 Toyota Probox GL", 4500],
+    ["2016 Toyota Succeed UL-X", 4500],
+    ["2020 Toyota Rush S", 8500],
+    ["2017 Nissan Serena X", 10000],
+    ["2016 Honda Stream ZS", 7000],
+    ["2016 Mazda Demio XD", 5000],
+    ["2016 Subaru Impreza 2.0i-S", 6500],
+    ["2016 Mitsubishi Delica D:5 M", 11000],
+    ["2017 Suzuki Escudo 1.4T", 8000],
+    ["2016 Volkswagen Golf TSI Comfortline", 7000],
   ];
   for (const [title, rate] of rentals) {
-    await prisma.car.updateMany({ where: { title }, data: { listingType: "BOTH", dailyRate: rate } });
+    await prisma.car.updateMany({ where: { title }, data: { listingType: "RENT", dailyRate: rate } });
+  }
+
+  // Keep the homepage Featured rail full with sale-only stock
+  for (const title of [
+    "2019 Mazda CX-5 XD Proactive Diesel",
+    "2018 Toyota Premio 1.8G Sedan",
+    "2018 Toyota Harrier Progress",
+    "2017 Honda Vezel Hybrid Z",
+    "2015 Volkswagen Tiguan TSI",
+    "2016 Audi A4 2.0T",
+    "2016 BMW 320i M Sport",
+  ]) {
+    await prisma.car.updateMany({ where: { title }, data: { featured: true, verified: true } });
   }
 
   // Blog posts for SEO — full-length Kenyan buying guides (re-seed refreshes them)

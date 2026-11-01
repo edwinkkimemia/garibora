@@ -50,7 +50,9 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
       </div>
       <div className="p-4">
         <h3 className="line-clamp-1 font-semibold text-slate-900">{car.title}</h3>
-        {car.dailyRate ? (
+        {car.dailyRate && car.listingType === "RENT" ? (
+          <p className="mt-1 text-lg font-extrabold text-navy">{formatKES(car.dailyRate)}<span className="text-sm font-semibold text-slate-500">/day</span> <span className="ml-1 rounded-full bg-navy px-2 py-0.5 text-[11px] font-bold text-gold-light">For hire</span></p>
+        ) : car.dailyRate ? (
           <p className="mt-1 text-lg font-extrabold text-navy">{formatKES(car.dailyRate)}<span className="text-sm font-semibold text-slate-500">/day</span> <span className="ml-1 text-xs font-normal text-slate-500">• {formatKES(car.price)} to buy</span></p>
         ) : (
           <p className="mt-1 text-lg font-extrabold text-navy">{formatKES(car.price)}</p>

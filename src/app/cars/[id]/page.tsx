@@ -41,13 +41,16 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
     }).catch(() => null);
     saved = !!f;
   }
-  const similar = await getSimilarCars(car.id, car.make, car.bodyType).catch(() => []);
+  const similar = await getSimilarCars(car.id, car.make, car.bodyType, car.listingType).catch(() => []);
   const insight = await getMarketInsight(car.make, car.model, car.id).catch(() => ({ avg: null as number | null, count: 0 }));
   const dealerCars = car.dealerId
     ? await getDealerCars(car.dealerId, car.id).catch(() => [])
     : [];
   const sellerPhone = car.dealer?.whatsapp || car.dealer?.phone || car.seller.phone || siteConfig.whatsappNumber;
-  const wa = whatsappLink(sellerPhone, `Hi! I'm interested in your ${car.title} listed at ${formatKES(car.price)} on ${siteConfig.brandName}. Is it available?`);
+  const isRent = car.listingType === "RENT";
+  const wa = whatsappLink(sellerPhone, isRent
+    ? `Hi! I'd like to HIRE your ${car.title} (${formatKES(car.dailyRate ?? 0)}/day) on ${siteConfig.brandName}. Which dates are available?`
+    : `Hi! I'm interested in your ${car.title} listed at ${formatKES(car.price)} on ${siteConfig.brandName}. Is it available?`);
   const diff = insight.avg ? Math.round(((car.price - insight.avg) / insight.avg) * 100) : null;
 
   const specs: [string, string][] = [
@@ -81,7 +84,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
         </div>
         <div className="flex items-center gap-2">
           <FavoriteButton carId={car.id} saved={saved} />
-          <a href={wa} target="_blank" rel="noreferrer"><Button className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />WhatsApp seller</Button></a>
+          <a href={wa} target="_blank" rel="noreferrer"><Button className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />{isRent ? "WhatsApp to book" : "WhatsApp seller"}</Button></a>
         </div>
       </div>
 
@@ -107,26 +110,28 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
         <aside className="space-y-4">
           <Card>
             <CardContent className="pt-5">
-              <p className="text-3xl font-extrabold text-primary">{formatKES(car.price)}</p>
-              {car.negotiable && <p className="text-xs text-muted-foreground">Negotiable</p>}
-              {diff !== null && insight.count >= 2 && (
-                <p className={`mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${diff <= 0 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-800"}`}>
-                  {diff <= 0 ? `Fair deal — ${Math.abs(diff)}% below market avg` : `${diff}% above market avg`} ({insight.count} similar)
-                </p>
+              {isRent && car.dailyRate ? (
+                <>
+                  <p className="inline-block rounded-full bg-navy px-3 py-1 text-xs font-bold uppercase tracking-wider text-gold-light">For hire — not for sale</p>
+                  <p className="mt-2 text-3xl font-extrabold text-primary">{formatKES(car.dailyRate)}<span className="text-base font-semibold text-muted-foreground">/day</span></p>
+                  <p className="mt-1 text-sm text-muted-foreground">≈ {formatKES(car.dailyRate * 6)}/week • Refundable deposit + DL required</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-3xl font-extrabold text-primary">{formatKES(car.price)}</p>
+                  {car.negotiable && <p className="text-xs text-muted-foreground">Negotiable</p>}
+                  {diff !== null && insight.count >= 2 && (
+                    <p className={`mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${diff <= 0 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-800"}`}>
+                      {diff <= 0 ? `Fair deal — ${Math.abs(diff)}% below market avg` : `${diff}% above market avg`} ({insight.count} similar)
+                    </p>
+                  )}
+                </>
               )}
               <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
                 <span className="rounded-lg bg-muted p-2"><Calendar className="mx-auto size-4" />{car.year}</span>
                 <span className="rounded-lg bg-muted p-2"><Gauge className="mx-auto size-4" />{(car.mileage / 1000).toFixed(0)}k km</span>
                 <span className="rounded-lg bg-muted p-2"><Fuel className="mx-auto size-4" />{car.fuelType}</span>
               </div>
-              {car.dailyRate ? (
-                <div className="mt-3 rounded-xl border border-gold/50 bg-gold/10 p-3">
-                  <p className="text-sm font-extrabold text-navy">Also for hire: {formatKES(car.dailyRate)}/day</p>
-                  <a href={whatsappLink(sellerPhone, `Hi! I'd like to HIRE your ${car.title} listed on ${siteConfig.brandName}. What dates are available?`)} target="_blank" rel="noreferrer">
-                    <Button size="sm" className="mt-2 w-full bg-navy text-gold-light hover:bg-navy-800"><WhatsAppIcon /> Book hire dates</Button>
-                  </a>
-                </div>
-              ) : null}
               <div className="mt-4 grid grid-cols-2 gap-2">
                 <a href={wa} target="_blank" rel="noreferrer"><Button className="w-full bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />WhatsApp</Button></a>
                 {car.seller.phone && <a href={`tel:${car.seller.phone}`}><Button variant="outline" className="w-full"><Phone />Call</Button></a>}
