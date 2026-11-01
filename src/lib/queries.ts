@@ -79,3 +79,26 @@ export async function getFeaturedCars() {
     orderBy: { createdAt: "desc" },
   });
 }
+
+/** Average price of comparable active cars (same make + model family). */
+export async function getMarketInsight(make: string, model: string, excludeId: string) {
+  const family = model.split(" ")[0];
+  const agg = await prisma.car.aggregate({
+    where: {
+      status: "ACTIVE", id: { not: excludeId },
+      make: { equals: make, mode: "insensitive" },
+      model: { contains: family, mode: "insensitive" },
+    },
+    _avg: { price: true }, _count: { id: true },
+  });
+  return { avg: agg._avg.price ? Math.round(agg._avg.price) : null, count: agg._count.id };
+}
+
+/** Other active stock from the same dealer. */
+export async function getDealerCars(dealerId: string, excludeId: string) {
+  return prisma.car.findMany({
+    where: { status: "ACTIVE", dealerId, id: { not: excludeId } },
+    take: 4, include: { images: true },
+    orderBy: { createdAt: "desc" },
+  });
+}

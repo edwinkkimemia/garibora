@@ -36,6 +36,16 @@ const brands = [
   { name: "Subaru", img: "https://images.unsplash.com/photo-1547038577-da80abbc4f19?q=80&w=400&auto=format&fit=crop" },
 ];
 
+const bodyImages: Record<string, string> = {
+  SUV: "photo-1533473353331-0135ef1b58bf",
+  SEDAN: "photo-1618843479313-40f8afb4b4d8",
+  PICKUP: "photo-1533106418989-88406c7cc8ca",
+  HATCHBACK: "photo-1549317661-bd32c8ce0db2",
+  VAN: "photo-1605893477799-b99e3b8b93fe",
+  COMMERCIAL: "photo-1559416523-140ddc511d3a",
+};
+const thumb = (id: string) => `https://images.unsplash.com/${id}?q=80&w=600&auto=format&fit=crop`;
+
 const testimonials = [
   { name: "Brian O.", place: "Nairobi", text: "Got a verified Prado with duty papers ready. The WhatsApp chat with the dealer took 10 minutes — viewing the same weekend." },
   { name: "Faith N.", place: "Mombasa", text: "As a first-time buyer I loved the inspection badge. Knew exactly what I was paying for, no stories." },
@@ -114,9 +124,15 @@ export default async function HomePage() {
         <h2 className="mt-1 text-2xl font-extrabold md:text-3xl">Shop by category</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {siteConfig.bodyTypes.map((c) => (
-            <Link key={c.value} href={`/cars?bodyType=${c.value}`} className="group flex items-center justify-between rounded-2xl border bg-card p-5 transition hover:border-gold hover:shadow-md">
-              <div><p className="font-bold">{c.label}</p><p className="text-sm text-muted-foreground">{c.blurb}</p></div>
-              <span className="grid size-12 place-items-center rounded-xl bg-navy/5 font-extrabold text-navy transition group-hover:bg-navy group-hover:text-gold-light"><ArrowRight className="size-5" /></span>
+            <Link key={c.value} href={`/cars?bodyType=${c.value}`} className="group overflow-hidden rounded-2xl border bg-white transition hover:border-gold hover:shadow-md">
+              <div className="relative h-32 overflow-hidden">
+                <Image src={thumb(bodyImages[c.value] ?? "photo-1503376780353-7e6692767b70")} alt={c.label} fill className="object-cover transition duration-300 group-hover:scale-105" sizes="400px" />
+                <span className="absolute bottom-2 left-2 rounded-full bg-navy/85 px-2.5 py-1 text-[11px] font-bold text-gold-light backdrop-blur-sm">{c.label}</span>
+              </div>
+              <div className="flex items-center justify-between p-4">
+                <div><p className="font-bold text-slate-900">{c.label}</p><p className="text-sm text-slate-500">{c.blurb}</p></div>
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-navy/5 text-navy transition group-hover:bg-navy group-hover:text-gold-light"><ArrowRight className="size-5" /></span>
+              </div>
             </Link>
           ))}
         </div>

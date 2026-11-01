@@ -9,7 +9,7 @@ import { CarCard } from "@/components/cars/car-card";
 import { InquiryForm } from "@/components/cars/inquiry-form";
 import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getCarById, getSimilarCars } from "@/lib/queries";
+import { getCarById, getSimilarCars, getMarketInsight, getDealerCars } from "@/lib/queries";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { formatKES, formatMileage, whatsappLink } from "@/lib/utils";
 import { baseMetadata, carJsonLd } from "@/lib/seo";
@@ -42,8 +42,13 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
     saved = !!f;
   }
   const similar = await getSimilarCars(car.id, car.make, car.bodyType).catch(() => []);
+  const insight = await getMarketInsight(car.make, car.model, car.id).catch(() => ({ avg: null as number | null, count: 0 }));
+  const dealerCars = car.dealerId
+    ? await getDealerCars(car.dealerId, car.id).catch(() => [])
+    : [];
   const sellerPhone = car.dealer?.whatsapp || car.dealer?.phone || car.seller.phone || siteConfig.whatsappNumber;
   const wa = whatsappLink(sellerPhone, `Hi! I'm interested in your ${car.title} listed at ${formatKES(car.price)} on ${siteConfig.brandName}. Is it available?`);
+  const diff = insight.avg ? Math.round(((car.price - insight.avg) / insight.avg) * 100) : null;
 
   const specs: [string, string][] = [
     ["Make / Model", `${car.make} ${car.model}`],
@@ -104,6 +109,11 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
             <CardContent className="pt-5">
               <p className="text-3xl font-extrabold text-primary">{formatKES(car.price)}</p>
               {car.negotiable && <p className="text-xs text-muted-foreground">Negotiable</p>}
+              {diff !== null && insight.count >= 2 && (
+                <p className={`mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${diff <= 0 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-800"}`}>
+                  {diff <= 0 ? `Fair deal — ${Math.abs(diff)}% below market avg` : `${diff}% above market avg`} ({insight.count} similar)
+                </p>
+              )}
               <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
                 <span className="rounded-lg bg-muted p-2"><Calendar className="mx-auto size-4" />{car.year}</span>
                 <span className="rounded-lg bg-muted p-2"><Gauge className="mx-auto size-4" />{(car.mileage / 1000).toFixed(0)}k km</span>
@@ -128,6 +138,29 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
             <CardContent><InquiryForm carId={car.id} /></CardContent>
           </Card>
         </aside>
+      </div>
+
+      {dealerCars.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-xl font-extrabold">More from {car.dealer?.businessName}</h2>
+          <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {dealerCars.map((c) => <CarCard key={c.id} car={c as never} />)}
+          </div>
+        </div>
+      )}
+
+      {/* BUYER SAFETY */}
+      <div className="mt-12 overflow-hidden rounded-3xl border border-gold/40 bg-gradient-to-br from-navy via-navy-800 to-navy-700 p-6 text-white md:p-8">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="size-5 text-gold-light" />
+          <h2 className="text-xl font-extrabold">Buy safe, drive happy</h2>
+        </div>
+        <ul className="mt-4 grid gap-3 text-sm text-slate-200 md:grid-cols-2">
+          <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-gold-light" /> Verify the logbook on NTSA TIMS before paying a shilling.</li>
+          <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-gold-light" /> Ask for duty-payment receipts on all foreign-used cars.</li>
+          <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-gold-light" /> View in daylight, test-drive, and bring a trusted mechanic.</li>
+          <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-gold-light" /> Pay to the logbook owner and transfer ownership together.</li>
+        </ul>
       </div>
 
       {similar.length > 0 && (
