@@ -8,10 +8,10 @@ import { auth } from "@/lib/auth";
 const links = [
   { href: "/cars", label: "Buy a car" },
   { href: "/rentals", label: "Rentals" },
+  { href: "/parts", label: "Parts" },
   { href: "/financing", label: "Financing" },
   { href: "/insurance", label: "Insurance" },
   { href: "/dealers", label: "Dealers" },
-  { href: "/blog", label: "Insights" },
 ];
 
 export async function Navbar() {

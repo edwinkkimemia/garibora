@@ -29,6 +29,7 @@ export async function GET() {
     `- Buy cars: ${base}/cars (filters: make, model, year, price, mileage, transmission, fuel, body type, condition, location)`,
     `- Sell your car (free listing): ${base}/sell
 - Hire a car (rentals): ${base}/rentals
+- Genuine & used car parts: ${base}/parts
 - Car financing & loan calculator: ${base}/financing
 - Car insurance estimator: ${base}/insurance`,
     `- Verified dealers: ${base}/dealers`,

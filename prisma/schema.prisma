@@ -59,6 +59,24 @@ enum CarCondition {
   LOCALLY_USED
 }
 
+enum PartCategory {
+  TYRES_WHEELS
+  BATTERY
+  BRAKES
+  SUSPENSION
+  ENGINE
+  ELECTRICAL
+  BODY
+  ACCESSORIES
+  OILS_FLUIDS
+}
+
+enum PartCondition {
+  NEW
+  USED
+  REFURBISHED
+}
+
 enum ListingType {
   SALE
   RENT
@@ -75,12 +93,16 @@ model User {
   image         String?
   role          Role      @default(BUYER)
   verified      Boolean   @default(false)
+  // Seller verification (private sellers, not just dealers)
+  idNumber      String?
+  idVerified    Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   accounts      Account[]
   sessions      Session[]
   cars          Car[]        @relation("SellerCars")
+  parts         Part[]       @relation("SellerParts")
   favorites     Favorite[]
   inquiriesSent Inquiry[]    @relation("BuyerInquiries")
   dealerProfile Dealer?
@@ -142,6 +164,7 @@ model Dealer {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   cars         Car[]
+  parts        Part[]   @relation("DealerParts")
 
   @@index([location])
   @@index([verified])
@@ -272,4 +295,49 @@ model Post {
   updatedAt DateTime @updatedAt
 
   @@index([published])
+}
+
+// ---------- Car parts marketplace ----------
+model Part {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  category    PartCategory
+  condition   PartCondition
+  price       Int // KES
+  negotiable  Boolean       @default(false)
+  location    String
+  description String        @db.Text
+  featured    Boolean       @default(false)
+  status      CarStatus     @default(ACTIVE)
+  views       Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  sellerId String
+  seller   User   @relation("SellerParts", fields: [sellerId], references: [id], onDelete: Cascade)
+
+  dealerId String?
+  dealer   Dealer? @relation("DealerParts", fields: [dealerId], references: [id], onDelete: SetNull)
+
+  images PartImage[]
+
+  @@index([status, featured])
+  @@index([category])
+  @@index([condition])
+  @@index([price])
+  @@index([location])
+  @@index([createdAt])
+  @@index([title])
+}
+
+model PartImage {
+  id        String  @id @default(cuid())
+  partId    String
+  part      Part    @relation(fields: [partId], references: [id], onDelete: Cascade)
+  url       String
+  isPrimary Boolean @default(false)
+  sortOrder Int     @default(0)
+
+  @@index([partId])
 }

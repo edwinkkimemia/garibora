@@ -45,6 +45,7 @@ export function Footer() {
             <li><Link href="/cars?bodyType=PICKUP" className="hover:text-gold-light">Pickups</Link></li>
             <li><Link href="/cars?condition=NEW" className="hover:text-gold-light">New cars</Link></li>
             <li><Link href="/rentals" className="hover:text-gold-light">Hire a car</Link></li>
+            <li><Link href="/parts" className="hover:text-gold-light">Car parts</Link></li>
             <li><Link href="/financing" className="hover:text-gold-light">Car financing</Link></li>
             <li><Link href="/insurance" className="hover:text-gold-light">Car insurance</Link></li>
             <li><Link href="/dealers" className="hover:text-gold-light">Verified dealers</Link></li>

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 const links = [
   { href: "/cars", label: "Buy a car" },
   { href: "/rentals", label: "Rent a car" },
+  { href: "/parts", label: "Car parts" },
   { href: "/financing", label: "Financing" },
   { href: "/insurance", label: "Insurance" },
   { href: "/sell", label: "Sell your car" },

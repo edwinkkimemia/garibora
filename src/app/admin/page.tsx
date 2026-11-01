@@ -1,43 +1,43 @@
-import { auth } from "@/lib/auth";
+import Link from "next/link";
 import prisma from "@/lib/prisma";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { redirect } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-export const metadata = { title: "Admin" };
+export const metadata = { title: "Admin overview" };
 
 export default async function AdminPage() {
-  const session = await auth();
-  const me = session?.user?.id ? await prisma.user.findUnique({ where: { id: session.user.id } }).catch(() => null) : null;
-  if (!me || me.role !== "ADMIN") redirect("/login?next=/admin");
-
-  const [users, pending, cars, dealers] = await Promise.all([
+  const [users, pending, cars, dealers, parts, pendingSellers] = await Promise.all([
     prisma.user.count().catch(() => 0),
     prisma.car.count({ where: { status: "PENDING" } }).catch(() => 0),
     prisma.car.count().catch(() => 0),
     prisma.dealer.count().catch(() => 0),
+    prisma.part.count().catch(() => 0),
+    prisma.user.count({ where: { idNumber: { not: null }, idVerified: false } }).catch(() => 0),
   ]);
-  const queue = await prisma.car.findMany({ where: { status: "PENDING" }, take: 20, orderBy: { createdAt: "desc" }, include: { images: true } }).catch(() => []);
-
+  const stats: [string, number, string][] = [
+    ["Pending listings", pending, "/admin/listings"],
+    ["Seller verifications", pendingSellers, "/admin/users"],
+    ["Total users", users, "/admin/users"],
+    ["Total cars", cars, "/cars"],
+    ["Dealers", dealers, "/dealers"],
+    ["Parts", parts, "/parts"],
+  ];
   return (
-    <div className="container py-8">
+    <div>
       <Breadcrumbs items={[{ label: "Admin" }]} />
-      <h1 className="text-3xl font-extrabold">Admin</h1>
-      <div className="mt-5 grid gap-4 sm:grid-cols-4">
-        {[["Users", users], ["Pending review", pending], ["Total cars", cars], ["Dealers", dealers]].map(([t, v]) => (
-          <Card key={t as string}><CardHeader><CardTitle className="text-sm text-muted-foreground">{t}</CardTitle></CardHeader><CardContent><p className="text-3xl font-extrabold">{v}</p></CardContent></Card>
+      <h1 className="text-3xl font-extrabold">Admin overview</h1>
+      <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {stats.map(([t, v, href]) => (
+          <Link key={t as string} href={href as string}><Card className="transition hover:border-gold hover:shadow-md"><CardHeader><CardTitle className="text-sm font-medium text-muted-foreground">{t}</CardTitle></CardHeader><CardContent><p className="text-3xl font-extrabold">{v}</p></CardContent></Card></Link>
         ))}
       </div>
-      <h2 className="mt-8 text-xl font-bold">Review queue</h2>
-      <div className="mt-3 grid gap-3">
-        {queue.map((c) => (
-          <div key={c.id} className="flex items-center justify-between rounded-2xl border p-3 text-sm">
-            <span><b>{c.title}</b> — {c.location}</span>
-            <span className="text-muted-foreground">Approve via Prisma Studio: <code>npx prisma studio</code> → set status ACTIVE + verified</span>
-          </div>
-        ))}
-        {queue.length === 0 && <p className="text-muted-foreground">Queue clear. 🎉</p>}
-      </div>
+      {(pending > 0 || pendingSellers > 0) && (
+        <div className="mt-6 flex flex-wrap gap-3">
+          {pending > 0 && <Link href="/admin/listings"><Button>Review {pending} listings →</Button></Link>}
+          {pendingSellers > 0 && <Link href="/admin/users"><Button variant="outline">Verify {pendingSellers} sellers →</Button></Link>}
+        </div>
+      )}
     </div>
   );
 }

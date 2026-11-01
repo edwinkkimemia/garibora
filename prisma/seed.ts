@@ -1,4 +1,4 @@
-import { PrismaClient, Transmission, FuelType, BodyType, CarCondition } from "@prisma/client";
+import { PrismaClient, Transmission, FuelType, BodyType, CarCondition, PartCategory, PartCondition } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { slugify } from "../src/lib/utils";
 
@@ -255,6 +255,22 @@ const GEN_BASES: GenBase[] = [
   { make: "Toyota", model: "Noah", grades: ["Si", "G", "X"], body: BodyType.VAN, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 2100000, engineCc: 2000, drive: "2WD" },
   { make: "Toyota", model: "Mark X", grades: ["250G", "250G S-Package", "350S"], body: BodyType.SEDAN, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 1850000, engineCc: 2500, drive: "2WD" },
   { make: "Toyota", model: "Dyna 2-Ton", grades: ["Standard", "Full-Justlow", "Double Cab"], body: BodyType.TRUCK, fuel: FuelType.DIESEL, gear: Transmission.MANUAL, condition: CarCondition.LOCALLY_USED, years: [2015, 2016, 2017], basePrice: 1900000, engineCc: 4000, drive: "2WD" },
+  { make: "Toyota", model: "Allion", grades: ["A18", "A18 G", "A20"], body: BodyType.SEDAN, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 1550000, engineCc: 1800, drive: "2WD" },
+  { make: "Toyota", model: "Ractis", grades: ["X", "G", "S"], body: BodyType.HATCHBACK, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 1050000, engineCc: 1500, drive: "2WD" },
+  { make: "Toyota", model: "Sienta", grades: ["X", "G", "DICE"], body: BodyType.VAN, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 1450000, engineCc: 1500, drive: "2WD" },
+  { make: "Toyota", model: "Tank", grades: ["X", "G", "Custom G S"], body: BodyType.HATCHBACK, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 1150000, engineCc: 1000, drive: "2WD" },
+  { make: "Nissan", model: "Latio", grades: ["X", "G", "S"], body: BodyType.SEDAN, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2014, 2015, 2016], basePrice: 850000, engineCc: 1200, drive: "2WD" },
+  { make: "Nissan", model: "Caravan NV350", grades: ["DX", "GX", "Rider"], body: BodyType.VAN, fuel: FuelType.DIESEL, gear: Transmission.MANUAL, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 2950000, engineCc: 2500, drive: "2WD" },
+  { make: "Honda", model: "Grace", grades: ["LX", "Hybrid DX", "Hybrid EX"], body: BodyType.SEDAN, fuel: FuelType.HYBRID, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 1550000, engineCc: 1500, drive: "2WD" },
+  { make: "Mazda", model: "Biante", grades: ["20S", "20CS", "Granz"], body: BodyType.VAN, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2014, 2015, 2016], basePrice: 1350000, engineCc: 2000, drive: "2WD" },
+  { make: "Mitsubishi", model: "RVR", grades: ["G", "M", "Roadest"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 1500000, engineCc: 1800, drive: "2WD" },
+  { make: "Suzuki", model: "Solio", grades: ["G", "S", "Bandit"], body: BodyType.HATCHBACK, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 1100000, engineCc: 1200, drive: "2WD" },
+  { make: "Volkswagen", model: "Polo Vivo", grades: ["Trendline", "Comfortline", "GT"], body: BodyType.HATCHBACK, fuel: FuelType.PETROL, gear: Transmission.MANUAL, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 950000, engineCc: 1400, drive: "2WD" },
+  { make: "BMW", model: "X1", grades: ["sDrive18i", "xDrive20i", "M Sport"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 2650000, engineCc: 2000, drive: "AWD" },
+  { make: "Mercedes-Benz", model: "GLA", grades: ["GLA 200", "AMG Line", "Progressive"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 2750000, engineCc: 1600, drive: "2WD" },
+  { make: "Nissan", model: "Navara", grades: ["SE", "XE", "LE"], body: BodyType.PICKUP, fuel: FuelType.DIESEL, gear: Transmission.MANUAL, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 3400000, engineCc: 2500, drive: "4WD" },
+  { make: "Ford", model: "Ranger", grades: ["XL", "XLT", "Wildtrak"], body: BodyType.PICKUP, fuel: FuelType.DIESEL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 3950000, engineCc: 3200, drive: "4WD" },
+  { make: "Mazda", model: "BT-50", grades: ["Brave", "Pro", "Thunder"], body: BodyType.PICKUP, fuel: FuelType.DIESEL, gear: Transmission.MANUAL, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 2900000, engineCc: 2200, drive: "4WD" },
   { make: "Nissan", model: "Tiida", grades: ["15M", "15G", "Axis"], body: BodyType.HATCHBACK, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 850000, engineCc: 1500, drive: "2WD" },
   { make: "Nissan", model: "Bluebird Sylphy", grades: ["X", "G", "XV"], body: BodyType.SEDAN, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 1150000, engineCc: 1800, drive: "2WD" },
   { make: "Nissan", model: "Serena", grades: ["Highway Star", "X", "Rider"], body: BodyType.VAN, fuel: FuelType.PETROL, gear: Transmission.CVT, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 1750000, engineCc: 2000, drive: "2WD" },
@@ -440,6 +456,47 @@ async function main() {
     "2016 BMW 320i M Sport",
   ]) {
     await prisma.car.updateMany({ where: { title }, data: { featured: true, verified: true } });
+  }
+
+  // ---------- Parts stock ----------
+  const engineImg = "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=1200&auto=format&fit=crop";
+  type SeedPart = {
+    title: string; category: PartCategory; condition: PartCondition; price: number;
+    location: string; description: string; dealer: string; images: string[];
+  };
+  const seedParts: SeedPart[] = [
+    { title: "Bridgestone Dueler 265/65R17 Tyre Set (4pcs)", category: PartCategory.TYRES_WHEELS, condition: PartCondition.NEW, price: 68000, location: "Nairobi", dealer: "kamau", description: "Brand new Dueler A/T set, 2025 date stamps. Fits Prado, Fortuner, Hilux. Free fitting + alignment check.", images: [img("photo-1626668893632-6f3d4466d22f")] },
+    { title: "GT Radial 205/65R16 Tyres — Pair", category: PartCategory.TYRES_WHEELS, condition: PartCondition.NEW, price: 24000, location: "Mombasa", dealer: "coast", description: "New pair, ideal for Fielder, Premio, Sylphy. Manufactured 2025.", images: [img("photo-1626668893632-6f3d4466d22f")] },
+    { title: '17" 5-Lug Alloy Rims Set — Prado/Fortuner', category: PartCategory.TYRES_WHEELS, condition: PartCondition.USED, price: 85000, location: "Nairobi", dealer: "kamau", description: "Clean used alloys, no bends or cracks. With centre caps.", images: [img("photo-1555215695-3004980ad54e")] },
+    { title: "Amaron 70Ah Battery — 18 Month Warranty", category: PartCategory.BATTERY, condition: PartCondition.NEW, price: 18500, location: "Nairobi", dealer: "kamau", description: "Genuine Amaron with warranty card. Free installation + old battery buyback.", images: [engineImg] },
+    { title: "Exide 55Ah Battery — Vitz/Note/Fit", category: PartCategory.BATTERY, condition: PartCondition.NEW, price: 14500, location: "Kisumu", dealer: "lake", description: "Exact fit for 1000–1500cc hatchbacks. 12-month warranty.", images: [engineImg] },
+    { title: "Front Brake Pads — Toyota Fielder/Axio", category: PartCategory.BRAKES, condition: PartCondition.NEW, price: 6500, location: "Nairobi", dealer: "kamau", description: "Ceramic pads, low dust, includes shims. Fits NZE/NRE chassis.", images: [img("photo-1487754180451-c456f719a1fc")] },
+    { title: "Brembo Rear Brake Discs — Mazda CX-5", category: PartCategory.BRAKES, condition: PartCondition.NEW, price: 22000, location: "Nairobi", dealer: "kamau", description: "Genuine Brembo pair for KF chassis. Eliminates judder.", images: [img("photo-1487754180451-c456f719a1fc")] },
+    { title: "Brake Pads — Nissan Note E12", category: PartCategory.BRAKES, condition: PartCondition.NEW, price: 5500, location: "Mombasa", dealer: "coast", description: "Front set for E12 Note, e-Power included.", images: [img("photo-1487754180451-c456f719a1fc")] },
+    { title: "KYB Front Shock Absorbers Pair — Probox/Succeed", category: PartCategory.SUSPENSION, condition: PartCondition.NEW, price: 26000, location: "Nairobi", dealer: "kamau", description: "Genuine KYB Excel-G pair. Transforms rough-road handling.", images: [engineImg] },
+    { title: "Rear Shocks — Subaru Forester SH", category: PartCategory.SUSPENSION, condition: PartCondition.USED, price: 12000, location: "Nakuru", dealer: "rift", description: "Low-mileage ex-Japan pair, no leaks. Tested.", images: [engineImg] },
+    { title: "Alternator — Toyota 1NZ (Vitz/Ractis)", category: PartCategory.ENGINE, condition: PartCondition.USED, price: 15000, location: "Nairobi", dealer: "kamau", description: "Tested ex-Japan alternator, 1-month warranty.", images: [engineImg] },
+    { title: "Radiator — Honda Fit GP5 Hybrid", category: PartCategory.ENGINE, condition: PartCondition.NEW, price: 19000, location: "Mombasa", dealer: "coast", description: "Brand new replacement radiator, exact GP5 fitment.", images: [engineImg] },
+    { title: "Side Mirror (R, Power) — Nissan Note E12", category: PartCategory.BODY, condition: PartCondition.USED, price: 7500, location: "Nairobi", dealer: "kamau", description: "Wine-red power mirror, motor tested. Paint-to-match available.", images: [img("photo-1549317661-bd32c8ce0db2")] },
+    { title: "Headlight (L, LED) — Mazda CX-5 KF", category: PartCategory.BODY, condition: PartCondition.USED, price: 28000, location: "Nairobi", dealer: "kamau", description: "Ex-Japan LED unit, all brackets intact.", images: [img("photo-1594502184342-2e12f877aa73")] },
+    { title: "Front Bumper — Toyota Premio T260", category: PartCategory.BODY, condition: PartCondition.USED, price: 18000, location: "Eldoret", dealer: "rift", description: "Clean used bumper, primed ready for paint.", images: [img("photo-1621007947382-bb3c3994e3fb")] },
+    { title: "Roof Rack + Cross Bars — Universal SUV", category: PartCategory.ACCESSORIES, condition: PartCondition.NEW, price: 15000, location: "Nairobi", dealer: "kamau", description: "Aluminium rack rated 100kg. Fits Prado, RAV4, X-Trail rails.", images: [img("photo-1533473353331-0135ef1b58bf")] },
+    { title: "Heavy-Duty Seat Covers — 5-Seater", category: PartCategory.ACCESSORIES, condition: PartCondition.NEW, price: 9500, location: "Nairobi", dealer: "kamau", description: "Waterproof canvas set, beige/grey. Fitted in 30 mins.", images: [img("photo-1503376780353-7e6692767b70")] },
+    { title: "Shell Helix 5W-30 (5L) + Oil Filter", category: PartCategory.OILS_FLUIDS, condition: PartCondition.NEW, price: 8500, location: "Nairobi", dealer: "kamau", description: "Service kit: genuine 5W-30 + filter. Covers most 1500–2000cc petrols.", images: [engineImg] },
+    { title: "LED Headlight Bulbs H4 (Pair, 6000K)", category: PartCategory.ELECTRICAL, condition: PartCondition.NEW, price: 4500, location: "Kisumu", dealer: "lake", description: "Plug-and-play H4 LEDs with canbus. 1-year warranty.", images: [img("photo-1618843479313-40f8afb4b4d8")] },
+    { title: "Starter Motor — Mazda Demio DE", category: PartCategory.ENGINE, condition: PartCondition.REFURBISHED, price: 9000, location: "Nakuru", dealer: "rift", description: "Professionally rebuilt with new brushes. 6-month warranty.", images: [engineImg] },
+  ];
+  for (const sp of seedParts) {
+    const slug = `${slugify(sp.title)}-${Math.random().toString(36).slice(2, 6)}`;
+    if (await prisma.part.findFirst({ where: { title: sp.title } })) continue;
+    await prisma.part.create({
+      data: {
+        title: sp.title, slug, category: sp.category, condition: sp.condition, price: sp.price,
+        location: sp.location, description: sp.description, status: "ACTIVE",
+        sellerId: kamauUser.id, dealerId: dealerIds[sp.dealer] ?? dealerIds.kamau,
+        images: { create: sp.images.map((url, i) => ({ url, isPrimary: i === 0, sortOrder: i })) },
+      },
+    });
   }
 
   // Blog posts for SEO — full-length Kenyan buying guides (re-seed refreshes them)

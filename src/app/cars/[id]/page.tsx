@@ -5,6 +5,7 @@ import { MapPin, Gauge, Fuel, Cog, Calendar, ShieldCheck, BadgeCheck, Phone } fr
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { CarGallery } from "@/components/cars/car-gallery";
 import { FavoriteButton } from "@/components/cars/favorite-button";
+import { ShareButtons } from "@/components/cars/share-buttons";
 import { CarCard } from "@/components/cars/car-card";
 import { InquiryForm } from "@/components/cars/inquiry-form";
 import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -82,7 +83,8 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
           <h1 className="mt-2 text-2xl font-extrabold md:text-3xl">{car.title}</h1>
           <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="size-4" />{car.location}, Kenya • {car.views} views</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <ShareButtons title={car.title} path={`/cars/${car.slug}`} />
           <FavoriteButton carId={car.id} saved={saved} />
           <a href={wa} target="_blank" rel="noreferrer"><Button className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />{isRent ? "WhatsApp to book" : "WhatsApp seller"}</Button></a>
         </div>

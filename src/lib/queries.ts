@@ -109,3 +109,33 @@ export async function getDealerCars(dealerId: string, excludeId: string) {
     orderBy: { createdAt: "desc" },
   });
 }
+
+// ---------- Parts ----------
+export type PartFilters = {
+  q?: string; category?: string; condition?: string; location?: string;
+  maxPrice?: number; sort?: "newest" | "price-asc" | "price-desc"; page?: number;
+};
+
+export async function searchParts(f: PartFilters) {
+  const pageSize = 12;
+  const where: Record<string, unknown> = { status: "ACTIVE" };
+  if (f.q) where.OR = [{ title: { contains: f.q, mode: "insensitive" } }];
+  if (f.category) where.category = f.category;
+  if (f.condition) where.condition = f.condition;
+  if (f.location) where.location = f.location;
+  if (f.maxPrice) where.price = { lte: f.maxPrice };
+  const orderBy = f.sort === "price-asc" ? { price: "asc" } : f.sort === "price-desc" ? { price: "desc" } : { createdAt: "desc" };
+  const page = Math.max(1, f.page || 1);
+  const [total, parts] = await Promise.all([
+    prisma.part.count({ where: where as never }),
+    prisma.part.findMany({ where: where as never, orderBy: orderBy as never, skip: (page - 1) * pageSize, take: pageSize, include: { images: { orderBy: { sortOrder: "asc" } } } }),
+  ]);
+  return { parts, total, page, pageSize, totalPages: Math.max(1, Math.ceil(total / pageSize)) };
+}
+
+export async function getPartBySlug(slug: string) {
+  return prisma.part.findFirst({
+    where: { slug, status: { in: ["ACTIVE", "SOLD"] } },
+    include: { images: { orderBy: { sortOrder: "asc" } }, dealer: true, seller: { select: { id: true, name: true, phone: true, verified: true } } },
+  });
+}

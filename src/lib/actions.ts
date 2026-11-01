@@ -96,3 +96,58 @@ export async function deleteListingAction(carId: string) {
   await prisma.car.deleteMany({ where: { id: carId, sellerId: session.user.id } });
   revalidatePath("/dashboard/listings");
 }
+
+async function requireAdmin() {
+  const session = await auth();
+  const me = session?.user?.id ? await prisma.user.findUnique({ where: { id: session.user.id } }) : null;
+  if (!me || me.role !== "ADMIN") throw new Error("Admin only");
+  return me;
+}
+
+/** Seller updates own profile + submits ID for verification. */
+export async function updateProfileAction(prev: unknown, formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Please log in." };
+  const name = String(formData.get("name") || "").trim();
+  const phone = String(formData.get("phone") || "").trim();
+  const idNumber = String(formData.get("idNumber") || "").trim();
+  if (name.length < 2) return { error: "Enter your name." };
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { name, phone: phone || null, idNumber: idNumber || null },
+  });
+  revalidatePath("/profile");
+  return { ok: true };
+}
+
+/** Admin: approve a pending listing (goes ACTIVE + verified). */
+export async function approveCarAction(carId: string) {
+  await requireAdmin();
+  await prisma.car.update({ where: { id: carId }, data: { status: "ACTIVE", verified: true } });
+  revalidatePath("/admin/listings");
+  revalidatePath("/cars");
+}
+
+/** Admin: reject a pending listing. */
+export async function rejectCarAction(carId: string) {
+  await requireAdmin();
+  await prisma.car.update({ where: { id: carId }, data: { status: "REJECTED" } });
+  revalidatePath("/admin/listings");
+}
+
+/** Admin: verify a seller's ID. */
+export async function verifyUserAction(userId: string) {
+  await requireAdmin();
+  await prisma.user.update({ where: { id: userId }, data: { idVerified: true, verified: true } });
+  revalidatePath("/admin/users");
+}
+
+/** Admin: change a user's role (used directly as a form action). */
+export async function setUserRoleAction(formData: FormData) {
+  try { await requireAdmin(); } catch { return; }
+  const userId = String(formData.get("userId") || "");
+  const role = String(formData.get("role") || "");
+  if (!userId || !["BUYER", "SELLER", "DEALER", "ADMIN"].includes(role)) return;
+  await prisma.user.update({ where: { id: userId }, data: { role: role as never } });
+  revalidatePath("/admin/users");
+}

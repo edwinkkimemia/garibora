@@ -8,6 +8,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const links = [
     { href: "/dashboard", label: "Overview" },
     { href: "/dashboard/listings", label: "My listings" },
+    { href: "/dashboard/requests", label: "My requests" },
     { href: "/dashboard/inquiries", label: "Inquiries" },
     { href: "/sell", label: "＋ New listing" },
     { href: "/profile", label: "Profile" },
