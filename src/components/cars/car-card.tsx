@@ -8,6 +8,7 @@ type CarCardCar = {
   id: string; slug: string; title: string; make: string; model: string; year: number;
   price: number; mileage: number; fuelType: string; transmission: string; location: string;
   verified: boolean; featured: boolean; negotiable: boolean;
+  dailyRate?: number | null; listingType?: string;
   images: { url: string }[];
 };
 
@@ -41,10 +42,19 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
           {car.verified && <Badge variant="success"><BadgeCheck className="size-3" />Verified</Badge>}
           {car.featured && <Badge>Featured</Badge>}
         </div>
+        {car.dailyRate ? (
+          <span className="absolute bottom-2 right-2 rounded-full bg-navy/90 px-2.5 py-1 text-[11px] font-bold text-gold-light backdrop-blur-sm">
+            {formatKES(car.dailyRate)}/day hire
+          </span>
+        ) : null}
       </div>
       <div className="p-4">
         <h3 className="line-clamp-1 font-semibold text-slate-900">{car.title}</h3>
-        <p className="mt-1 text-lg font-extrabold text-navy">{formatKES(car.price)}</p>
+        {car.dailyRate ? (
+          <p className="mt-1 text-lg font-extrabold text-navy">{formatKES(car.dailyRate)}<span className="text-sm font-semibold text-slate-500">/day</span> <span className="ml-1 text-xs font-normal text-slate-500">• {formatKES(car.price)} to buy</span></p>
+        ) : (
+          <p className="mt-1 text-lg font-extrabold text-navy">{formatKES(car.price)}</p>
+        )}
         <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
           <span>{car.year}</span><span>•</span><span>{formatMileage(car.mileage)}</span><span>•</span><span>{car.transmission}</span><span>•</span><span>{car.location}</span>
         </p>

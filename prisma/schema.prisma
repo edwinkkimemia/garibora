@@ -59,6 +59,12 @@ enum CarCondition {
   LOCALLY_USED
 }
 
+enum ListingType {
+  SALE
+  RENT
+  BOTH
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -184,6 +190,10 @@ model Car {
   brandId String?
   brand   Brand?  @relation(fields: [brandId], references: [id], onDelete: SetNull)
 
+  // Listing type: sale, hire, or both (monetization: rentals)
+  listingType ListingType @default(SALE)
+  dailyRate   Int? // KES per day, when rentable
+
   // Extra specs
   engineCc   Int?
   drive      String? // 2WD, 4WD, AWD
@@ -205,6 +215,7 @@ model Car {
   @@index([fuelType])
   @@index([transmission])
   @@index([condition])
+  @@index([listingType])
   @@index([createdAt])
   // Full-text: use Postgres tsvector via raw query in lib/search.ts; keep composite index for prefix search
   @@index([title, make, model])

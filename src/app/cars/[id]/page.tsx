@@ -119,6 +119,14 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
                 <span className="rounded-lg bg-muted p-2"><Gauge className="mx-auto size-4" />{(car.mileage / 1000).toFixed(0)}k km</span>
                 <span className="rounded-lg bg-muted p-2"><Fuel className="mx-auto size-4" />{car.fuelType}</span>
               </div>
+              {car.dailyRate ? (
+                <div className="mt-3 rounded-xl border border-gold/50 bg-gold/10 p-3">
+                  <p className="text-sm font-extrabold text-navy">Also for hire: {formatKES(car.dailyRate)}/day</p>
+                  <a href={whatsappLink(sellerPhone, `Hi! I'd like to HIRE your ${car.title} listed on ${siteConfig.brandName}. What dates are available?`)} target="_blank" rel="noreferrer">
+                    <Button size="sm" className="mt-2 w-full bg-navy text-gold-light hover:bg-navy-800"><WhatsAppIcon /> Book hire dates</Button>
+                  </a>
+                </div>
+              ) : null}
               <div className="mt-4 grid grid-cols-2 gap-2">
                 <a href={wa} target="_blank" rel="noreferrer"><Button className="w-full bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />WhatsApp</Button></a>
                 {car.seller.phone && <a href={`tel:${car.seller.phone}`}><Button variant="outline" className="w-full"><Phone />Call</Button></a>}

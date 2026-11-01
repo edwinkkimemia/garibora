@@ -237,6 +237,25 @@ export default async function HomePage() {
         </section>
       )}
 
+      {/* MONETIZATION: rent / finance / insure */}
+      <section className="container pb-12">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-dark">More than a marketplace</p>
+        <h2 className="mt-1 text-2xl font-extrabold md:text-3xl">Do more with your gari</h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {[
+            { icon: KeyRound, t: "Hire a car", d: "Verified rentals from KSh 4,000/day — self-drive or chauffeur.", href: "/rentals" },
+            { icon: Banknote, t: "Finance it", d: "Estimate monthly payments and get pre-qualified in minutes.", href: "/financing" },
+            { icon: ShieldCheck, t: "Insure it", d: "Comprehensive or third-party cover, quoted in 60 seconds.", href: "/insurance" },
+          ].map((m) => (
+            <Link key={m.href} href={m.href} className="group rounded-2xl border bg-card p-5 transition hover:border-gold hover:shadow-md">
+              <span className="grid size-11 place-items-center rounded-xl bg-navy text-gold-light"><m.icon className="size-5" /></span>
+              <p className="mt-3 flex items-center gap-1 font-bold">{m.t} <ArrowRight className="size-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-gold-dark" /></p>
+              <p className="mt-1 text-sm text-muted-foreground">{m.d}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* TESTIMONIALS */}
       <section className="bg-navy py-12 text-white">
         <div className="container">

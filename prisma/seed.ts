@@ -398,6 +398,25 @@ async function main() {
     });
   }
 
+  // Flag hire stock (monetization: rentals) — deterministic, idempotent
+  const rentals: [string, number][] = [
+    ["2017 Nissan Note e-Power Medalist", 4500],
+    ["2017 Honda Fit Hybrid F-Package", 4000],
+    ["2022 Suzuki Swift RS 1.2", 5000],
+    ["2019 Mazda CX-5 XD Proactive Diesel", 9500],
+    ["2020 Toyota Hiace Super GL 2.8 Van", 12000],
+    ["2019 Toyota Land Cruiser Prado TX-L 2.8D", 22000],
+    ["2018 Mercedes-Benz C200 AMG Line", 15000],
+    ["2021 BMW 420i M Sport Coupe", 16000],
+    ["2023 Toyota RAV4 Adventure 2.5 Hybrid", 14000],
+    ["2016 Toyota Fielder G 1.5 Hybrid", 5500],
+    ["2015 Subaru Forester XT 2.0T", 8000],
+    ["2021 Toyota Hilux Double Cab 2.8 GD-6", 13000],
+  ];
+  for (const [title, rate] of rentals) {
+    await prisma.car.updateMany({ where: { title }, data: { listingType: "BOTH", dailyRate: rate } });
+  }
+
   // Blog posts for SEO — full-length Kenyan buying guides (re-seed refreshes them)
   const posts = [
     {

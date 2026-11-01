@@ -4,8 +4,11 @@ import type { Prisma } from "@prisma/client";
 
 const PAGE_SIZE = 12;
 
-export async function searchCars(filters: CarFilters) {
+export async function searchCars(filters: CarFilters, opts?: { rentalOnly?: boolean }) {
   const where: Prisma.CarWhereInput = { status: "ACTIVE" };
+
+  // Rentals live in their own vertical; sale search excludes rent-only stock
+  where.listingType = opts?.rentalOnly ? { in: ["RENT", "BOTH"] } : { in: ["SALE", "BOTH"] };
 
   if (filters.q) {
     // Prisma full-text-ish: case-insensitive contains across key fields.
