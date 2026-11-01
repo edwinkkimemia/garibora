@@ -6,6 +6,11 @@ export function baseMetadata(overrides: Partial<Metadata> = {}): Metadata {
     metadataBase: new URL(siteConfig.url),
     title: { default: `${siteConfig.brandName} — ${siteConfig.tagline}`, template: `%s | ${siteConfig.brandName}` },
     description: siteConfig.description,
+    keywords: [
+      "cars for sale Kenya", "buy car Nairobi", "GariBora", "Toyota Prado Kenya price",
+      "foreign used cars Kenya", "verified car dealers Kenya", "car prices KES",
+      "Mombasa cars", "Kisumu cars", "Nakuru cars", "car loan Kenya", "NTSA logbook transfer",
+    ],
     openGraph: { type: "website", siteName: siteConfig.brandName, locale: "en_KE" },
     twitter: { card: "summary_large_image" },
     ...overrides,

@@ -398,14 +398,119 @@ async function main() {
     });
   }
 
-  // Blog posts for SEO
+  // Blog posts for SEO — full-length Kenyan buying guides (re-seed refreshes them)
   const posts = [
-    { slug: "toyota-prado-buying-guide-kenya", title: "Toyota Prado Buying Guide in Kenya (2026): Prices, Grades & What to Check", excerpt: "TX vs TX-L vs TZ-G, diesel vs petrol, mileage checks and duty.", content: "Full guide content…", coverUrl: img("photo-1533473353331-0135ef1b58bf"), published: true },
-    { slug: "kra-duty-calculator-import-car", title: "KRA Duty in 2026: How Much to Import a Car to Kenya", excerpt: "CRSP, excise and what foreign-used really costs.", content: "Full guide content…", coverUrl: img("photo-1449965408869-eaa3f722e40d"), published: true },
-    { slug: "best-fuel-efficient-cars-nairobi", title: "7 Most Fuel-Efficient Cars for Nairobi Traffic", excerpt: "Note e-Power, Fit Hybrid, Swift and real-world km/l.", content: "Full guide content…", coverUrl: img("photo-1477959858617-67df85cf4f1df"), published: true },
+    {
+      slug: "toyota-prado-buying-guide-kenya",
+      title: "Toyota Prado Buying Guide in Kenya (2026): Prices, Grades & What to Check",
+      excerpt: "TX vs TX-L vs TZ-G, diesel vs petrol, mileage checks and duty.",
+      coverUrl: img("photo-1533473353331-0135ef1b58bf"), published: true,
+      content: [
+        "The Land Cruiser Prado is Kenya's default premium SUV — from Nairobi school runs to Maasai Mara safaris. In 2026, a foreign-used 2017–2019 TX-L 2.8D sells for KSh 6.2M–7.2M, while a brand-new Land Cruiser 300 ZX pushes past KSh 18M.",
+        "Grades decoded: TX is the workhorse fabric-seat spec; TX-L adds leather, sunroof and a cooler box; TZ-G tops the range with adaptive suspension and premium audio. Diesel 2.8 (1GD-FTV) is the Kenyan favourite — 11–13 km/l and proven on local diesel. The 2.7 petrol is cheaper to buy but thirsty and slower to resell.",
+        "What to check: confirm the 8-year import rule compliance (year of manufacture, not registration), verify duty payment with the KRA CRSP schedule, and inspect the underbody for off-road abuse. Mileage above 120,000 km is normal — service history matters more than the odometer.",
+        "Resale: Prados hold value better than any rival. Buy the cleanest TX-L you can afford, keep full service records, and you will typically recover 70–80% after three years.",
+      ].join("\n\n"),
+    },
+    {
+      slug: "kra-duty-calculator-import-car",
+      title: "KRA Duty in 2026: How Much It Really Costs to Import a Car to Kenya",
+      excerpt: "CRSP, excise and what foreign-used really costs.",
+      coverUrl: img("photo-1449965408869-eaa3f722e40d"), published: true,
+      content: [
+        "Every foreign-used car price in Kenya hides the same math: KRA's Current Retail Selling Price (CRSP) schedule plus import duty 35%, excise duty (20–35% by engine size), VAT 16%, IDF 2.5% and RDL 2%. On a typical 1500cc car, total taxes land near 100% of the CRSP value.",
+        "Rule one: Kenya allows only cars under 8 years old from year of manufacture. Rule two: always price-shop using the CRSP, not the Japanese auction price — two identical-looking units can carry very different duty if their trim levels differ.",
+        "Cheapest route for most buyers is still buying an already-imported, duty-paid unit from a verified dealer — the duty is sunk, the logbook exists, and you can verify everything on NTSA TIMS before paying.",
+        "Watch out: 'duty not paid' deals at the port look cheap until KRA storage, clearing and compliance are added. Insist on a duty receipt for every foreign-used listing.",
+      ].join("\n\n"),
+    },
+    {
+      slug: "best-fuel-efficient-cars-nairobi",
+      title: "7 Most Fuel-Efficient Cars for Nairobi Traffic (2026 Real-World km/l)",
+      excerpt: "Note e-Power, Fit Hybrid, Swift and real-world km/l.",
+      coverUrl: img("photo-1477959858617-67df85cf4f1df"), published: true,
+      content: [
+        "With petrol hovering around KSh 180/litre, fuel economy is the first filter for Nairobi commuters stuck on Mombasa Road. Hybrids dominate the real-world rankings.",
+        "Nissan Note e-Power (25–28 km/l) leads because its petrol engine only charges the battery — no gearbox losses in stop-go traffic. Honda Fit Hybrid (24–27 km/l) and Toyota Aqua (23–26 km/l) follow closely, all available foreign-used between KSh 1.1M and 1.5M.",
+        "Non-hybrids worth a look: Suzuki Swift (18–20 km/l), Mazda Demio 1.3 petrol (17–19 km/l) and Toyota Vitz (17–19 km/l). Avoid big-engine sedans as daily drivers — a 2000cc Premio drinks twice what a Note sips on the same commute.",
+        "Battery worry? Hybrid battery replacements for Note and Fit now cost KSh 80,000–150,000 in Nairobi with warranty — budget it once every 8–10 years and the fuel savings still win by a mile.",
+      ].join("\n\n"),
+    },
+    {
+      slug: "ntsa-logbook-transfer-guide",
+      title: "NTSA Logbook Transfer in Kenya: TIMS Process, Fees & Timelines (2026)",
+      excerpt: "How to move ownership without stories — step by step.",
+      coverUrl: img("photo-1560250097-0b93528c311a"), published: true,
+      content: [
+        "Never drive away in a car whose logbook still reads someone else's name. Transfer on NTSA TIMS is the only proof of ownership — a sale agreement alone protects no one.",
+        "Process: both buyer and seller log into TIMS, the seller initiates transfer, the buyer accepts, then KRA generates a transfer fee (roughly KSh 5,000–15,000 depending on engine rating) plus new logbook processing. Done together at a cyber or Huduma Centre, it takes under an hour of clicking and 2–14 days for the new logbook.",
+        "Before you start: confirm the seller's KRA PIN matches the logbook, check for active loans or caveats on the vehicle, and ensure all number plates match the TIMS record. Any mismatch — walk away.",
+        "On GariBora, verified dealers complete TIMS transfer with you before final payment release. Private sellers: do the transfer step together, in person, on the same day money moves.",
+      ].join("\n\n"),
+    },
+    {
+      slug: "car-loan-kenya-banks-vs-sacco",
+      title: "Car Loans in Kenya: Banks vs SACCOs vs In-House Dealer Finance (2026)",
+      excerpt: "Rates, deposits and which option actually fits your salary.",
+      coverUrl: img("photo-1449965408869-eaa3f722e40d"), published: true,
+      content: [
+        "Most Kenyans buy cars on credit. Banks currently lend at 15–20% on reducing balance for salaried buyers, usually demanding 20–30% deposit and comprehensive insurance through their panel.",
+        "SACCOs are often cheaper (12–15%, sometimes on a flat or reducing basis) and more flexible on informal income — but you must save with them first, typically for 3–6 months, and borrowing is capped at 3–4x your deposits.",
+        "Dealer in-house finance gets you driving fastest with the smallest deposit (sometimes 30–40% down, balance over 12–24 months), but effective rates run highest. Read the repossession clause carefully.",
+        "Rule of thumb: keep total car costs (loan + insurance + fuel + service) under 25% of household income. On a KSh 2M car over 48 months at 18%, expect roughly KSh 55,000–60,000 monthly before fuel.",
+      ].join("\n\n"),
+    },
+    {
+      slug: "best-cars-under-1-5m-kenya",
+      title: "Best Cars Under KSh 1.5M in Kenya (2026): 8 Picks That Hold Value",
+      excerpt: "Note, Fit, Swift, Demio and more — ranked for town driving.",
+      coverUrl: img("photo-1477959858617-67df85cf4f1df"), published: true,
+      content: [
+        "KSh 1.5M is Kenya's sweet spot: enough for a clean foreign-used hatchback with duty paid and change left for insurance and service. Here is how the segment ranks in 2026.",
+        "1) Nissan Note e-Power (~KSh 1.25M) — unbeatable town economy. 2) Honda Fit Hybrid (~KSh 1.2M) — magic seats, 28 km/l. 3) Suzuki Swift (~KSh 1.1M) — fun, cheap parts. 4) Mazda Demio (~KSh 950K) — premium cabin feel. 5) Toyota Vitz (~KSh 1.05M) — resale king.",
+        "Stretch picks: Toyota Ractis for headroom, Nissan Tiida for comfort on long drives, and Honda Freed if you need 7 seats on a budget.",
+        "At this budget, condition beats badge. Favour units below 80,000 km with auction sheets, verify duty, and keep KSh 150,000 spare for tyres, service and transfer.",
+      ].join("\n\n"),
+    },
+    {
+      slug: "prado-vs-land-cruiser-300",
+      title: "Prado vs Land Cruiser 300 in Kenya: Which 4x4 Deserves Your Millions?",
+      excerpt: "Price, comfort, running costs and resale — head to head.",
+      coverUrl: img("photo-1533473353331-0135ef1b58bf"), published: true,
+      content: [
+        "The Prado (KSh 6–7.5M foreign-used) versus the full-size Land Cruiser 300 (KSh 16M+ new) is really a question about presence versus prudence.",
+        "The LC300's 3.3 twin-turbo diesel is a monster — 302hp, effortless overtaking on the Nakuru highway, and a cabin closer to a lounge than a car. But it drinks more, insures for more, and scares more carjackers' attention.",
+        "The Prado 2.8D does 90% of the job at 40% of the price: same 7 seats, same go-anywhere ability, cheaper parts everywhere from Industrial Area to Kisumu. For most families, the Prado plus KSh 9M still in the bank wins.",
+        "Verdict: buy the LC300 if the car is the statement. Buy the Prado if the journey is the point — and check both against our verified stock before deciding.",
+      ].join("\n\n"),
+    },
+    {
+      slug: "pre-purchase-inspection-checklist-kenya",
+      title: "17-Point Inspection Checklist Before You Pay for Any Car in Kenya",
+      excerpt: "The exact walkaround our inspectors use — steal it.",
+      coverUrl: img("photo-1503376780353-7e6692767b70"), published: true,
+      content: [
+        "Documents first: logbook matches seller ID and KRA PIN; TIMS record clean; duty receipt for imports; service history present. No documents, no deal — walk away regardless of price.",
+        "Body: panel gaps even, paint shade consistent in daylight, no overspray on rubbers, boot floor and spare wheel well rust-free. Flood cars hide in Mombasa stock — sniff for damp and check under-seat rails for rust.",
+        "Mechanicals: cold start (no smoke, no rattles), gearbox shifts smooth hot and cold, no dashboard lights after 10 seconds, AC ice-cold, all electrics working. Budget KSh 3,000–5,000 for an independent inspection in Nairobi — the cheapest money in car buying.",
+        "On GariBora, cars with the inspection badge have already passed these checks, and the report summary is available from the seller before viewing.",
+      ].join("\n\n"),
+    },
+    {
+      slug: "toyota-hiace-shuttle-business-kenya",
+      title: "Toyota Hiace Shuttle Business in Kenya: Routes, PSV & the Real Math",
+      excerpt: "Nairobi–Nakuru, Upcountry, airport runs — what it earns.",
+      coverUrl: img("photo-1605893477799-b99e3b8b93fe"), published: true,
+      content: [
+        "A 14-seater Hiace on the Nairobi–Nakuru corridor grosses roughly KSh 12,000–18,000 daily in fares. After fuel (KSh 4,000–5,000), driver, SACCO fees and service, disciplined operators net KSh 150,000–250,000 monthly per van.",
+        "Compliance is non-negotiable: PSV licence via NTSA, TLB for long routes, SACCO membership, speed governor, inspection every 6 months, and genuine PSV insurance (KSh 150,000–250,000 yearly). Skip any of these and one crackdown wipes out months of profit.",
+        "Buy right: the 2.8 diesel Super GL (2017+, KSh 4.5–5.5M) is the industry standard — parts everywhere, resale instant. Avoid petrol vans for shuttle work; the fuel math never closes.",
+        "Start with one van, drive the route yourself for a month to learn the crew economics, then scale. Most failed shuttle businesses fail on driver honesty, not on the vehicle.",
+      ].join("\n\n"),
+    },
   ];
   for (const p of posts) {
-    await prisma.post.upsert({ where: { slug: p.slug }, update: {}, create: p });
+    await prisma.post.upsert({ where: { slug: p.slug }, update: { title: p.title, excerpt: p.excerpt, content: p.content, coverUrl: p.coverUrl, published: p.published }, create: p });
   }
 
   console.log("Seeded admin + 4 dealers + cars. Logins: admin@garibora.ke / seller@garibora.ke (Password123!)");

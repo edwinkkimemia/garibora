@@ -2,10 +2,16 @@ import Link from "next/link";
 import { ShieldCheck, Star } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { baseMetadata } from "@/lib/seo";
+
+export const metadata = baseMetadata({
+  title: "Verified car dealers in Kenya",
+  description: "ID-checked car dealers in Nairobi, Mombasa, Kisumu and Eldoret. Verified yards, rated stock, WhatsApp-direct contact.",
+  keywords: ["car dealers Nairobi", "verified car yards Kenya", "Mombasa car dealers", "buy from dealer Kenya"],
+});
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-export const metadata = { title: "Verified dealers", description: "Trusted car dealers in Kenya — verified yards in Nairobi, Mombasa, Kisumu and more." };
 export const revalidate = 120;
 
 export default async function DealersPage() {

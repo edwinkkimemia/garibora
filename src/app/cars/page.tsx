@@ -9,7 +9,11 @@ import { baseMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-export const metadata: Metadata = baseMetadata({ title: "Buy cars in Kenya", description: "Search verified cars for sale in Kenya — Prado, Hilux, Note, CX-5 and more. Prices in KES." });
+export const metadata: Metadata = baseMetadata({
+  title: "Buy cars in Kenya",
+  description: "Search 100+ verified cars for sale in Kenya — Prado, Hilux, Note, CX-5 and more. Transparent KES prices, NTSA-checked dealers.",
+  keywords: ["cars for sale Nairobi", "Toyota Prado price Kenya", "buy car Mombasa", "foreign used cars Kenya", "cheap cars Kenya", "Hilux for sale Kenya"],
+});
 
 export default async function CarsPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const raw = await searchParams;
@@ -52,6 +56,42 @@ export default async function CarsPage({ searchParams }: { searchParams: Promise
           )}
         </div>
       </div>
+
+      {/* SEO: buying guide + internal links */}
+      <section className="mt-14 grid gap-6 rounded-3xl border bg-card p-6 md:grid-cols-3 md:p-8">
+        <div>
+          <h2 className="font-extrabold">Buying a car in Kenya?</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Every listing shows real KES pricing, mileage and location. Favour <b>Verified</b> badge cars —
+            duty status and condition reviewed — and always confirm the logbook on <b>NTSA TIMS</b> before
+            paying. Budget 10–15% above price for transfer, service and tyres.
+          </p>
+          <Link href="/blog/ntsa-logbook-transfer-guide" className="mt-2 inline-block text-sm font-semibold text-gold-dark hover:underline">Read the transfer guide →</Link>
+        </div>
+        <div>
+          <h2 className="font-extrabold">Shop by town</h2>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret", "Thika"].map((l) => (
+              <Link key={l} href={`/cars?location=${encodeURIComponent(l)}`} className="rounded-full border px-3 py-1 text-xs font-semibold transition hover:border-gold hover:text-gold-dark">{l}</Link>
+            ))}
+          </div>
+          <h2 className="mt-4 font-extrabold">Popular right now</h2>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {[["Prado", "/cars?q=Prado"], ["Hilux 4WD", "/cars?q=Hilux"], ["Note e-Power", "/cars?q=Note"], ["Under 1.5M", "/cars?maxPrice=1500000"], ["Hybrids", "/cars?fuelType=HYBRID"]].map(([t, h]) => (
+              <Link key={t} href={h} className="rounded-full border px-3 py-1 text-xs font-semibold transition hover:border-gold hover:text-gold-dark">{t}</Link>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h2 className="font-extrabold">Good to know</h2>
+          <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
+            <li><Link href="/blog/kra-duty-calculator-import-car" className="hover:text-gold-dark hover:underline">How KRA duty shapes foreign-used prices</Link></li>
+            <li><Link href="/blog/best-fuel-efficient-cars-nairobi" className="hover:text-gold-dark hover:underline">Most fuel-efficient cars for Nairobi traffic</Link></li>
+            <li><Link href="/blog/car-loan-kenya-banks-vs-sacco" className="hover:text-gold-dark hover:underline">Banks vs SACCOs vs dealer finance</Link></li>
+            <li><Link href="/blog/pre-purchase-inspection-checklist-kenya" className="hover:text-gold-dark hover:underline">17-point inspection checklist</Link></li>
+          </ul>
+        </div>
+      </section>
     </div>
   );
 }
