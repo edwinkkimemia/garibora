@@ -1,0 +1,47 @@
+export const siteConfig = {
+  brandName: process.env.NEXT_PUBLIC_BRAND_NAME || "GariBora",
+  tagline: "Gari bora. Deal clear.",
+  taglineAlt: "Premium cars. Verified.",
+  description:
+    "Kenya's premium car marketplace. Verified dealers, inspected cars, transparent KES pricing. From Nairobi to Mombasa, Kisumu to Nakuru.",
+  url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "254700000000",
+  locations: [
+    "Nairobi",
+    "Mombasa",
+    "Kisumu",
+    "Nakuru",
+    "Eldoret",
+    "Thika",
+    "Kiambu",
+    "Machakos",
+    "Nyeri",
+    "Meru",
+  ],
+  makes: [
+    "Toyota",
+    "Nissan",
+    "Mercedes-Benz",
+    "BMW",
+    "Honda",
+    "Mazda",
+    "Subaru",
+    "Volkswagen",
+    "Audi",
+    "Mitsubishi",
+    "Suzuki",
+    "Land Rover",
+    "Ford",
+    "Isuzu",
+  ],
+  bodyTypes: [
+    { value: "SUV", label: "SUVs", blurb: "Prado, RAV4, CX-5" },
+    { value: "SEDAN", label: "Sedans", blurb: "Axio, Note, C-Class" },
+    { value: "PICKUP", label: "Pickups", blurb: "Hilux, D-Max, Ranger" },
+    { value: "HATCHBACK", label: "Hatchbacks", blurb: "Fit, Demio, Swift" },
+    { value: "VAN", label: "Vans", blurb: "Hiace, NV350" },
+    { value: "COMMERCIAL", label: "Commercial", blurb: "Canter, FH" },
+  ] as const,
+};
+
+export type SiteConfig = typeof siteConfig;

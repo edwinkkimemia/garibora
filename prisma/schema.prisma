@@ -1,0 +1,264 @@
+// GariBora — Prisma schema (PostgreSQL)
+// Kenya-first, East-Africa-ready marketplace.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  BUYER
+  SELLER
+  DEALER
+  ADMIN
+}
+
+enum CarStatus {
+  DRAFT
+  PENDING
+  ACTIVE
+  SOLD
+  REJECTED
+}
+
+enum Transmission {
+  AUTOMATIC
+  MANUAL
+  CVT
+}
+
+enum FuelType {
+  PETROL
+  DIESEL
+  HYBRID
+  ELECTRIC
+  LPG
+}
+
+enum BodyType {
+  SUV
+  SEDAN
+  HATCHBACK
+  PICKUP
+  COUPE
+  CONVERTIBLE
+  WAGON
+  VAN
+  TRUCK
+  COMMERCIAL
+}
+
+enum CarCondition {
+  NEW
+  FOREIGN_USED
+  LOCALLY_USED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  passwordHash  String?
+  phone         String?
+  image         String?
+  role          Role      @default(BUYER)
+  verified      Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  cars          Car[]        @relation("SellerCars")
+  favorites     Favorite[]
+  inquiriesSent Inquiry[]    @relation("BuyerInquiries")
+  dealerProfile Dealer?
+
+  @@index([role])
+  @@index([email])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Dealer {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName String
+  slug         String   @unique
+  description  String?  @db.Text
+  location     String
+  phone        String?
+  whatsapp     String?
+  logoUrl      String?
+  coverUrl     String?
+  rating       Float    @default(0)
+  reviewCount  Int      @default(0)
+  verified     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  cars         Car[]
+
+  @@index([location])
+  @@index([verified])
+}
+
+model Brand {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  logoUrl   String?
+  popularKE Boolean  @default(false)
+  cars      Car[]
+
+  @@index([popularKE])
+}
+
+model Car {
+  id           String        @id @default(cuid())
+  title        String
+  slug         String        @unique
+  make         String
+  model        String
+  year         Int
+  price        Int // KES, integer
+  negotiable   Boolean       @default(false)
+  mileage      Int // km
+  transmission Transmission
+  fuelType     FuelType
+  bodyType     BodyType
+  condition    CarCondition
+  location     String
+  description  String        @db.Text
+  featured     Boolean       @default(false)
+  verified     Boolean       @default(false) // inspection badge
+  status       CarStatus     @default(PENDING)
+  views        Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  sellerId String
+  seller   User   @relation("SellerCars", fields: [sellerId], references: [id], onDelete: Cascade)
+
+  dealerId String?
+  dealer   Dealer? @relation(fields: [dealerId], references: [id], onDelete: SetNull)
+
+  brandId String?
+  brand   Brand?  @relation(fields: [brandId], references: [id], onDelete: SetNull)
+
+  // Extra specs
+  engineCc   Int?
+  drive      String? // 2WD, 4WD, AWD
+  color      String?
+  vin        String?
+  dutyPaid   Boolean @default(true)
+  inspection String? // inspection report URL / notes
+
+  images    CarImage[]
+  favorites Favorite[]
+  inquiries Inquiry[]
+
+  @@index([status, featured])
+  @@index([make, model])
+  @@index([price])
+  @@index([year])
+  @@index([location])
+  @@index([bodyType])
+  @@index([fuelType])
+  @@index([transmission])
+  @@index([condition])
+  @@index([createdAt])
+  // Full-text: use Postgres tsvector via raw query in lib/search.ts; keep composite index for prefix search
+  @@index([title, make, model])
+}
+
+model CarImage {
+  id        String  @id @default(cuid())
+  carId     String
+  car       Car     @relation(fields: [carId], references: [id], onDelete: Cascade)
+  url       String
+  isPrimary Boolean @default(false)
+  sortOrder Int     @default(0)
+
+  @@index([carId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  carId     String
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, carId])
+  @@index([userId])
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  carId     String
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  buyerId   String?
+  buyer     User?    @relation("BuyerInquiries", fields: [buyerId], references: [id], onDelete: SetNull)
+  name      String
+  phone     String
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([carId])
+  @@index([buyerId])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  excerpt   String?
+  content   String   @db.Text
+  coverUrl  String?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published])
+}
