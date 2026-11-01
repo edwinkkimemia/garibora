@@ -41,6 +41,8 @@ export const siteConfig = {
     { value: "HATCHBACK", label: "Hatchbacks", blurb: "Fit, Demio, Swift" },
     { value: "VAN", label: "Vans", blurb: "Hiace, NV350" },
     { value: "COMMERCIAL", label: "Commercial", blurb: "Canter, FH" },
+    { value: "COUPE", label: "Coupes", blurb: "420i, 4 Series" },
+    { value: "CONVERTIBLE", label: "Convertibles", blurb: "MX-5 RF, Z4" },
   ] as const,
 };
 

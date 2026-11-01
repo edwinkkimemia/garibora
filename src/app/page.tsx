@@ -14,17 +14,18 @@ export const revalidate = 60;
 async function getHomeData() {
   try {
     const sale = { status: "ACTIVE", listingType: "SALE" } as const;
-    const [featured, newCars, recent, dealers, posts, total] = await Promise.all([
+    const [featured, newCars, recent, hireCars, dealers, posts, total] = await Promise.all([
       prisma.car.findMany({ where: { ...sale, featured: true }, take: 8, include: { images: true }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: { ...sale, condition: "NEW" }, take: 4, include: { images: true }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: sale, take: 8, include: { images: true }, orderBy: { createdAt: "desc" } }),
+      prisma.car.findMany({ where: { status: "ACTIVE", listingType: "RENT" }, take: 4, include: { images: true }, orderBy: { createdAt: "desc" } }),
       prisma.dealer.findMany({ where: { verified: true }, take: 3, orderBy: { rating: "desc" } }),
       prisma.post.findMany({ where: { published: true }, take: 3, orderBy: { createdAt: "desc" } }),
       prisma.car.count({ where: { status: "ACTIVE" } }),
     ]);
-    return { featured, newCars, recent, dealers, posts, total };
+    return { featured, newCars, recent, hireCars, dealers, posts, total };
   } catch {
-    return { featured: [], newCars: [], recent: [], dealers: [], posts: [], total: 0 };
+    return { featured: [], newCars: [], recent: [], hireCars: [], dealers: [], posts: [], total: 0 };
   }
 }
 
@@ -44,6 +45,8 @@ const bodyImages: Record<string, string> = {
   HATCHBACK: "photo-1549317661-bd32c8ce0db2",
   VAN: "photo-1605893477799-b99e3b8b93fe",
   COMMERCIAL: "photo-1559416523-140ddc511d3a",
+  COUPE: "photo-1555215695-3004980ad54e",
+  CONVERTIBLE: "photo-1503376780353-7e6692767b70",
 };
 const thumb = (id: string) => `https://images.unsplash.com/${id}?q=80&w=600&auto=format&fit=crop`;
 
@@ -54,7 +57,7 @@ const testimonials = [
 ];
 
 export default async function HomePage() {
-  const { featured, newCars, recent, dealers, posts, total } = await getHomeData();
+  const { featured, newCars, recent, hireCars, dealers, posts, total } = await getHomeData();
 
   return (
     <div>
@@ -123,7 +126,7 @@ export default async function HomePage() {
       <section className="container py-12">
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-dark">Browse by need</p>
         <h2 className="mt-1 text-2xl font-extrabold md:text-3xl">Shop by category</h2>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {siteConfig.bodyTypes.map((c) => (
             <Link key={c.value} href={`/cars?bodyType=${c.value}`} className="group overflow-hidden rounded-2xl border bg-white transition hover:border-gold hover:shadow-md">
               <div className="relative h-32 overflow-hidden">
@@ -171,6 +174,24 @@ export default async function HomePage() {
           {recent.map((c) => <CarCard key={c.id} car={c as never} />)}
         </div>
       </section>
+
+      {/* HIRE */}
+      {hireCars.length > 0 && (
+        <section className="bg-navy py-12 text-white">
+          <div className="container">
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-light">Self-drive & chauffeur</p>
+                <h2 className="mt-1 text-2xl font-extrabold md:text-3xl">Hire a car from KSh 4,000/day</h2>
+              </div>
+              <Link href="/rentals"><Button size="sm" className="bg-gold text-navy hover:bg-gold-dark hover:text-white">All hire cars <ArrowRight /></Button></Link>
+            </div>
+            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {hireCars.map((c) => <CarCard key={c.id} car={c as never} />)}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* HOW IT WORKS */}
       <section className="bg-muted/50 py-12">
