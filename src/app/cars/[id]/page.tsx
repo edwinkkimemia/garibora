@@ -100,7 +100,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
         </div>
 
         <aside className="space-y-4">
-          <Card className="lg:sticky lg:top-20">
+          <Card>
             <CardContent className="pt-5">
               <p className="text-3xl font-extrabold text-primary">{formatKES(car.price)}</p>
               {car.negotiable && <p className="text-xs text-muted-foreground">Negotiable</p>}

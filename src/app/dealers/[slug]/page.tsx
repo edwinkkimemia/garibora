@@ -14,13 +14,17 @@ export default async function DealerDetailPage({ params }: { params: Promise<{ s
   return (
     <div className="container py-8">
       <Breadcrumbs items={[{ label: "Dealers", href: "/dealers" }, { label: dealer.businessName }]} />
-      <h1 className="flex items-center gap-2 text-3xl font-extrabold">{dealer.businessName} <ShieldCheck className="size-6 text-green-600" /></h1>
-      <p className="mt-1 flex items-center gap-1 text-muted-foreground"><Star className="size-4 fill-gold text-gold" /> {dealer.rating.toFixed(1)} • {dealer.location} • {dealer.cars.length} cars in stock</p>
-      <div className="mt-3 flex flex-wrap gap-2">
-        <a href={whatsappLink(dealer.whatsapp || dealer.phone || "254700000000", `Hi ${dealer.businessName}! I found you on GariBora and I'm looking for a car.`)} target="_blank" rel="noreferrer">
-          <Button size="sm" className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />WhatsApp dealer</Button>
-        </a>
-        {dealer.phone && <a href={`tel:${dealer.phone}`}><Button size="sm" variant="outline"><Phone />{dealer.phone}</Button></a>}
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="flex items-center gap-2 text-3xl font-extrabold">{dealer.businessName} <ShieldCheck className="size-6 text-green-600" /></h1>
+          <p className="mt-1 flex items-center gap-1 text-muted-foreground"><Star className="size-4 fill-gold text-gold" /> {dealer.rating.toFixed(1)} • {dealer.location} • {dealer.cars.length} cars in stock</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <a href={whatsappLink(dealer.whatsapp || dealer.phone || "254700000000", `Hi ${dealer.businessName}! I found you on GariBora and I'm looking for a car.`)} target="_blank" rel="noreferrer">
+            <Button size="sm" className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />WhatsApp dealer</Button>
+          </a>
+          {dealer.phone && <a href={`tel:${dealer.phone}`}><Button size="sm" variant="outline"><Phone />{dealer.phone}</Button></a>}
+        </div>
       </div>
       <p className="mt-3 max-w-2xl text-sm">{dealer.description}</p>
       <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
