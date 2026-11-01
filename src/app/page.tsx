@@ -309,8 +309,8 @@ export default async function HomePage() {
             <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">Sell in days, not months.</h2>
             <p className="mt-2 text-slate-200">Free listing • WhatsApp inquiries • Verified badge boosts trust 3×.</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/sell"><Button size="lg" className="bg-gold text-navy hover:bg-gold-dark hover:text-white">List your car — free</Button></Link>
-              <Link href="/how-it-works"><Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">How it works</Button></Link>
+              <Link href="/sell"><Button size="lg" className="bg-white text-navy hover:bg-gold-light">List your car — free</Button></Link>
+              <Link href="/how-it-works"><Button size="lg" className="bg-gold text-navy hover:bg-gold-dark hover:text-white">How it works</Button></Link>
             </div>
           </div>
         </div>
