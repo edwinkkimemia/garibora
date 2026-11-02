@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, KeyRound, Banknote, ShieldCheck, Wrench } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ShareButtons } from "@/components/cars/share-buttons";
+import { formatKES } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -16,6 +17,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     where: { published: true, slug: { not: slug } },
     select: { slug: true, title: true, excerpt: true, coverUrl: true },
     orderBy: { createdAt: "desc" }, take: 4,
+  }).catch(() => []);
+  const featuredCars = await prisma.car.findMany({
+    where: { status: "ACTIVE", listingType: "SALE", featured: true },
+    select: { slug: true, title: true, price: true, images: { select: { url: true }, take: 1 } },
+    orderBy: { createdAt: "desc" }, take: 3,
   }).catch(() => []);
 
   return (
@@ -53,6 +59,25 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               {more.length === 0 && <p className="text-sm text-muted-foreground">More guides coming soon.</p>}
             </CardContent>
           </Card>
+          {featuredCars.length > 0 && (
+            <Card className="border-gold/40">
+              <CardHeader><CardTitle className="text-base">Featured cars <span className="ml-1 rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-bold text-gold-dark">VERIFIED</span></CardTitle></CardHeader>
+              <CardContent className="grid gap-3">
+                {featuredCars.map((c) => (
+                  <Link key={c.slug} href={`/cars/${c.slug}`} className="group flex gap-3">
+                    <span className="relative block h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-muted">
+                      {c.images[0] && <Image src={c.images[0].url} alt={c.title} fill className="object-cover" sizes="100px" />}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="line-clamp-2 text-sm font-bold leading-snug group-hover:text-gold-dark">{c.title}</span>
+                      <span className="text-sm font-extrabold text-navy">{formatKES(c.price)}</span>
+                    </span>
+                  </Link>
+                ))}
+                <Link href="/cars"><Button size="sm" variant="outline" className="w-full">Browse all cars</Button></Link>
+              </CardContent>
+            </Card>
+          )}
           <Card className="border-gold/40 bg-gradient-to-br from-navy to-navy-800 text-white">
             <CardContent className="pt-5">
               <p className="font-extrabold">Reading about it? <span className="text-gold-light">Drive it.</span></p>
@@ -62,6 +87,26 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </Card>
         </aside>
       </div>
+
+      {/* Other services */}
+      <section className="mt-12">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-dark">More from Motiva</p>
+        <h2 className="mt-1 text-2xl font-extrabold">Everything for your car, in one place</h2>
+        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { icon: KeyRound, t: "Hire a car", d: "Verified rentals from KSh 4,000/day.", href: "/rentals" },
+            { icon: Banknote, t: "Finance it", d: "Loans, logbook cash & calculator.", href: "/financing" },
+            { icon: ShieldCheck, t: "Insure it", d: "Cover in 60 seconds, from your phone.", href: "/insurance" },
+            { icon: Wrench, t: "Parts & spares", d: "Tyres, batteries, brakes & more.", href: "/parts" },
+          ].map((s) => (
+            <Link key={s.href} href={s.href} className="group rounded-2xl border bg-card p-5 transition hover:border-gold hover:shadow-md">
+              <span className="grid size-11 place-items-center rounded-xl bg-navy text-gold-light"><s.icon className="size-5" /></span>
+              <p className="mt-3 flex items-center gap-1 font-bold">{s.t} <ArrowRight className="size-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-gold-dark" /></p>
+              <p className="mt-1 text-sm text-muted-foreground">{s.d}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
