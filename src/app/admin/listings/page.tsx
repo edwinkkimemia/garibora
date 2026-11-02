@@ -35,8 +35,8 @@ export default async function AdminListingsPage() {
               </p>
               <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{c.description}</p>
               <div className="mt-2 flex gap-2">
-                <form action={async () => { await approveCarAction(c.id); }}><Button size="sm">Approve ✓</Button></form>
-                <form action={async () => { await rejectCarAction(c.id); }}><Button size="sm" variant="destructive">Reject</Button></form>
+                <form action={async () => { "use server"; await approveCarAction(c.id); }}><Button size="sm">Approve ✓</Button></form>
+                <form action={async () => { "use server"; await rejectCarAction(c.id); }}><Button size="sm" variant="destructive">Reject</Button></form>
                 <Link href={`/cars/${c.slug}`}><Button size="sm" variant="ghost">Preview</Button></Link>
               </div>
             </div>

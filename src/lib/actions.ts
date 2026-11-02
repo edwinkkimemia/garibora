@@ -120,6 +120,22 @@ export async function updateProfileAction(prev: unknown, formData: FormData) {
   return { ok: true };
 }
 
+/** Seller: relist a sold car. */
+export async function relistAction(carId: string) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  await prisma.car.updateMany({ where: { id: carId, sellerId: session.user.id }, data: { status: "ACTIVE" } });
+  revalidatePath("/dashboard/listings");
+}
+
+/** Seller: mark an inquiry as read. */
+export async function markInquiryReadAction(inquiryId: string) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  await prisma.inquiry.updateMany({ where: { id: inquiryId, car: { sellerId: session.user.id } }, data: { read: true } });
+  revalidatePath("/dashboard/inquiries");
+}
+
 /** Admin: approve a pending listing (goes ACTIVE + verified). */
 export async function approveCarAction(carId: string) {
   await requireAdmin();

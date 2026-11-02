@@ -23,7 +23,7 @@ export default async function AdminUsersPage() {
               <p className="font-bold">{u.name} <Badge variant="outline">{u.role}</Badge></p>
               <p className="text-muted-foreground">{u.email}{u.phone ? ` • ${u.phone}` : ""} • ID: <b>{u.idNumber}</b></p>
             </div>
-            <form action={async () => { await verifyUserAction(u.id); }}><Button size="sm">Verify seller ✓</Button></form>
+            <form action={async () => { "use server"; await verifyUserAction(u.id); }}><Button size="sm">Verify seller ✓</Button></form>
           </div>
         ))}
         {requests.length === 0 && <p className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">No pending ID verifications.</p>}

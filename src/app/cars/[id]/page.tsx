@@ -33,6 +33,8 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
   const { id } = await params;
   const car = await getCarById(id).catch(() => null);
   if (!car) notFound();
+  // Count the view (fire-and-forget so it never blocks the render)
+  void prisma.car.update({ where: { id: car.id }, data: { views: { increment: 1 } } }).catch(() => {});
 
   const session = await auth().catch(() => null);
   let saved = false;
