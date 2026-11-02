@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/card";
+import { Watermark } from "@/components/ui/watermark";
 import { formatKES } from "@/lib/utils";
 
 export function partLabel(s: string) {
@@ -19,6 +20,7 @@ export function PartCard({ part }: { part: PartCardPart }) {
     <Link href={`/parts/${part.slug}`} className="group overflow-hidden rounded-2xl border bg-white text-slate-900 transition hover:shadow-md">
       <div className="relative aspect-[16/10] overflow-hidden bg-muted">
         {part.images[0] && <Image src={part.images[0].url} alt={part.title} fill className="object-cover transition duration-300 group-hover:scale-105" sizes="300px" />}
+        {part.images[0] && <Watermark url={part.images[0].url} size="sm" />}
         <span className="absolute left-2 top-2"><Badge variant="outline" className="bg-white/90">{partLabel(part.category)}</Badge></span>
       </div>
       <div className="p-3">

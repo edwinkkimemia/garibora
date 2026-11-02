@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Watermark } from "@/components/ui/watermark";
 
 export function CarGallery({ images, title }: { images: { url: string }[]; title: string }) {
   const [active, setActive] = useState(0);
@@ -11,6 +12,7 @@ export function CarGallery({ images, title }: { images: { url: string }[]; title
     <div>
       <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border">
         <Image src={list[active].url} alt={title} fill className="object-cover" priority sizes="(max-width:768px) 100vw, 800px" />
+        <Watermark url={list[active].url} />
       </div>
       {list.length > 1 && (
         <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">

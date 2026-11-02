@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MapPin, Gauge, Fuel, Cog, BadgeCheck, Heart } from "lucide-react";
 import { formatKES, formatMileage } from "@/lib/utils";
 import { Badge } from "@/components/ui/card";
+import { Watermark } from "@/components/ui/watermark";
 
 type CarCardCar = {
   id: string; slug: string; title: string; make: string; model: string; year: number;
@@ -19,6 +20,7 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
       <Link href={`/cars/${car.slug}`} className="flex gap-4 rounded-2xl border bg-white p-3 text-slate-900 shadow-sm transition hover:shadow-md">
         <div className="relative h-28 w-40 shrink-0 overflow-hidden rounded-xl sm:h-36 sm:w-56">
           <Image src={photo} alt={car.title} fill className="object-cover" sizes="300px" />
+          <Watermark url={photo} size="sm" />
           {car.verified && <span className="absolute left-2 top-2"><Badge variant="success"><BadgeCheck className="size-3" />Verified</Badge></span>}
         </div>
         <div className="min-w-0 flex-1">
@@ -46,7 +48,7 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
           <span className="absolute bottom-2 right-2 rounded-full bg-navy/90 px-2.5 py-1 text-[11px] font-bold text-gold-light backdrop-blur-sm">
             {formatKES(car.dailyRate)}/day hire
           </span>
-        ) : null}
+        ) : <Watermark url={photo} />}
       </div>
       <div className="p-4">
         <h3 className="line-clamp-1 font-semibold text-slate-900">{car.title}</h3>
