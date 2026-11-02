@@ -7,7 +7,7 @@ import { siteConfig } from "@/config/site";
 
 export const metadata = {
   title: "How it works — buy & sell cars safely in Kenya",
-  description: "Search verified cars, chat on WhatsApp, inspect with NTSA checks, pay and transfer. Selling is free. GariBora Kenya guide.",
+  description: "Search verified cars, chat on WhatsApp, inspect with NTSA checks, pay and transfer. Selling is free. Motiva Kenya guide.",
 };
 
 const steps = [
@@ -18,7 +18,7 @@ const steps = [
 ];
 
 const faqs = [
-  { q: "Is GariBora free for buyers?", a: "Yes — searching, saving favourites and contacting sellers is completely free. We may introduce optional escrow and inspection services later." },
+  { q: "Is Motiva free for buyers?", a: "Yes — searching, saving favourites and contacting sellers is completely free. We may introduce optional escrow and inspection services later." },
   { q: "How much does it cost to sell?", a: "Basic listings are free. Optional featured placement to boost visibility will be priced in KES before checkout." },
   { q: "What does the Verified badge mean?", a: "The dealer passed ID and yard-location checks, and the car's duty status, mileage evidence and condition were reviewed by our team." },
   { q: "Can I buy from outside Nairobi?", a: "Yes — dealers in Mombasa, Kisumu, Nakuru, Eldoret and more list here. Always view the car (or send a trusted inspector) before paying." },

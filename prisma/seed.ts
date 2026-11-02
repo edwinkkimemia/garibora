@@ -322,38 +322,52 @@ GEN_BASES.forEach((b, bi) => {
 
 const extraDealers = [
   {
-    key: "coast", email: "coast@garibora.ke", name: "Coast Auto Mall", slug: "coast-auto-mall",
+    key: "coast", email: "coast@motiva.co.ke", name: "Coast Auto Mall", slug: "coast-auto-mall",
     description: "Mombasa's trusted yard along Moi Avenue. Specialists in hybrids, vans and port-cleared imports.",
     location: "Mombasa", phone: "+254733111222", rating: 4.6, reviewCount: 89,
   },
   {
-    key: "lake", email: "lake@garibora.ke", name: "Lake Basin Motors", slug: "lake-basin-motors",
+    key: "lake", email: "lake@motiva.co.ke", name: "Lake Basin Motors", slug: "lake-basin-motors",
     description: "Kisumu's home of clean family cars and commercial trucks. Every unit inspected before listing.",
     location: "Kisumu", phone: "+254744333444", rating: 4.7, reviewCount: 64,
   },
   {
-    key: "rift", email: "rift@garibora.ke", name: "Rift Valley Cars", slug: "rift-valley-cars",
+    key: "rift", email: "rift@motiva.co.ke", name: "Rift Valley Cars", slug: "rift-valley-cars",
     description: "Eldoret yard serving farmers and athletes — pickups, vans and reliable town runners.",
     location: "Eldoret", phone: "+254755555666", rating: 4.5, reviewCount: 51,
   },
 ];
 
 async function main() {
-  console.log("Seeding GariBora…");
+  console.log("Seeding Motiva…");
+
+  // One-time domain move: rename demo accounts garibora.ke → motiva.co.ke
+  // (row IDs stay the same, so listings, favourites and inquiries are untouched).
+  const renames: Array<[string, string]> = [
+    ["admin@garibora.ke", "admin@motiva.co.ke"],
+    ["seller@garibora.ke", "seller@motiva.co.ke"],
+    ["coast@garibora.ke", "coast@motiva.co.ke"],
+    ["lake@garibora.ke", "lake@motiva.co.ke"],
+    ["rift@garibora.ke", "rift@motiva.co.ke"],
+  ];
+  for (const [oldE, newE] of renames) {
+    const taken = await prisma.user.findUnique({ where: { email: newE } });
+    if (!taken) await prisma.user.updateMany({ where: { email: oldE }, data: { email: newE } });
+  }
 
   const passwordHash = await bcrypt.hash("Password123!", 10);
 
   await prisma.user.upsert({
-    where: { email: "admin@garibora.ke" },
+    where: { email: "admin@motiva.co.ke" },
     update: {},
-    create: { email: "admin@garibora.ke", name: "GariBora Admin", role: "ADMIN", verified: true, passwordHash },
+    create: { email: "admin@motiva.co.ke", name: "Motiva Admin", role: "ADMIN", verified: true, passwordHash },
   });
 
   // Main dealer (Nairobi)
   const kamauUser = await prisma.user.upsert({
-    where: { email: "seller@garibora.ke" },
+    where: { email: "seller@motiva.co.ke" },
     update: {},
-    create: { email: "seller@garibora.ke", name: "Kamau Motors", phone: "+254722000000", role: "DEALER", verified: true, passwordHash },
+    create: { email: "seller@motiva.co.ke", name: "Kamau Motors", phone: "+254722000000", role: "DEALER", verified: true, passwordHash },
   });
   await prisma.dealer.upsert({
     where: { userId: kamauUser.id },
@@ -561,7 +575,7 @@ async function main() {
         "Never drive away in a car whose logbook still reads someone else's name. Transfer on NTSA TIMS is the only proof of ownership — a sale agreement alone protects no one.",
         "Process: both buyer and seller log into TIMS, the seller initiates transfer, the buyer accepts, then KRA generates a transfer fee (roughly KSh 5,000–15,000 depending on engine rating) plus new logbook processing. Done together at a cyber or Huduma Centre, it takes under an hour of clicking and 2–14 days for the new logbook.",
         "Before you start: confirm the seller's KRA PIN matches the logbook, check for active loans or caveats on the vehicle, and ensure all number plates match the TIMS record. Any mismatch — walk away.",
-        "On GariBora, verified dealers complete TIMS transfer with you before final payment release. Private sellers: do the transfer step together, in person, on the same day money moves.",
+        "On Motiva, verified dealers complete TIMS transfer with you before final payment release. Private sellers: do the transfer step together, in person, on the same day money moves.",
       ].join("\n\n"),
     },
     {
@@ -609,7 +623,7 @@ async function main() {
         "Documents first: logbook matches seller ID and KRA PIN; TIMS record clean; duty receipt for imports; service history present. No documents, no deal — walk away regardless of price.",
         "Body: panel gaps even, paint shade consistent in daylight, no overspray on rubbers, boot floor and spare wheel well rust-free. Flood cars hide in Mombasa stock — sniff for damp and check under-seat rails for rust.",
         "Mechanicals: cold start (no smoke, no rattles), gearbox shifts smooth hot and cold, no dashboard lights after 10 seconds, AC ice-cold, all electrics working. Budget KSh 3,000–5,000 for an independent inspection in Nairobi — the cheapest money in car buying.",
-        "On GariBora, cars with the inspection badge have already passed these checks, and the report summary is available from the seller before viewing.",
+        "On Motiva, cars with the inspection badge have already passed these checks, and the report summary is available from the seller before viewing.",
       ].join("\n\n"),
     },
     {
@@ -629,7 +643,7 @@ async function main() {
     await prisma.post.upsert({ where: { slug: p.slug }, update: { title: p.title, excerpt: p.excerpt, content: p.content, coverUrl: p.coverUrl, published: p.published }, create: p });
   }
 
-  console.log("Seeded admin + 4 dealers + cars. Logins: admin@garibora.ke / seller@garibora.ke (Password123!)");
+  console.log("Seeded admin + 4 dealers + cars. Logins: admin@motiva.co.ke / seller@motiva.co.ke (Password123!)");
 }
 
 main().catch((e) => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());

@@ -20,7 +20,7 @@ export default async function DealerDetailPage({ params }: { params: Promise<{ s
           <p className="mt-1 flex items-center gap-1 text-muted-foreground"><Star className="size-4 fill-gold text-gold" /> {dealer.rating.toFixed(1)} • {dealer.location} • {dealer.cars.length} cars in stock</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <a href={whatsappLink(dealer.whatsapp || dealer.phone || "254700000000", `Hi ${dealer.businessName}! I found you on GariBora and I'm looking for a car.`)} target="_blank" rel="noreferrer">
+          <a href={whatsappLink(dealer.whatsapp || dealer.phone || "254700000000", `Hi ${dealer.businessName}! I found you on Motiva and I'm looking for a car.`)} target="_blank" rel="noreferrer">
             <Button size="sm" className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />WhatsApp dealer</Button>
           </a>
           {dealer.phone && <a href={`tel:${dealer.phone}`}><Button size="sm" variant="outline"><Phone />{dealer.phone}</Button></a>}

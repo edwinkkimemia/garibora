@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* GariBora premium theme — midnight navy + champagne gold. Light only. */
+/* Motiva premium theme — midnight navy + champagne gold. Light only. */
 @layer base {
   :root {
     --background: 0 0% 100%;

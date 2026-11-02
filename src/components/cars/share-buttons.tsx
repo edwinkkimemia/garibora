@@ -25,7 +25,7 @@ export function ShareButtons({ title, path }: { title: string; path: string }) {
   const [copied, setCopied] = useState(false);
   const share = (network: "whatsapp" | "x" | "facebook") => {
     const url = typeof window !== "undefined" ? window.location.href : path;
-    const text = `${title} — on GariBora`;
+    const text = `${title} — on Motiva`;
     const links = {
       whatsapp: `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`,
       x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,

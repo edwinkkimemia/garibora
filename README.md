@@ -1,4 +1,4 @@
-# GariBora — Premium Car Marketplace (Kenya-first, East Africa ready)
+# Motiva — Premium Car Marketplace (Kenya-first, East Africa ready)
 
 **Gari bora. Deal clear.** Premium cars. Verified.
 
@@ -16,7 +16,7 @@ npm run db:seed              # 12 realistic Kenyan listings + dealers + blog pos
 npm run dev                  # → http://localhost:3000
 ```
 
-Demo login: `seller@garibora.ke` / `Password123!` (admin: `admin@garibora.ke`).
+Demo login: `seller@motiva.co.ke` / `Password123!` (admin: `admin@motiva.co.ke`).
 
 ## Deploy (Vercel + Neon)
 
@@ -62,4 +62,4 @@ src/
   config/site.ts   # brand name, tagline, locations, makes
 ```
 
-Set brand via `NEXT_PUBLIC_BRAND_NAME` (GariBora / SafiGari / ImaraCars / SafariGari / BoraDrive).
+Brand is configured via `NEXT_PUBLIC_BRAND_NAME` (default: Motiva) and `NEXT_PUBLIC_APP_URL` (production: https://motiva.co.ke).

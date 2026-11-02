@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
@@ -11,6 +11,8 @@ import { baseMetadata } from "@/lib/seo";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = baseMetadata();
+
+export const viewport: Viewport = { themeColor: "#0C1F3F" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

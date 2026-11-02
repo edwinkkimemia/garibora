@@ -1,10 +1,10 @@
 export const siteConfig = {
-  brandName: process.env.NEXT_PUBLIC_BRAND_NAME || "GariBora",
-  tagline: "Gari bora. Deal clear.",
+  brandName: process.env.NEXT_PUBLIC_BRAND_NAME || "Motiva",
+  tagline: "Find your next drive.",
   taglineAlt: "Premium cars. Verified.",
   description:
-    "Kenya's premium car marketplace. Verified dealers, inspected cars, transparent KES pricing. From Nairobi to Mombasa, Kisumu to Nakuru.",
-  url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+    "Motiva — Kenya's premium car marketplace. Verified dealers, inspected cars, transparent KES pricing. From Nairobi to Mombasa, Kisumu to Nakuru.",
+  url: (process.env.NEXT_PUBLIC_APP_URL || "https://motiva.co.ke").replace(/\/$/, ""),
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "254700000000",
   locations: [
     "Nairobi",

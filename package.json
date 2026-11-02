@@ -1,8 +1,8 @@
 {
-  "name": "garibora",
+  "name": "motiva",
   "version": "1.0.0",
   "private": true,
-  "description": "GariBora — Premium car marketplace for Kenya & East Africa. Gari bora. Deal clear.",
+  "description": "Motiva — Premium car marketplace for Kenya & East Africa. Find your next drive.",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",

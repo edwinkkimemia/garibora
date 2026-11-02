@@ -1,12 +1,12 @@
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export const metadata = {
-  title: "Terms of use — GariBora Kenya",
-  description: "GariBora marketplace terms: buyer safety rules, seller obligations, logbook transfer, fees in KES.",
+  title: "Terms of use — Motiva Kenya",
+  description: "Motiva marketplace terms: buyer safety rules, seller obligations, logbook transfer, fees in KES.",
 };
 
 const sections = [
-  { h: "1. The marketplace", p: "GariBora connects buyers with verified sellers and dealers across Kenya. The sale contract is always between buyer and seller; we verify identities, review listings and provide communication tools, but we are not a party to the sale unless an escrow product is explicitly used." },
+  { h: "1. The marketplace", p: "Motiva connects buyers with verified sellers and dealers across Kenya. The sale contract is always between buyer and seller; we verify identities, review listings and provide communication tools, but we are not a party to the sale unless an escrow product is explicitly used." },
   { h: "2. Buyer rules", p: "Always view the car in person, verify the logbook on NTSA TIMS, confirm duty-paid status for foreign-used imports, and never send money before viewing. Report suspicious listings immediately — fraud reports lead to instant suspension." },
   { h: "3. Seller obligations", p: "You must own the vehicle or act for the owner, list accurate year, mileage and condition, hold a transferable logbook, and disclose accident history, outstanding loans and mechanical faults you know about." },
   { h: "4. Verification badges", p: "Verified and Inspected badges reflect checks done at review time (identity, yard location, duty evidence, condition photos). They are indicators of diligence, not warranties. Independent inspection is always recommended for high-value purchases." },

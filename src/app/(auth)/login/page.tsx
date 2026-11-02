@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { CarFront, BadgeCheck, MessageCircle, Banknote } from "lucide-react";
+import Image from "next/image";
+import { BadgeCheck, MessageCircle, Banknote } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { LoginForm } from "@/components/auth/login-form";
 import { siteConfig } from "@/config/site";
@@ -19,9 +20,10 @@ export default function LoginPage() {
             <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=1000&auto=format&fit=crop" alt="" className="h-full w-full object-cover" />
           </div>
           <div className="absolute inset-0 bg-gradient-to-b from-navy/70 via-navy/85 to-navy" />
-          <div className="relative flex items-center gap-2 text-lg font-extrabold">
-            <span className="grid size-8 place-items-center rounded-xl bg-gold text-navy"><CarFront className="size-4" /></span>
-            {siteConfig.brandName}
+          <div className="relative flex items-center gap-2">
+            <span className="overflow-hidden rounded-lg bg-black">
+              <Image src="/logo.png" alt="Motiva — Find your next drive" width={140} height={34} className="h-8 w-auto" />
+            </span>
           </div>
           <div className="relative">
             <p className="text-2xl font-extrabold leading-tight">Karibu back.<br /><span className="text-gold-light">Your gari awaits.</span></p>

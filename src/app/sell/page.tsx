@@ -66,7 +66,7 @@ export default async function SellPage({ searchParams }: { searchParams: Promise
               <CardHeader><CardTitle className="text-base">Stuck on the form?</CardTitle></CardHeader>
               <CardContent className="text-sm text-muted-foreground">
                 <p>Chat us a photo of your logbook and we&apos;ll help draft the listing free.</p>
-                <a href={whatsappLink(siteConfig.whatsappNumber, "Hi GariBora! Help me list my car.")} target="_blank" rel="noreferrer">
+                <a href={whatsappLink(siteConfig.whatsappNumber, "Hi Motiva! Help me list my car.")} target="_blank" rel="noreferrer">
                   <Button className="mt-3 w-full bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />WhatsApp help</Button>
                 </a>
               </CardContent>

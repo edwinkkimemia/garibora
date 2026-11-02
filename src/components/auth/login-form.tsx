@@ -56,7 +56,7 @@ export function LoginForm() {
         {error && <p className="rounded-xl bg-red-50 p-3 text-sm font-medium text-red-700">{error}</p>}
         <Button className="w-full" size="lg" disabled={busy}><LogIn />{busy ? "Logging in…" : "Log in"}</Button>
       </form>
-      <p className="mt-4 rounded-xl bg-muted p-3 text-center text-xs text-muted-foreground">Demo seller: seller@garibora.ke / Password123!</p>
+      <p className="mt-4 rounded-xl bg-muted p-3 text-center text-xs text-muted-foreground">Demo seller: seller@motiva.co.ke / Password123!</p>
     </div>
   );
 }

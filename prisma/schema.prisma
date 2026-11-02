@@ -1,4 +1,4 @@
-// GariBora — Prisma schema (PostgreSQL)
+// Motiva — Prisma schema (PostgreSQL)
 // Kenya-first, East-Africa-ready marketplace.
 
 generator client {

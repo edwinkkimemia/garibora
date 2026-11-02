@@ -54,9 +54,9 @@ export default function FinancingPage() {
         <h2 className="mt-10 text-xl font-extrabold">Need cash against the car you already own?</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
           {[
-            { icon: FileBadge, tag: "Same-day cash", t: "Logbook loans", d: "Borrow KSh 100K–3M against your car's logbook and keep driving. 6–24 months, payout to M-Pesa.", wa: "Hi GariBora! I need a logbook loan against my …" },
-            { icon: RefreshCcw, tag: "Cut your monthly", t: "Refinance", d: "Already servicing a car loan? Move it for a longer term or better rate and breathe again.", wa: "Hi GariBora! I want to refinance my car loan of KSh …" },
-            { icon: KeyRound, tag: "Reserve a car", t: "Deposit & hold", d: "Found your car on GariBora? Place a refundable deposit while bank or SACCO finance is arranged.", wa: "Hi GariBora! I want to reserve the … with a deposit." },
+            { icon: FileBadge, tag: "Same-day cash", t: "Logbook loans", d: "Borrow KSh 100K–3M against your car's logbook and keep driving. 6–24 months, payout to M-Pesa.", wa: "Hi Motiva! I need a logbook loan against my …" },
+            { icon: RefreshCcw, tag: "Cut your monthly", t: "Refinance", d: "Already servicing a car loan? Move it for a longer term or better rate and breathe again.", wa: "Hi Motiva! I want to refinance my car loan of KSh …" },
+            { icon: KeyRound, tag: "Reserve a car", t: "Deposit & hold", d: "Found your car on Motiva? Place a refundable deposit while bank or SACCO finance is arranged.", wa: "Hi Motiva! I want to reserve the … with a deposit." },
           ].map((p) => (
             <div key={p.t} className="rounded-2xl border bg-card p-5">
               <span className="rounded-full bg-gold/15 px-2.5 py-1 text-[11px] font-bold text-gold-dark">{p.tag}</span>
@@ -73,7 +73,7 @@ export default function FinancingPage() {
             <p className="mt-1 text-sm text-slate-300">Send your target car + deposit. A financing partner replies with real terms — free, no obligation.</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <a href={whatsappLink(siteConfig.whatsappNumber, "Hi GariBora! I want financing. My budget is KSh … and my deposit is KSh …")} target="_blank" rel="noreferrer"><Button className="bg-[#25D366] text-white hover:bg-[#1eb85a]"><WhatsAppIcon />WhatsApp us</Button></a>
+            <a href={whatsappLink(siteConfig.whatsappNumber, "Hi Motiva! I want financing. My budget is KSh … and my deposit is KSh …")} target="_blank" rel="noreferrer"><Button className="bg-[#25D366] text-white hover:bg-[#1eb85a]"><WhatsAppIcon />WhatsApp us</Button></a>
             <Link href="/blog/car-loan-kenya-banks-vs-sacco"><Button className="bg-gold text-navy hover:bg-gold-dark hover:text-white">Loan guide</Button></Link>
           </div>
         </div>

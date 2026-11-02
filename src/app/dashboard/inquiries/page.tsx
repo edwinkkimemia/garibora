@@ -51,7 +51,7 @@ export default async function InquiriesPage({ searchParams }: { searchParams: Pr
               </div>
               <p className="mt-2 rounded-xl bg-muted/70 p-3 text-sm italic">&ldquo;{q.message}&rdquo;</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <a href={whatsappLink(q.phone, `Hi ${q.name}, thanks for your interest in "${q.car.title}" on GariBora. When would you like to view it?`)} target="_blank" rel="noreferrer">
+                <a href={whatsappLink(q.phone, `Hi ${q.name}, thanks for your interest in "${q.car.title}" on Motiva. When would you like to view it?`)} target="_blank" rel="noreferrer">
                   <Button size="sm" className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />Reply on WhatsApp</Button>
                 </a>
                 <a href={`tel:${q.phone}`}><Button size="sm" variant="outline"><Phone />{q.phone}</Button></a>

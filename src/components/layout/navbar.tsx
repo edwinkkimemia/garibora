@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { CarFront, Heart, PlusCircle, LayoutDashboard } from "lucide-react";
-import { siteConfig } from "@/config/site";
+import Image from "next/image";
+import { Heart, PlusCircle, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { auth } from "@/lib/auth";
@@ -19,11 +19,10 @@ export async function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
       <div className="container flex h-16 items-center justify-between gap-4">
-        <Link href="/" className="flex shrink-0 items-center gap-2 text-xl font-extrabold tracking-tight text-navy">
-          <span className="grid size-9 place-items-center rounded-xl bg-navy text-gold-light">
-            <CarFront className="size-5" />
+        <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Motiva home">
+          <span className="overflow-hidden rounded-lg bg-black">
+            <Image src="/logo.png" alt="Motiva — Find your next drive" width={168} height={40} className="h-9 w-auto" priority />
           </span>
-          {siteConfig.brandName}
           <span className="hidden rounded-full bg-gold/15 px-2 py-0.5 text-[11px] font-bold text-gold-dark sm:inline">KE</span>
         </Link>
         <nav className="hidden items-center gap-5 text-sm font-medium lg:flex">

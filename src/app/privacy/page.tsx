@@ -1,17 +1,17 @@
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 export const metadata = {
-  title: "Privacy policy — GariBora Kenya",
-  description: "How GariBora handles your data under Kenya's Data Protection Act 2019: what we collect, why, and your rights.",
+  title: "Privacy policy — Motiva Kenya",
+  description: "How Motiva handles your data under Kenya's Data Protection Act 2019: what we collect, why, and your rights.",
 };
 
 const sections = [
   { h: "What we collect", p: "Account details (name, email, phone), listings and photos you publish, favourites, inquiries you send, and aggregated usage analytics. Phone numbers on listings are visible to buyers so deals can happen." },
   { h: "Why we use it", p: "To run the marketplace: showing your cars, connecting inquiries over WhatsApp and email, preventing fraud, and improving search. We never sell personal data to anyone." },
   { h: "Cookies & analytics", p: "We use privacy-respecting analytics to understand which cars and guides help Kenyans most. No advertising trackers, no cross-site profiling." },
-  { h: "Your rights", p: "Under Kenya's Data Protection Act, 2019 you may access, correct or delete your data at any time. Email hello@garibora.ke and we act within 14 days." },
+  { h: "Your rights", p: "Under Kenya's Data Protection Act, 2019 you may access, correct or delete your data at any time. Email hello@motiva.co.ke and we act within 14 days." },
   { h: "Data security", p: "Passwords are hashed with bcrypt, sessions are encrypted, and database access is restricted. Report suspected breaches immediately." },
-  { h: "Retention", p: "Active account data is kept while you use GariBora. Sold-car records are retained for fraud prevention, then anonymised." },
+  { h: "Retention", p: "Active account data is kept while you use Motiva. Sold-car records are retained for fraud prevention, then anonymised." },
 ];
 
 export default function PrivacyPage() {

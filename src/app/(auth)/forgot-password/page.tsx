@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { CarFront, ShieldCheck } from "lucide-react";
+import Image from "next/image";
+import { ShieldCheck } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
@@ -14,9 +15,10 @@ export default function ForgotPasswordPage() {
       <div className="grid overflow-hidden rounded-3xl border bg-card shadow-sm lg:grid-cols-2">
         <div className="relative hidden flex-col justify-between overflow-hidden bg-navy p-6 text-white lg:flex">
           <div className="absolute inset-0 bg-gradient-to-b from-navy via-navy-800 to-navy" />
-          <div className="relative flex items-center gap-2 text-lg font-extrabold">
-            <span className="grid size-8 place-items-center rounded-xl bg-gold text-navy"><CarFront className="size-4" /></span>
-            {siteConfig.brandName}
+          <div className="relative flex items-center gap-2">
+            <span className="overflow-hidden rounded-lg bg-black">
+              <Image src="/logo.png" alt="Motiva — Find your next drive" width={140} height={34} className="h-8 w-auto" />
+            </span>
           </div>
           <div className="relative">
             <p className="text-2xl font-extrabold leading-tight">Locked out?<br /><span className="text-gold-light">Back in a minute.</span></p>

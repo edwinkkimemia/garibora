@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { CarFront, MapPin, Phone, Mail, Clock, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import Image from "next/image";
+import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 const popular = [
@@ -18,9 +19,10 @@ export function Footer() {
       <div className="h-1 bg-gradient-to-r from-gold-dark via-gold-light to-gold-dark" />
       <div className="container grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-4">
         <div>
-          <div className="flex items-center gap-2 text-lg font-extrabold text-white">
-            <span className="grid size-8 place-items-center rounded-lg bg-gold text-navy"><CarFront className="size-4" /></span>
-            {siteConfig.brandName}
+          <div className="flex items-center gap-2">
+            <span className="overflow-hidden rounded-lg bg-black">
+              <Image src="/logo.png" alt="Motiva — Find your next drive" width={150} height={36} className="h-8 w-auto" />
+            </span>
             <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[11px] font-bold text-gold-light">KE</span>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-slate-300">{siteConfig.tagline} {siteConfig.taglineAlt} Kenya&apos;s trusted marketplace for verified cars.</p>
@@ -64,7 +66,7 @@ export function Footer() {
           <ul className="mt-3 space-y-2 text-sm text-slate-300">
             <li className="flex items-center gap-2"><MapPin className="size-4 shrink-0 text-gold" /> Kiambu Road, Nairobi, Kenya</li>
             <li className="flex items-center gap-2"><Phone className="size-4 shrink-0 text-gold" /> +254 700 000 000</li>
-            <li className="flex items-center gap-2"><Mail className="size-4 shrink-0 text-gold" /> hello@garibora.ke</li>
+            <li className="flex items-center gap-2"><Mail className="size-4 shrink-0 text-gold" /> hello@motiva.co.ke</li>
             <li className="flex items-center gap-2"><Clock className="size-4 shrink-0 text-gold" /> Mon–Sat, 8am–6pm EAT</li>
           </ul>
           <p className="mt-4 text-xs leading-relaxed text-slate-400">Buyer protection: always verify the logbook on NTSA TIMS and transfer ownership together. Never pay before viewing.</p>

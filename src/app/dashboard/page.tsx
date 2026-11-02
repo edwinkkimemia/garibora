@@ -73,7 +73,7 @@ export default async function DashboardPage() {
                 <p><b>{q.name}</b> <span className="text-muted-foreground">• {q.phone}</span></p>
                 <p className="truncate text-muted-foreground">Re: {q.car.title}</p>
                 <div className="mt-2">
-                  <a href={whatsappLink(q.phone, `Hi ${q.name}, thanks for your interest in "${q.car.title}" on GariBora. When would you like to view it?`)} target="_blank" rel="noreferrer">
+                  <a href={whatsappLink(q.phone, `Hi ${q.name}, thanks for your interest in "${q.car.title}" on Motiva. When would you like to view it?`)} target="_blank" rel="noreferrer">
                     <Button size="sm" className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />Reply</Button>
                   </a>
                 </div>

@@ -7,7 +7,7 @@ import { siteConfig } from "@/config/site";
 
 export const metadata = {
   title: "About us — Kenya's premium car marketplace",
-  description: "GariBora is Kenya's premium car marketplace: verified dealers, inspected cars, transparent KES pricing. Nairobi to Mombasa, Kisumu to Nakuru.",
+  description: "Motiva is Kenya's premium car marketplace: verified dealers, inspected cars, transparent KES pricing. Nairobi to Mombasa, Kisumu to Nakuru.",
 };
 
 const values = [
@@ -29,10 +29,10 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-navy/60 via-navy/80 to-navy" />
         <div className="relative container py-14 md:py-20">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-light">Our story</p>
-          <h1 className="mt-2 max-w-3xl text-4xl font-extrabold leading-tight md:text-5xl">Gari bora. Deal clear.</h1>
+          <h1 className="mt-2 max-w-3xl text-4xl font-extrabold leading-tight md:text-5xl">Find your next drive.</h1>
           <p className="mt-4 max-w-2xl text-lg text-slate-200">
             Buying a car in Kenya used to mean endless WhatsApp forwards, unclear duty status and &quot;price on
-            negotiation&quot;. GariBora fixes that with verified dealers, inspection badges and transparent KES
+            negotiation&quot;. Motiva fixes that with verified dealers, inspection badges and transparent KES
             pricing — from Kiambu Road to Moi Avenue, from Kisumu to Eldoret.
           </p>
           <div className="mt-6 flex flex-wrap gap-8">
