@@ -41,8 +41,11 @@ Demo login: `seller@garibora.ke` / `Password123!` (admin: `admin@garibora.ke`).
 
 ## Images
 
-Next.js `<Image>` + remote patterns for Unsplash/Cloudinary/Uploadthing.
-Sell form accepts image URLs today — drop in `<UploadButton endpoint="carImages">` (Uploadthing) or the Cloudinary widget and push URLs into the form state.
+Sell forms upload straight to [Uploadthing](https://uploadthing.com) (12 photos max, 4MB each):
+
+1. Create a free Uploadthing app → copy the token.
+2. Set `UPLOADTHING_TOKEN` and `NEXT_PUBLIC_UPLOADTHING_ENABLED="true"` in Vercel env vars (and local `.env`).
+3. Redeploy. Without the token, forms gracefully fall back to pasting image URLs.
 
 ## Search at scale
 

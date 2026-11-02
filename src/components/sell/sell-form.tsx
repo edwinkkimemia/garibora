@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { listCarAction } from "@/lib/actions";
+import { ImageUploader } from "@/components/upload/image-uploader";
 import { siteConfig } from "@/config/site";
 
 export function SellForm() {
   const [state, action, pending] = useActionState(listCarAction, { error: "" } as { error?: string });
-  // Image URLs: paste Uploadthing/Cloudinary URLs. File upload widget plugs in here.
+  // Image uploads (Uploadthing when configured, else URL paste)
+  // Image URLs are read from the ImageUploader hidden inputs
   const [images, setImages] = useState<string[]>([]);
-  const [imgInput, setImgInput] = useState("");
 
   return (
     <form action={action} className="mt-6 space-y-5">
@@ -37,22 +38,7 @@ export function SellForm() {
       </CardContent></Card>
 
       <Card><CardContent className="pt-5">
-        <Label>Photos (paste image URLs — connect Uploadthing/Cloudinary for uploads)</Label>
-        <div className="mt-2 flex gap-2">
-          <Input value={imgInput} onChange={(e) => setImgInput(e.target.value)} placeholder="https://…" />
-          <Button type="button" variant="secondary" onClick={() => { if (imgInput.trim()) { setImages([...images, imgInput.trim()]); setImgInput(""); } }}>Add</Button>
-        </div>
-        {images.map((u) => <input key={u} type="hidden" name="images" value={u} />)}
-        {images.length > 0 ? (
-          <ul className="mt-3 grid grid-cols-2 gap-2 text-xs md:grid-cols-4">
-            {images.map((u, i) => (
-              <li key={u} className="truncate rounded-lg border p-2">{i === 0 ? "★ Primary — " : ""}{u}
-                <button type="button" className="ml-2 text-red-600" onClick={() => setImages(images.filter((x) => x !== u))}>remove</button>
-              </li>
-            ))}
-          </ul>
-        ) : <p className="mt-2 text-sm text-muted-foreground">Add at least 1 photo. Tip: exterior 360°, interior, dashboard mileage, engine bay.</p>}
-        <p className="mt-2 text-xs text-muted-foreground">Production: replace this with &lt;UploadButton endpoint=&quot;carImages&quot; /&gt; (Uploadthing) or Cloudinary widget — then push returned URLs into this list.</p>
+        <ImageUploader images={images} setImages={setImages} />
       </CardContent></Card>
 
       {state?.error && <p className="text-sm text-red-600">{state.error}</p>}

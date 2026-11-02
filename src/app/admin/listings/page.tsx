@@ -5,15 +5,21 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/card";
 import { formatKES } from "@/lib/utils";
-import { approveCarAction, rejectCarAction } from "@/lib/actions";
+import { approveCarAction, rejectCarAction, approvePartAction, rejectPartAction } from "@/lib/actions";
 
 export const metadata = { title: "Admin — listing review" };
 
 export default async function AdminListingsPage() {
-  const queue = await prisma.car.findMany({
-    where: { status: "PENDING" }, take: 30, orderBy: { createdAt: "desc" },
-    include: { images: true, seller: { select: { name: true, email: true, phone: true, idVerified: true } } },
-  }).catch(() => []);
+  const [queue, partQueue] = await Promise.all([
+    prisma.car.findMany({
+      where: { status: "PENDING" }, take: 30, orderBy: { createdAt: "desc" },
+      include: { images: true, seller: { select: { name: true, email: true, phone: true, idVerified: true } } },
+    }).catch(() => []),
+    prisma.part.findMany({
+      where: { status: "PENDING" }, take: 30, orderBy: { createdAt: "desc" },
+      include: { images: true, seller: { select: { name: true, email: true, phone: true, idVerified: true } } },
+    }).catch(() => []),
+  ]);
   return (
     <div>
       <Breadcrumbs items={[{ label: "Admin", href: "/admin" }, { label: "Listing review" }]} />
@@ -42,7 +48,29 @@ export default async function AdminListingsPage() {
             </div>
           </div>
         ))}
-        {queue.length === 0 && <p className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">Queue clear. 🎉</p>}
+        {queue.length === 0 && <p className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">Car queue clear. 🎉</p>}
+      </div>
+
+      <h2 className="mt-8 text-xl font-extrabold">Parts review ({partQueue.length})</h2>
+      <div className="mt-3 grid gap-3">
+        {partQueue.map((p) => (
+          <div key={p.id} className="flex flex-wrap gap-4 rounded-2xl border bg-card p-3">
+            <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-xl bg-muted">
+              {p.images[0] && <Image src={p.images[0].url} alt={p.title} fill className="object-cover" sizes="150px" />}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold">{p.title}</p>
+              <p className="text-sm font-bold text-navy">{formatKES(p.price)} • {p.location} <Badge variant="outline">{p.category.replace(/_/g, " ")}</Badge></p>
+              <p className="mt-0.5 text-xs text-muted-foreground">Seller: {p.seller.name} ({p.seller.email}){p.seller.idVerified ? " — ID verified ✓" : " — ID NOT verified"}</p>
+              <div className="mt-2 flex gap-2">
+                <form action={async () => { "use server"; await approvePartAction(p.id); }}><Button size="sm">Approve ✓</Button></form>
+                <form action={async () => { "use server"; await rejectPartAction(p.id); }}><Button size="sm" variant="destructive">Reject</Button></form>
+                <Link href={`/parts/${p.slug}`}><Button size="sm" variant="ghost">Preview</Button></Link>
+              </div>
+            </div>
+          </div>
+        ))}
+        {partQueue.length === 0 && <p className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">Parts queue clear. 🎉</p>}
       </div>
     </div>
   );

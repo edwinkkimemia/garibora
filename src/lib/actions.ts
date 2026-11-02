@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { inquirySchema, listCarSchema, registerSchema } from "@/lib/validations";
+import { inquirySchema, listCarSchema, listPartSchema, registerSchema } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
 
 export async function registerAction(prev: unknown, formData: FormData) {
@@ -138,6 +138,45 @@ export async function markInquiryReadAction(inquiryId: string) {
   revalidatePath("/dashboard/inquiries");
 }
 
+/** Seller: list a spare part (goes to PENDING review). */
+export async function listPartAction(prev: unknown, formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Please log in to list a part." };
+  const parsed = listPartSchema.safeParse({
+    title: formData.get("title"), category: formData.get("category"), condition: formData.get("condition"),
+    price: formData.get("price"), negotiable: formData.get("negotiable") === "on",
+    location: formData.get("location"), description: formData.get("description"),
+    images: formData.getAll("images").filter(Boolean) as string[],
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the form" };
+  const d = parsed.data;
+  const me = await prisma.user.findUnique({ where: { id: session.user.id }, include: { dealerProfile: true } });
+  const slug = `${slugify(d.title)}-${Date.now().toString(36)}`;
+  await prisma.part.create({
+    data: {
+      ...d, slug, status: "PENDING",
+      sellerId: session.user.id, dealerId: me?.dealerProfile?.id ?? null,
+      images: { create: d.images.map((url, i) => ({ url, isPrimary: i === 0, sortOrder: i })) },
+    },
+  });
+  revalidatePath("/parts");
+  redirect("/dashboard/listings?listed=part");
+}
+
+/** Admin: approve a pending part. */
+export async function approvePartAction(partId: string) {
+  await requireAdmin();
+  await prisma.part.update({ where: { id: partId }, data: { status: "ACTIVE" } });
+  revalidatePath("/admin/listings");
+  revalidatePath("/parts");
+}
+
+/** Admin: reject a pending part. */
+export async function rejectPartAction(partId: string) {
+  await requireAdmin();
+  await prisma.part.update({ where: { id: partId }, data: { status: "REJECTED" } });
+  revalidatePath("/admin/listings");
+}
 /** Admin: approve a pending listing (goes ACTIVE + verified). */
 export async function approveCarAction(carId: string) {
   await requireAdmin();

@@ -48,6 +48,19 @@ export const listCarSchema = z.object({
 
 export type ListCarInput = z.infer<typeof listCarSchema>;
 
+export const listPartSchema = z.object({
+  title: z.string().min(8, "Describe the part (min 8 chars)"),
+  category: z.enum(["TYRES_WHEELS", "BATTERY", "BRAKES", "SUSPENSION", "ENGINE", "ELECTRICAL", "BODY", "ACCESSORIES", "OILS_FLUIDS"]),
+  condition: z.enum(["NEW", "USED", "REFURBISHED"]),
+  price: z.coerce.number().min(100, "Price seems too low"),
+  negotiable: z.boolean().default(false),
+  location: z.string().min(1),
+  description: z.string().min(20, "Add fitment details (min 20 chars)"),
+  images: z.array(z.string().url()).min(1, "Add at least 1 photo").max(8),
+});
+
+export type ListPartInput = z.infer<typeof listPartSchema>;
+
 export const registerSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
