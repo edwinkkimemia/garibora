@@ -94,7 +94,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
         <div>
-          <CarGallery images={car.images} title={car.title} slug={car.slug} />
+          <CarGallery images={car.images} title={car.title} />
           <Card className="mt-6">
             <CardHeader><CardTitle>Specifications</CardTitle></CardHeader>
             <CardContent>
