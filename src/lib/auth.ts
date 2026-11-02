@@ -13,16 +13,23 @@ const credentialsSchema = z.object({
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  // Falls back to a dev-only value so `next dev` never crashes; Vercel MUST set AUTH_SECRET.
+  secret: process.env.AUTH_SECRET ?? "dev-only-insecure-secret-change-me",
   trustHost: true,
   session: { strategy: "jwt" },
   pages: { signIn: "/login", newUser: "/register" },
   providers: [
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
-      // Allow linking when email already exists via credentials
-      allowDangerousEmailAccountLinking: true,
-    }),
+    // Google is only wired when credentials exist — an undefined clientId
+    // would otherwise crash the entire auth route (including email login).
+    ...(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET
+      ? [
+          Google({
+            clientId: process.env.AUTH_GOOGLE_ID,
+            clientSecret: process.env.AUTH_GOOGLE_SECRET,
+            allowDangerousEmailAccountLinking: true,
+          }),
+        ]
+      : []),
     Credentials({
       name: "Email",
       credentials: { email: { label: "Email" }, password: { label: "Password", type: "password" } },

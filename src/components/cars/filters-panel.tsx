@@ -1,13 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ChevronDown, SlidersHorizontal } from "lucide-react";
 import { Input, Select } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
+import { cn } from "@/lib/utils";
 
 const transmissions = ["AUTOMATIC", "MANUAL", "CVT"];
 const fuels = ["PETROL", "DIESEL", "HYBRID", "ELECTRIC"];
-const bodies = ["SUV", "SEDAN", "HATCHBACK", "PICKUP", "WAGON", "VAN", "COMMERCIAL"];
+const bodies = ["SUV", "SEDAN", "HATCHBACK", "PICKUP", "COUPE", "CONVERTIBLE", "WAGON", "VAN", "COMMERCIAL"];
 const conditions = ["NEW", "FOREIGN_USED", "LOCALLY_USED"];
 const sorts = [
   { v: "newest", l: "Newest first" },
@@ -21,6 +24,8 @@ export function FiltersPanel() {
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
+  // Collapsed on mobile, always open on desktop (lg+)
+  const [open, setOpen] = useState(false);
 
   function set(key: string, value: string) {
     const next = new URLSearchParams(sp.toString());
@@ -30,9 +35,22 @@ export function FiltersPanel() {
   }
 
   const get = (k: string) => sp.get(k) ?? "";
+  const activeCount = ["q", "make", "location", "bodyType", "condition", "transmission", "fuelType", "minPrice", "maxPrice", "minYear", "maxMileage"].filter((k) => sp.get(k)).length;
 
   return (
-    <div className="rounded-2xl border bg-card p-4 shadow-sm">
+    <div className="rounded-2xl border bg-card shadow-sm">
+      <button
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        className="flex w-full items-center justify-between p-4 lg:hidden"
+      >
+        <span className="flex items-center gap-2 text-sm font-extrabold">
+          <SlidersHorizontal className="size-4 text-gold-dark" /> Filters
+          {activeCount > 0 && <span className="rounded-full bg-navy px-2 py-0.5 text-[11px] font-bold text-gold-light">{activeCount}</span>}
+        </span>
+        <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} />
+      </button>
+      <div className={cn(open ? "block" : "hidden", "p-4 pt-0 lg:block lg:p-4")}>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-1 lg:grid-cols-2">
         <div className="col-span-2"><Input placeholder="Keyword…" defaultValue={get("q")} onChange={(e) => set("q", e.target.value)} aria-label="Keyword" /></div>
         <Select value={get("make")} onChange={(e) => set("make", e.target.value)} aria-label="Make">
@@ -66,6 +84,7 @@ export function FiltersPanel() {
         </Select>
       </div>
       <Button variant="ghost" size="sm" className="mt-3 w-full" onClick={() => router.push(pathname)}>Clear filters</Button>
+      </div>
     </div>
   );
 }
