@@ -20,7 +20,7 @@ export async function Navbar() {
     <header className="sticky top-0 z-40 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
       <div className="container flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Motiva home">
-          <span className="overflow-hidden rounded-lg bg-black">
+          <span className="overflow-hidden rounded-lg">
             <Image src="/logo.png" alt="Motiva — Find your next drive" width={168} height={40} className="h-9 w-auto" priority />
           </span>
           <span className="hidden rounded-full bg-gold/15 px-2 py-0.5 text-[11px] font-bold text-gold-dark sm:inline">KE</span>

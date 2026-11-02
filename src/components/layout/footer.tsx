@@ -20,7 +20,7 @@ export function Footer() {
       <div className="container grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="overflow-hidden rounded-lg bg-black">
+            <span className="overflow-hidden rounded-lg bg-white">
               <Image src="/logo.png" alt="Motiva — Find your next drive" width={150} height={36} className="h-8 w-auto" />
             </span>
             <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[11px] font-bold text-gold-light">KE</span>

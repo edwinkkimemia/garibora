@@ -16,7 +16,7 @@ export default function ForgotPasswordPage() {
         <div className="relative hidden flex-col justify-between overflow-hidden bg-navy p-6 text-white lg:flex">
           <div className="absolute inset-0 bg-gradient-to-b from-navy via-navy-800 to-navy" />
           <div className="relative flex items-center gap-2">
-            <span className="overflow-hidden rounded-lg bg-black">
+            <span className="overflow-hidden rounded-lg bg-white">
               <Image src="/logo.png" alt="Motiva — Find your next drive" width={140} height={34} className="h-8 w-auto" />
             </span>
           </div>
