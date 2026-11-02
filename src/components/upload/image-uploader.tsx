@@ -1,17 +1,68 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import { X, Link2, Loader2 } from "lucide-react";
-import { UploadButton } from "@/lib/uploadthing-client";
+import { useRef, useState } from "react";
+import NextImage from "next/image";
+import { X, Link2, Loader2, Upload } from "lucide-react";
+import { useUploadThing } from "@/lib/uploadthing-client";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 
 const enabled = process.env.NEXT_PUBLIC_UPLOADTHING_ENABLED === "true";
 
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
 /**
- * Photo uploader: direct UploadThing uploads when configured,
- * otherwise paste image URLs. Emits hidden `images` inputs for the parent form.
+ * Stamps the Motiva wordmark at the bottom-right of a photo and
+ * returns a JPEG ready for upload. All branding happens client-side,
+ * so every stored image carries the watermark automatically.
+ */
+async function watermark(file: File, logo: HTMLImageElement): Promise<File> {
+  const bmp = await createImageBitmap(file);
+  const canvas = document.createElement("canvas");
+  canvas.width = bmp.width;
+  canvas.height = bmp.height;
+  const ctx = canvas.getContext("2d")!;
+
+  // Photo + soft vignette at the bottom for legibility
+  ctx.drawImage(bmp, 0, 0);
+  const grad = ctx.createLinearGradient(0, canvas.height * 0.82, 0, canvas.height);
+  grad.addColorStop(0, "rgba(12,31,63,0)");
+  grad.addColorStop(1, "rgba(12,31,63,0.45)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, canvas.height * 0.82, canvas.width, canvas.height * 0.18);
+
+  // Logo plate, bottom-right
+  const lw = Math.round(canvas.width * 0.22);
+  const lh = Math.round((lw * logo.naturalHeight) / logo.naturalWidth);
+  const m = Math.round(canvas.width * 0.03);
+  const x = canvas.width - lw - m;
+  const y = canvas.height - lh - m;
+  ctx.fillStyle = "rgba(255,255,255,0.92)";
+  const r = Math.round(lw * 0.06);
+  if (typeof ctx.roundRect === "function") {
+    ctx.beginPath();
+    ctx.roundRect(x - m / 2, y - m / 2, lw + m, lh + m, r);
+    ctx.fill();
+  } else {
+    ctx.fillRect(x - m / 2, y - m / 2, lw + m, lh + m);
+  }
+  ctx.drawImage(logo, x, y, lw, lh);
+
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.92));
+  if (!blob) return file;
+  return new File([blob], file.name.replace(/\.\w+$/, "") + "-motiva.jpg", { type: "image/jpeg" });
+}
+
+/**
+ * Photo uploader: direct UploadThing uploads (auto-watermarked) when
+ * configured, otherwise paste image URLs. Emits hidden `images` inputs.
  */
 export function ImageUploader({
   images, setImages, label = "Photos", max = 12, fieldName = "images",
@@ -20,10 +71,42 @@ export function ImageUploader({
   label?: string; max?: number; fieldName?: string;
 }) {
   const [url, setUrl] = useState("");
-  const [uploading, setUploading] = useState(false);
+  const [busy, setBusy] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const { startUpload, isUploading } = useUploadThing("carImageUploader", {
+    onClientUploadComplete: (res) => {
+      res.forEach((r) => add(r.url));
+      setBusy("");
+      if (inputRef.current) inputRef.current.value = "";
+    },
+    onUploadError: (e) => {
+      setBusy("");
+      if (inputRef.current) inputRef.current.value = "";
+      alert(e.message.includes("token") ? "Upload not configured yet — paste an image URL instead, or set a valid UPLOADTHING_TOKEN." : `Upload failed: ${e.message}`);
+    },
+  });
+
   const add = (u: string) => {
     const clean = u.trim();
     if (clean && images.length < max && !images.includes(clean)) setImages([...images, clean]);
+  };
+
+  const onFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const picked = [...files].filter((f) => f.type.startsWith("image/")).slice(0, max - images.length);
+    if (picked.length === 0) return;
+    try {
+      setBusy("Adding Motiva watermark…");
+      const logo = await loadImage("/logo.png");
+      setBusy(`Uploading ${picked.length} photo${picked.length > 1 ? "s" : ""}…`);
+      const stamped = await Promise.all(picked.map((f) => watermark(f, logo)));
+      await startUpload(stamped);
+    } catch {
+      setBusy("");
+      alert("Couldn't process that photo — try a JPG/PNG under 4MB, or paste a URL.");
+      if (inputRef.current) inputRef.current.value = "";
+    }
   };
 
   return (
@@ -33,21 +116,11 @@ export function ImageUploader({
 
       {enabled ? (
         <div className="mt-2">
-          <UploadButton
-            endpoint="carImageUploader"
-            appearance={{
-              button: "rounded-xl bg-navy px-4 py-2.5 text-sm font-bold text-gold-light hover:bg-navy-800 ut-uploading:bg-navy-800",
-              allowedContent: "text-xs text-muted-foreground",
-            }}
-            content={{ button: uploading ? "Uploading…" : "Upload photos", allowedContent: "Images up to 4MB each" }}
-            onUploadBegin={() => setUploading(true)}
-            onClientUploadComplete={(res) => {
-              setUploading(false);
-              res.forEach((r) => add(r.url));
-            }}
-            onUploadError={(e) => { setUploading(false); alert(`Upload failed: ${e.message}`); }}
-          />
-          {uploading && <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><Loader2 className="size-3 animate-spin" /> Uploading…</p>}
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-navy px-4 py-2.5 text-sm font-bold text-gold-light transition hover:bg-navy-800">
+            <Upload className="size-4" /> {isUploading || busy ? busy || "Uploading…" : "Upload photos"}
+            <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" disabled={isUploading} onChange={(e) => onFiles(e.target.files)} />
+          </label>
+          <p className="mt-1 text-xs text-muted-foreground">Motiva watermark added automatically • JPG/PNG up to 4MB each</p>
         </div>
       ) : (
         <div className="mt-2 flex gap-2">
@@ -60,7 +133,7 @@ export function ImageUploader({
         <ul className="mt-3 grid grid-cols-3 gap-2 md:grid-cols-4">
           {images.map((u, i) => (
             <li key={u} className="relative aspect-[4/3] overflow-hidden rounded-xl border">
-              <Image src={u} alt={`Upload ${i + 1}`} fill className="object-cover" sizes="150px" />
+              <NextImage src={u} alt={`Upload ${i + 1}`} fill className="object-cover" sizes="150px" />
               {i === 0 && <span className="absolute left-1 top-1 rounded-full bg-gold px-2 py-0.5 text-[10px] font-bold text-navy">Cover</span>}
               <button type="button" aria-label="Remove photo" onClick={() => setImages(images.filter((x) => x !== u))}
                 className="absolute right-1 top-1 grid size-6 place-items-center rounded-full bg-black/70 text-white hover:bg-black"><X className="size-3" /></button>
