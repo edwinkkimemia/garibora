@@ -41,8 +41,8 @@ export default async function SellPage({ searchParams }: { searchParams: Promise
             </p>
           </div>
           <div className="flex gap-2">
-            <Link href="/sell"><Button size="sm" variant={isPart ? "outline" : "default"} className={isPart ? "border-white/30 text-white hover:bg-white/10" : "bg-gold text-navy hover:bg-gold-dark hover:text-white"}>Sell a car</Button></Link>
-            <Link href="/sell?type=part"><Button size="sm" variant={isPart ? "default" : "outline"} className={isPart ? "bg-gold text-navy hover:bg-gold-dark hover:text-white" : "border-white/30 text-white hover:bg-white/10"}>Sell a part</Button></Link>
+            <Link href="/sell"><Button size="sm" variant={isPart ? "outline" : "default"} className={isPart ? "border-gold/60 text-gold-light hover:bg-gold/10" : "bg-gold text-navy hover:bg-gold-dark hover:text-white"}>Sell a car</Button></Link>
+            <Link href="/sell?type=part"><Button size="sm" variant={isPart ? "default" : "outline"} className={isPart ? "bg-gold text-navy hover:bg-gold-dark hover:text-white" : "border-gold/60 text-gold-light hover:bg-gold/10"}>Sell a part</Button></Link>
           </div>
         </div>
       </section>
