@@ -139,3 +139,18 @@ export async function getPartBySlug(slug: string) {
     include: { images: { orderBy: { sortOrder: "asc" } }, dealer: true, seller: { select: { id: true, name: true, phone: true, verified: true } } },
   });
 }
+
+/** Parts like this one (same category), plus more from the same seller. */
+export async function getSimilarParts(partId: string, category: string) {
+  return prisma.part.findMany({
+    where: { status: "ACTIVE", id: { not: partId }, category: category as never },
+    take: 4, include: { images: true }, orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function getSellerParts(sellerId: string, excludeId: string) {
+  return prisma.part.findMany({
+    where: { status: "ACTIVE", sellerId, id: { not: excludeId } },
+    take: 4, include: { images: true }, orderBy: { createdAt: "desc" },
+  });
+}

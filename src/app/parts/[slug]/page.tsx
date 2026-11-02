@@ -1,13 +1,14 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, ShieldCheck, BadgeCheck, Phone } from "lucide-react";
+import { MapPin, ShieldCheck, BadgeCheck, Phone, Wrench } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ShareButtons } from "@/components/cars/share-buttons";
 import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
-import { getPartBySlug } from "@/lib/queries";
+import { getPartBySlug, getSimilarParts, getSellerParts } from "@/lib/queries";
+import { PartCard } from "@/components/parts/part-card";
 import { formatKES, whatsappLink } from "@/lib/utils";
 import { baseMetadata } from "@/lib/seo";
 import { siteConfig } from "@/config/site";
@@ -32,6 +33,8 @@ export default async function PartDetailPage({ params }: { params: Promise<{ slu
   if (!part) notFound();
   const sellerPhone = part.dealer?.whatsapp || part.dealer?.phone || part.seller.phone || siteConfig.whatsappNumber;
   const wa = whatsappLink(sellerPhone, `Hi! I'm interested in your part "${part.title}" listed at ${formatKES(part.price)} on ${siteConfig.brandName}. Is it available?`);
+  const similar = await getSimilarParts(part.id, part.category).catch(() => []);
+  const sellerParts = await getSellerParts(part.seller.id, part.id).catch(() => []);
 
   return (
     <div className="container py-8">
@@ -82,6 +85,38 @@ export default async function PartDetailPage({ params }: { params: Promise<{ slu
           </Card>
           <Link href="/parts"><Button variant="outline" className="w-full">← More parts</Button></Link>
         </aside>
+      </div>
+
+      {sellerParts.length > 0 && (
+        <div className="mt-12">
+          <h2 className="flex items-center gap-2 text-xl font-extrabold"><Wrench className="size-5 text-gold-dark" /> More from this seller</h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {sellerParts.map((p) => <PartCard key={p.id} part={p as never} />)}
+          </div>
+        </div>
+      )}
+
+      {similar.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-xl font-extrabold">Similar {label(part.category).toLowerCase()} parts</h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {similar.map((p) => <PartCard key={p.id} part={p as never} />)}
+          </div>
+        </div>
+      )}
+
+      {/* PARTS SAFETY */}
+      <div className="mt-12 overflow-hidden rounded-3xl border border-gold/40 bg-gradient-to-br from-navy via-navy-800 to-navy-700 p-6 text-white md:p-8">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="size-5 text-gold-light" />
+          <h2 className="text-xl font-extrabold">Buy parts without stories</h2>
+        </div>
+        <ul className="mt-4 grid gap-3 text-sm text-slate-200 md:grid-cols-2">
+          <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-gold-light" /> Match part numbers against your old part or VIN before paying.</li>
+          <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-gold-light" /> Test electrics on the spot — mirrors, lights, starters.</li>
+          <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-gold-light" /> Ask for warranty in writing: new (1yr), refurbished (6mo).</li>
+          <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-gold-light" /> Meet at the seller&apos;s shop; get a receipt with the car model noted.</li>
+        </ul>
       </div>
     </div>
   );

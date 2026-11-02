@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { CarCard } from "@/components/cars/car-card";
 import { FiltersPanel } from "@/components/cars/filters-panel";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
@@ -29,8 +30,12 @@ export default async function RentalsPage({ searchParams }: { searchParams: Prom
   return (
     <div>
       <div className="container pt-8"><Breadcrumbs items={[{ label: "Rentals" }]} /></div>
-      <section className="bg-navy text-white">
-        <div className="container py-12">
+      <section className="relative overflow-hidden bg-navy text-white">
+        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-2/5 sm:block" aria-hidden>
+          <Image src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop" alt="" fill className="object-cover opacity-50" sizes="600px" />
+          <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/50 to-transparent" />
+        </div>
+        <div className="container relative py-12">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-light">Self-drive & chauffeur</p>
           <h1 className="mt-2 max-w-2xl text-4xl font-extrabold md:text-5xl">Hire a verified car, from KSh 4,000/day.</h1>
           <p className="mt-3 max-w-xl text-slate-200">Prados for safari, Hiace vans for events, hybrids for town runs. Insured, serviced, WhatsApp booking.</p>
