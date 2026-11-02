@@ -367,6 +367,7 @@ async function main() {
 
   // Regional dealers
   const dealerIds: Record<string, string> = { kamau: (await prisma.dealer.findUnique({ where: { slug: "kamau-motors" } }))!.id };
+  const sellerIds: Record<string, string> = { kamau: kamauUser.id };
   for (const d of extraDealers) {
     const user = await prisma.user.upsert({
       where: { email: d.email },
@@ -383,6 +384,7 @@ async function main() {
       },
     });
     dealerIds[d.key] = dealer.id;
+    sellerIds[d.key] = user.id;
   }
 
   // Brands
@@ -407,10 +409,18 @@ async function main() {
         mileage: c.mileage, transmission: c.transmission, fuelType: c.fuelType, bodyType: c.bodyType,
         condition: c.condition, location: c.location, description: c.description,
         featured: c.featured, verified: c.verified, status: "ACTIVE",
-        sellerId: kamauId, dealerId: dealerIds[c.dealer] ?? dealerIds.kamau, brandId: brand?.id,
+        sellerId: sellerIds[c.dealer] ?? kamauId, dealerId: dealerIds[c.dealer] ?? dealerIds.kamau, brandId: brand?.id,
         engineCc: c.engineCc, drive: c.drive, color: c.color, dutyPaid: true,
         images: { create: c.images.map((url, i) => ({ url, isPrimary: i === 0, sortOrder: i })) },
       },
+    });
+  }
+
+  // Backfill ownership for rows seeded before per-dealer sellers existed
+  for (const c of cars) {
+    await prisma.car.updateMany({
+      where: { title: c.title },
+      data: { sellerId: sellerIds[c.dealer] ?? kamauId, dealerId: dealerIds[c.dealer] ?? dealerIds.kamau },
     });
   }
 
@@ -488,12 +498,17 @@ async function main() {
   ];
   for (const sp of seedParts) {
     const slug = `${slugify(sp.title)}-${Math.random().toString(36).slice(2, 6)}`;
-    if (await prisma.part.findFirst({ where: { title: sp.title } })) continue;
+    const owner = sellerIds[sp.dealer] ?? kamauUser.id;
+    const existingPart = await prisma.part.findFirst({ where: { title: sp.title } });
+    if (existingPart) {
+      await prisma.part.update({ where: { id: existingPart.id }, data: { sellerId: owner, dealerId: dealerIds[sp.dealer] ?? dealerIds.kamau } });
+      continue;
+    }
     await prisma.part.create({
       data: {
         title: sp.title, slug, category: sp.category, condition: sp.condition, price: sp.price,
         location: sp.location, description: sp.description, status: "ACTIVE",
-        sellerId: kamauUser.id, dealerId: dealerIds[sp.dealer] ?? dealerIds.kamau,
+        sellerId: owner, dealerId: dealerIds[sp.dealer] ?? dealerIds.kamau,
         images: { create: sp.images.map((url, i) => ({ url, isPrimary: i === 0, sortOrder: i })) },
       },
     });

@@ -27,6 +27,8 @@ export const listCarSchema = z.object({
   year: z.coerce.number().min(1995).max(new Date().getFullYear() + 1),
   price: z.coerce.number().min(50000, "Price seems too low"),
   negotiable: z.boolean().default(false),
+  listingType: z.enum(["SALE", "RENT", "BOTH"]).default("SALE"),
+  dailyRate: z.coerce.number().min(500, "Daily rate seems too low").optional(),
   mileage: z.coerce.number().min(0).max(1_000_000),
   transmission: z.enum(["AUTOMATIC", "MANUAL", "CVT"]),
   fuelType: z.enum(["PETROL", "DIESEL", "HYBRID", "ELECTRIC", "LPG"]),
@@ -38,6 +40,10 @@ export const listCarSchema = z.object({
   drive: z.string().optional(),
   color: z.string().optional(),
   images: z.array(z.string().url()).min(1, "Add at least 1 photo").max(12),
+}).superRefine((v, ctx) => {
+  if (v.listingType !== "SALE" && !v.dailyRate) {
+    ctx.addIssue({ code: "custom", path: ["dailyRate"], message: "Daily rate is required for hire listings" });
+  }
 });
 
 export type ListCarInput = z.infer<typeof listCarSchema>;

@@ -17,6 +17,8 @@ export function SellForm() {
     <form action={action} className="mt-6 space-y-5">
       <Card><CardContent className="grid gap-3 pt-5 md:grid-cols-2">
         <div className="md:col-span-2"><Label>Title</Label><Input name="title" required placeholder="e.g. 2019 Toyota Prado TX-L 2.8D — duty paid" /></div>
+        <div><Label>Listing type</Label><Select name="listingType" defaultValue="SALE"><option value="SALE">For sale</option><option value="RENT">For hire</option><option value="BOTH">Sale + hire</option></Select></div>
+        <div><Label>Daily hire rate (KES) — if for hire</Label><Input name="dailyRate" type="number" min={500} placeholder="e.g. 12000" /></div>
         <div><Label>Make</Label><Input name="make" required list="makes" placeholder="Toyota" /><datalist id="makes">{siteConfig.makes.map((m) => <option key={m} value={m} />)}</datalist></div>
         <div><Label>Model</Label><Input name="model" required placeholder="Land Cruiser Prado" /></div>
         <div><Label>Year</Label><Input name="year" type="number" required min={1995} max={2027} placeholder="2019" /></div>

@@ -140,11 +140,20 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
                 <a href={wa} target="_blank" rel="noreferrer"><Button className="w-full bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />WhatsApp</Button></a>
                 {car.seller.phone && <a href={`tel:${car.seller.phone}`}><Button variant="outline" className="w-full"><Phone />Call</Button></a>}
               </div>
-              {car.dealer && (
+              {car.dealer ? (
                 <div className="mt-4 rounded-xl border p-3 text-sm">
                   <p className="font-bold">{car.dealer.businessName} {car.dealer.verified && <ShieldCheck className="inline size-4 text-green-600" />}</p>
                   <p className="text-muted-foreground">{car.dealer.location} • ★ {car.dealer.rating.toFixed(1)} ({car.dealer.reviewCount})</p>
                   <Link href={`/dealers/${car.dealer.slug}`} className="mt-1 inline-block text-primary hover:underline">View dealer →</Link>
+                </div>
+              ) : (
+                <div className="mt-4 rounded-xl border p-3 text-sm">
+                  <p className="flex items-center gap-1.5 font-bold">
+                    <span className="grid size-7 place-items-center rounded-full bg-navy text-xs font-extrabold text-gold-light">{(car.seller.name || "P").charAt(0).toUpperCase()}</span>
+                    {car.seller.name || "Private seller"}
+                    {(car.seller.idVerified || car.seller.verified) && <ShieldCheck className="size-4 text-green-600" />}
+                  </p>
+                  <p className="mt-1 text-muted-foreground">Independent seller • {car.location}{(car.seller.idVerified || car.seller.verified) ? " • ID verified" : ""}</p>
                 </div>
               )}
               <p className="mt-3 flex items-start gap-1 text-xs text-muted-foreground"><ShieldCheck className="mt-0.5 size-3 shrink-0" /> Safety: meet in public, verify logbook on NTSA, never pay before viewing.</p>

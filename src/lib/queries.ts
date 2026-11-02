@@ -60,7 +60,7 @@ export async function getCarById(idOrSlug: string) {
     include: {
       images: { orderBy: { sortOrder: "asc" } },
       dealer: true,
-      seller: { select: { id: true, name: true, phone: true, verified: true } },
+      seller: { select: { id: true, name: true, phone: true, verified: true, idVerified: true } },
     },
   });
 }
