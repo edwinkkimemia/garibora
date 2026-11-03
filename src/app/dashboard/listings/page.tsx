@@ -68,7 +68,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
                 <span className="inline-flex items-center gap-1"><MessageCircle className="size-3" />{c._count.inquiries} inquiries</span>
               </p>
             </div>
-            <div className="flex flex-row flex-wrap gap-1.5 sm:col-span-2 sm:pt-1 lg:col-span-1 lg:w-36 lg:flex-col lg:items-stretch lg:justify-center lg:pt-0">
+            <div className="flex flex-row flex-wrap gap-1.5 sm:col-span-2 sm:pt-1 lg:col-span-1 lg:grid lg:w-60 lg:grid-cols-2 lg:content-center lg:pt-0">
               <Link href={`/cars/${c.slug}`} className="lg:w-full"><Button size="sm" variant="outline" className="w-full"><ExternalLink />View</Button></Link>
                 {c.status === "ACTIVE" && !boostActive(c) && <BoostModal carId={c.id} carTitle={c.title} triggerClassName="w-full" />}
                 {c.status === "ACTIVE" && <form action={async () => { "use server"; await markSoldAction(c.id); }}><Button size="sm" variant="secondary" className="w-full"><BadgeDollarSign />Mark sold</Button></form>}

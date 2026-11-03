@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { auth, signOut } from "@/lib/auth";
 import { inquirySchema, listCarSchema, listPartSchema, partInquirySchema, registerSchema } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
 import { canList } from "@/lib/permissions";
@@ -272,4 +272,9 @@ export async function setUserRoleAction(formData: FormData) {
   if (!userId || !["BUYER", "SELLER", "DEALER", "ADMIN"].includes(role)) return;
   await prisma.user.update({ where: { id: userId }, data: { role: role as never } });
   revalidatePath("/admin/users");
+}
+
+/** Sign the current user out and return to the homepage. */
+export async function signOutAction() {
+  await signOut({ redirectTo: "/" });
 }

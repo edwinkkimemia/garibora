@@ -35,8 +35,8 @@ export async function Navbar() {
           </Link>
           {session?.user ? (
             <>
-              <Link href="/dashboard"><Button variant="secondary" size="sm"><LayoutDashboard />Dashboard</Button></Link>
-              <Link href="/sell" className="hidden sm:inline"><Button size="sm"><PlusCircle />Sell</Button></Link>
+              <Link href="/dashboard" className="hidden lg:inline"><Button variant="secondary" size="sm"><LayoutDashboard />Dashboard</Button></Link>
+              <Link href="/sell"><Button size="sm"><PlusCircle />Sell</Button></Link>
             </>
           ) : (
             <>
