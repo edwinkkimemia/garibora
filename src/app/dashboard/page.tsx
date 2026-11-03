@@ -1,12 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, Heart, MessageCircle, PlusCircle, ArrowRight, TrendingUp } from "lucide-react";
+import { Eye, Heart, MessageCircle, PlusCircle, ArrowRight, TrendingUp, Crown } from "lucide-react";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/card";
+import { PayButton } from "@/components/pay/pay-button";
 import { formatKES } from "@/lib/utils";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { whatsappLink } from "@/lib/utils";
@@ -107,9 +108,26 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
+      {/* Dealer plans — pay here */}
+      <Card className="mt-6 border-gold/50">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-base"><Crown className="size-4 text-gold-dark" /> Dealer plans — pay via M-Pesa</CardTitle>
+          <Link href="/pricing" className="text-xs font-bold text-gold-dark hover:underline">Compare plans →</Link>
+        </CardHeader>
+        <CardContent className="grid gap-3 md:grid-cols-2">
+          <div className="rounded-xl border p-3">
+            <p className="text-sm font-bold">Growth — KSh 4,999/mo <span className="ml-1 rounded-full bg-gold/15 px-2 py-0.5 text-[10px] text-gold-dark">POPULAR</span></p>
+            <div className="mt-2"><PayButton amount={4999} purpose="PLAN_GROWTH" reference={uid} label="Dealer Growth" /></div>
+          </div>
+          <div className="rounded-xl border p-3">
+            <p className="text-sm font-bold">Premium — KSh 9,999/mo</p>
+            <div className="mt-2"><PayButton amount={9999} purpose="PLAN_PREMIUM" reference={uid} label="Dealer Premium" /></div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Top performing */}
-      {top.length > 0 && (
-        <Card className="mt-6">
+      {top.length > 0 && (        <Card className="mt-6">
           <CardHeader><CardTitle className="flex items-center gap-2 text-base"><TrendingUp className="size-4 text-gold-dark" /> Most viewed listings</CardTitle></CardHeader>
           <CardContent className="grid gap-2">
             {top.map((t) => (

@@ -25,7 +25,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return baseMetadata({
     title: `${car.year} ${car.make} ${car.model} — ${formatKES(car.price)}`,
     description: `${car.title} for sale in ${car.location}, Kenya. ${car.mileage}km, ${car.transmission}. ${car.verified ? "Verified & inspected." : ""}`,
-    openGraph: { images: car.images[0] ? [car.images[0].url] : undefined },
+    openGraph: { images: car.images[0] ? [{ url: car.images[0].url, alt: car.title }] : undefined },
+    twitter: { images: car.images[0] ? [car.images[0].url] : undefined },
   });
 }
 

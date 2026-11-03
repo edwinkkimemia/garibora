@@ -2,11 +2,8 @@ import Link from "next/link";
 import { Zap, Store, Check, MessageCircle, Crown } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
-import { PayButton } from "@/components/pay/pay-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { baseMetadata } from "@/lib/seo";
-import { siteConfig } from "@/config/site";
-import { whatsappLink } from "@/lib/utils";
 
 export const metadata = baseMetadata({
   title: "Pricing — featured listings & dealer plans",
@@ -72,8 +69,8 @@ export default function PricingPage() {
               <CardContent>
                 <p className="text-3xl font-extrabold text-navy">{b.price}</p>
                 <p className="mt-1 text-sm text-muted-foreground">{b.d}</p>
-                <div className="mt-4"><PayButton amount={b.amount} purpose={b.purpose} label={b.name} /></div>
-                <p className="mt-2 text-center text-xs text-muted-foreground">or pay manually to Till <b>1781595</b>, then <a className="font-semibold text-gold-dark hover:underline" target="_blank" rel="noreferrer" href={whatsappLink(siteConfig.whatsappNumber, `Hi Motiva! I paid ${b.price} to Till 1781595 for ${b.name}. M-Pesa code: …`)}>share the code on WhatsApp</a></p>
+                <Link href="/dashboard/listings"><Button className="mt-4 w-full bg-gold text-navy hover:bg-gold-dark hover:text-white"><Zap />Boost from dashboard</Button></Link>
+                <p className="mt-2 text-center text-xs text-muted-foreground">Pay securely via M-Pesa STK push in your dashboard</p>
               </CardContent>
             </Card>
           ))}
@@ -97,8 +94,8 @@ export default function PricingPage() {
                   <Link href="/sell"><Button className="mt-4 w-full" variant="outline">Start free</Button></Link>
                 ) : (
                   <>
-                    <div className="mt-4"><PayButton amount={p.amount} purpose={p.purpose} label={p.name} /></div>
-                    <p className="mt-2 text-center text-xs text-muted-foreground">or Till <b>1781595</b> + <a className="font-semibold text-gold-dark hover:underline" target="_blank" rel="noreferrer" href={whatsappLink(siteConfig.whatsappNumber, `Hi Motiva! I paid ${p.price} to Till 1781595 for ${p.name}. M-Pesa code: …`)}>WhatsApp the code</a></p>
+                    <Link href="/dashboard"><Button className={`mt-4 w-full ${p.hot ? "bg-navy text-gold-light hover:bg-navy-800" : ""}`} variant={p.hot ? "default" : "outline"}>Pay from dashboard</Button></Link>
+                    <p className="mt-2 text-center text-xs text-muted-foreground">Secure M-Pesa STK push, activated in minutes</p>
                   </>
                 )}
               </CardContent>

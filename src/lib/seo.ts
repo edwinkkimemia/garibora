@@ -12,8 +12,8 @@ export function baseMetadata(overrides: Partial<Metadata> = {}): Metadata {
       "Mombasa cars", "Kisumu cars", "Nakuru cars", "car loan Kenya", "NTSA logbook transfer",
     ],
     icons: { icon: "/fav.jpg", apple: "/fav.jpg" },
-    openGraph: { type: "website", siteName: siteConfig.brandName, locale: "en_KE" },
-    twitter: { card: "summary_large_image" },
+    openGraph: { type: "website", siteName: siteConfig.brandName, locale: "en_KE", images: ["/og-image.png"] },
+    twitter: { card: "summary_large_image", images: ["/og-image.png"] },
     ...overrides,
   };
 }

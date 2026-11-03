@@ -64,7 +64,7 @@ export default async function HomePage() {
       {/* HERO — search + trust pills, compact so Featured peeks above the fold */}
       <section className="relative overflow-hidden bg-navy text-white">
         <div className="absolute inset-0 opacity-90">
-          <Image src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1600&auto=format&fit=crop" alt="Premium sports car" fill className="object-cover" priority />
+          <Image src="/hero.jpg" alt="Premium cars in Nairobi at sunset" fill className="object-cover" priority />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-navy/10 via-navy/25 to-navy" />
         <div className="relative container py-16 md:py-24">
