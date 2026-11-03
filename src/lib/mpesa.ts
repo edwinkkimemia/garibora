@@ -10,13 +10,15 @@ const BASE = process.env.MPESA_ENV === "sandbox"
 function cfg() {
   const consumerKey = process.env.MPESA_CONSUMER_KEY || "";
   const consumerSecret = process.env.MPESA_CONSUMER_SECRET || "";
-  const shortCode = process.env.MPESA_SHORTCODE || "";
+  // Store/H.O shortcode goes in BusinessShortCode + password; the Till goes in PartyB.
+  const storeShortCode = process.env.MPESA_STORE_SHORTCODE || process.env.MPESA_SHORTCODE || "";
+  const till = process.env.MPESA_TILL_NUMBER || process.env.MPESA_SHORTCODE || "";
   const passkey = process.env.MPESA_PASSKEY || "";
   const transactionType = process.env.MPESA_TRANSACTION_TYPE || "CustomerBuyGoodsOnline";
-  if (!consumerKey || !consumerSecret || !shortCode || !passkey) {
+  if (!consumerKey || !consumerSecret || !storeShortCode || !till || !passkey) {
     throw new Error("M-Pesa is not configured (missing MPESA_* env vars).");
   }
-  return { consumerKey, consumerSecret, shortCode, passkey, transactionType };
+  return { consumerKey, consumerSecret, storeShortCode, till, passkey, transactionType };
 }
 
 /** 07XX… / +254… / 254… → 2547XXXXXXXX. Throws on invalid numbers. */
@@ -27,10 +29,11 @@ export function normalizePhone(input: string): string {
   return msisdn;
 }
 
+/** Safaricom requires East Africa Time (UTC+3), not server local time. */
 function timestamp(): string {
-  const d = new Date();
+  const now = new Date(Date.now() + 3 * 60 * 60 * 1000);
   const p = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
+  return `${now.getUTCFullYear()}${p(now.getUTCMonth() + 1)}${p(now.getUTCDate())}${p(now.getUTCHours())}${p(now.getUTCMinutes())}${p(now.getUTCSeconds())}`;
 }
 
 async function accessToken(): Promise<string> {
@@ -38,6 +41,7 @@ async function accessToken(): Promise<string> {
   const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64");
   const res = await fetch(`${BASE}/oauth/v1/generate?grant_type=client_credentials`, {
     headers: { Authorization: `Basic ${auth}` },
+    cache: "no-store",
   });
   if (!res.ok) throw new Error("M-Pesa auth failed — check Consumer Key/Secret.");
   const data = (await res.json()) as { access_token?: string };
@@ -51,25 +55,26 @@ export type StkResult = { merchantRequestId: string; checkoutRequestId: string }
 export async function stkPush(opts: {
   phone: string; amount: number; accountRef: string; description: string;
 }): Promise<StkResult> {
-  const { shortCode, passkey, transactionType } = cfg();
+  const { storeShortCode, till, passkey, transactionType } = cfg();
   if (!Number.isInteger(opts.amount) || opts.amount < 1) throw new Error("Invalid amount.");
   const token = await accessToken();
   const ts = timestamp();
-  const password = Buffer.from(`${shortCode}${passkey}${ts}`).toString("base64");
+  const password = Buffer.from(`${storeShortCode}${passkey}${ts}`).toString("base64");
   const res = await fetch(`${BASE}/mpesa/stkpush/v1/processrequest`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    cache: "no-store",
     body: JSON.stringify({
-      BusinessShortCode: shortCode,
+      BusinessShortCode: storeShortCode,
       Password: password,
       Timestamp: ts,
       TransactionType: transactionType,
       Amount: opts.amount,
       PartyA: opts.phone,
-      PartyB: shortCode,
+      PartyB: till,
       PhoneNumber: opts.phone,
       CallBackURL: `${process.env.NEXT_PUBLIC_APP_URL || "https://motiva.co.ke"}/api/mpesa/callback`,
-      AccountReference: opts.accountRef.slice(0, 20),
+      AccountReference: opts.accountRef.slice(0, 12),
       TransactionDesc: opts.description.slice(0, 20),
     }),
   });
@@ -88,3 +93,28 @@ export const PRODUCTS: Record<string, { amount: number; label: string }> = {
   PLAN_GROWTH: { amount: 4999, label: "Dealer Growth — monthly" },
   PLAN_PREMIUM: { amount: 9999, label: "Dealer Premium — monthly" },
 };
+
+/**
+ * Re-query a transaction's live status (covers delayed callbacks).
+ * Returns "COMPLETED" | "FAILED" | "CANCELLED" | "PENDING".
+ */
+export async function queryStk(checkoutRequestId: string): Promise<"COMPLETED" | "FAILED" | "CANCELLED" | "PENDING"> {
+  const { storeShortCode, passkey } = cfg();
+  const token = await accessToken();
+  const ts = timestamp();
+  const password = Buffer.from(`${storeShortCode}${passkey}${ts}`).toString("base64");
+  const res = await fetch(`${BASE}/mpesa/query/v1/query`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    cache: "no-store",
+    body: JSON.stringify({ BusinessShortCode: storeShortCode, Password: password, Timestamp: ts, CheckoutRequestID: checkoutRequestId }),
+  });
+  const data = (await res.json()) as { ResponseCode?: string; ResultCode?: string | number; ResultDesc?: string };
+  if (data.ResponseCode !== "0") throw new Error(data.ResultDesc || "Status query failed.");
+  const code = String(data.ResultCode ?? "");
+  if (code === "0") return "COMPLETED";
+  // 1032 = cancelled by user; 1/2001/1019 = failed; 1037 = timeout (keep polling)
+  if (code === "1032") return "CANCELLED";
+  if (code === "1" || code === "2001" || code === "1019") return "FAILED";
+  return "PENDING";
+}

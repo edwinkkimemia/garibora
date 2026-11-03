@@ -1,14 +1,16 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, ShieldCheck, BadgeCheck, Phone, Wrench } from "lucide-react";
+import { ArrowRight, MapPin, ShieldCheck, BadgeCheck, Phone, Wrench } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ShareButtons } from "@/components/cars/share-buttons";
+import { CarCard } from "@/components/cars/car-card";
 import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
-import { getPartBySlug, getSimilarParts, getSellerParts } from "@/lib/queries";
+import { getFeaturedCars, getPartBySlug, getSimilarParts, getSellerParts } from "@/lib/queries";
 import { PartCard } from "@/components/parts/part-card";
+import { PartInquiryForm } from "@/components/parts/part-inquiry-form";
 import { formatKES, whatsappLink } from "@/lib/utils";
 import { baseMetadata } from "@/lib/seo";
 import { siteConfig } from "@/config/site";
@@ -33,8 +35,11 @@ export default async function PartDetailPage({ params }: { params: Promise<{ slu
   if (!part) notFound();
   const sellerPhone = part.dealer?.whatsapp || part.dealer?.phone || part.seller.phone || siteConfig.whatsappNumber;
   const wa = whatsappLink(sellerPhone, `Hi! I'm interested in your part "${part.title}" listed at ${formatKES(part.price)} on ${siteConfig.brandName}. Is it available?`);
-  const similar = await getSimilarParts(part.id, part.category).catch(() => []);
-  const sellerParts = await getSellerParts(part.seller.id, part.id).catch(() => []);
+  const [similar, sellerParts, featured] = await Promise.all([
+    getSimilarParts(part.id, part.category).catch(() => []),
+    getSellerParts(part.seller.id, part.id).catch(() => []),
+    getFeaturedCars().catch(() => []),
+  ]);
 
   return (
     <div className="container py-8">
@@ -83,6 +88,10 @@ export default async function PartDetailPage({ params }: { params: Promise<{ slu
               <p className="mt-3 text-xs text-muted-foreground">Confirm part numbers match your car before paying. Meet in person for used items.</p>
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader><CardTitle className="text-base">Enquire about this part</CardTitle></CardHeader>
+            <CardContent><PartInquiryForm partTitle={part.title} price={part.price} phone={sellerPhone} /></CardContent>
+          </Card>
           <Link href="/parts"><Button variant="outline" className="w-full">← More parts</Button></Link>
         </aside>
       </div>
@@ -118,6 +127,18 @@ export default async function PartDetailPage({ params }: { params: Promise<{ slu
           <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-gold-light" /> Meet at the seller&apos;s shop; get a receipt with the car model noted.</li>
         </ul>
       </div>
+
+      {featured.length > 0 && (
+        <div className="mt-12">
+          <div className="flex items-end justify-between gap-4">
+            <h2 className="text-xl font-extrabold">Featured cars</h2>
+            <Link href="/cars"><Button variant="outline" size="sm">View all <ArrowRight /></Button></Link>
+          </div>
+          <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {featured.slice(0, 4).map((c) => <CarCard key={c.id} car={c as never} />)}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

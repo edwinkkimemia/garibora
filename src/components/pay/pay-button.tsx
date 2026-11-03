@@ -24,8 +24,15 @@ export function PayButton({ amount, purpose, reference, label }: {
     timer.current = setInterval(async () => {
       if (Date.now() - started > 120_000) {
         if (timer.current) clearInterval(timer.current);
+        // One live re-query before giving up (covers delayed callbacks)
+        try {
+          const r = await fetch(`/api/mpesa/status?checkoutId=${encodeURIComponent(checkoutId)}&refresh=1`);
+          const d = (await r.json()) as { status?: string };
+          if (d.status === "COMPLETED") { setPhase("success"); return; }
+          if (d.status === "CANCELLED") { setPhase("failed"); setError("You cancelled the request. Try again when ready."); return; }
+        } catch { /* fall through */ }
         setPhase("failed");
-        setError("Timed out waiting for M-Pesa. If charged, share the code on WhatsApp and we'll activate.");
+        setError("Timed out waiting for M-Pesa. Already paid? Tap Retry — completed payments are detected. Otherwise no money left your account.");
         return;
       }
       try {
