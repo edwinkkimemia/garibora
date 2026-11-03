@@ -21,7 +21,12 @@ export function PayButton({ amount, purpose, reference, label }: {
 
   const poll = (checkoutId: string) => {
     const started = Date.now();
+    let ticks = 0;
     timer.current = setInterval(async () => {
+      ticks++;
+      // Every ~20s, re-query Safaricom live so completion is caught
+      // even when callbacks can't reach us (firewalls, tunnels, delays).
+      const live = ticks % 5 === 0 ? "&refresh=1" : "";
       if (Date.now() - started > 120_000) {
         if (timer.current) clearInterval(timer.current);
         // One live re-query before giving up (covers delayed callbacks)
@@ -36,7 +41,9 @@ export function PayButton({ amount, purpose, reference, label }: {
         return;
       }
       try {
-        const r = await fetch(`/api/mpesa/status?checkoutId=${encodeURIComponent(checkoutId)}`);
+        // Every ~20s, re-query Safaricom live so completion is caught even when callbacks are blocked.
+        const live = ticks % 5 === 0 ? "&refresh=1" : "";
+        const r = await fetch(`/api/mpesa/status?checkoutId=${encodeURIComponent(checkoutId)}${live}`);
         const d = (await r.json()) as { status?: string };
         if (d.status === "COMPLETED") {
           if (timer.current) clearInterval(timer.current);

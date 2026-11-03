@@ -19,7 +19,7 @@ export function PartInquiryForm({ partTitle, price, phone }: { partTitle: string
       `Hi! I'm interested in your part "${partTitle}" listed at ${formatKES(price)} on ${siteConfig.brandName}.`,
       `Name: ${name}`,
       `Phone: ${buyerPhone}`,
-      message ? `Message: ${message}` : "",
+      message,
     ].filter(Boolean).join("\n");
 
     window.open(whatsappLink(phone, text), "_blank", "noopener");
@@ -33,7 +33,7 @@ export function PartInquiryForm({ partTitle, price, phone }: { partTitle: string
         name="message"
         placeholder="Hi, is this still available? Does it fit a…"
         required
-        defaultValue="Hi, is this part still available? Does it fit my car?"
+        defaultValue="Is this part still available? Does it fit my car?"
         aria-label="Message"
       />
       <Button type="submit" className="w-full bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />Send enquiry</Button>
