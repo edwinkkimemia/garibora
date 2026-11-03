@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LayoutDashboard, CarFront, Inbox, Send, PlusCircle, BadgeCheck } from "lucide-react";
+import { LayoutDashboard, CarFront, Inbox, Send, PlusCircle, Settings, BadgeCheck } from "lucide-react";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     { href: "/dashboard/listings", label: "My listings", icon: CarFront },
     { href: "/dashboard/inquiries", label: "Inquiries", icon: Inbox },
     { href: "/dashboard/requests", label: "My requests", icon: Send },
+    { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
   return (
     <div className="mx-auto w-full max-w-[1500px] px-4 py-6 md:px-6">
@@ -41,7 +42,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </nav>
           <Link href="/sell" className="mt-3 block"><Button className="w-full"><PlusCircle />New listing</Button></Link>
           {!(me?.idVerified || me?.verified) && (
-            <Link href="/profile" className="mt-2 block rounded-xl border border-dashed border-gold/60 bg-gold/10 p-3 text-xs font-semibold text-navy hover:bg-gold/20">
+            <Link href="/dashboard/settings" className="mt-2 block rounded-xl border border-dashed border-gold/60 bg-gold/10 p-3 text-xs font-semibold text-navy hover:bg-gold/20">
               Get verified — buyers contact verified sellers 3× more →
             </Link>
           )}

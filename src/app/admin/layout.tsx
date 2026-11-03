@@ -11,6 +11,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: "/admin", label: "Overview" },
     { href: "/admin/listings", label: "Listing review" },
     { href: "/admin/users", label: "Users & sellers" },
+    { href: "/dashboard/settings", label: "My settings" },
   ];
   return (
     <div className="container grid gap-6 py-8 lg:grid-cols-[220px_1fr]">
