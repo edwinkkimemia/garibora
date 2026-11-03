@@ -57,10 +57,13 @@ export function FiltersPanel() {
           <option value="">All makes</option>
           {siteConfig.makes.map((m) => <option key={m} value={m}>{m}</option>)}
         </Select>
-        <Select value={get("location")} onChange={(e) => set("location", e.target.value)} aria-label="Location">
-          <option value="">All Kenya</option>
-          {siteConfig.locations.map((l) => <option key={l} value={l}>{l}</option>)}
-        </Select>
+        <Input
+          list="ke-locations" value={get("location")} onChange={(e) => set("location", e.target.value)}
+          placeholder="Type a county or town…" aria-label="Location" className="col-span-2 md:col-span-1 lg:col-span-1"
+        />
+        <datalist id="ke-locations">
+          {siteConfig.locations.map((l) => <option key={l} value={l} />)}
+        </datalist>
         <Select value={get("bodyType")} onChange={(e) => set("bodyType", e.target.value)} aria-label="Body type">
           <option value="">All types</option>
           {bodies.map((b) => <option key={b} value={b}>{b}</option>)}

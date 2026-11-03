@@ -55,10 +55,10 @@ export function SearchBar() {
         </div>
         <div>
           <label className={label} htmlFor="hero-loc">Location</label>
-          <Select id="hero-loc" value={location} onChange={(e) => setLocation(e.target.value)} className={field}>
-            <option value="">All Kenya</option>
-            {siteConfig.locations.map((l) => <option key={l} value={l}>{l}</option>)}
-          </Select>
+          <Input id="hero-loc" list="hero-locations" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="County or town…" className={field} />
+          <datalist id="hero-locations">
+            {siteConfig.locations.map((l) => <option key={l} value={l} />)}
+          </datalist>
         </div>
         <div className="flex items-end">
           <Button type="submit" size="lg" className="w-full bg-gold text-navy hover:bg-gold-dark hover:text-white md:w-auto">
