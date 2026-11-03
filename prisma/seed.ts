@@ -237,7 +237,7 @@ const GEN_POOL = [
   "photo-1533473353331-0135ef1b58bf", "photo-1503376780353-7e6692767b70",
 ];
 const GEN_COLORS = ["Silver", "Black", "White", "Wine Red", "Grey", "Blue", "Pearl White", "Gun Metallic"];
-const GEN_TOWNS = ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret", "Thika", "Kiambu", "Machakos", "Nyeri", "Meru"];
+const GEN_TOWNS = ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Kiambu", "Uasin Gishu", "Machakos", "Meru", "Nyeri", "Kisii", "Kakamega", "Kilifi"];
 const GEN_DEALERS = ["kamau", "coast", "lake", "rift"];
 const GEN_BLURBS: ((b: GenBase, grade: string, town: string) => string)[] = [
   (b, grade, town) => `${b.make} ${b.model} ${grade}, original paint, accident-free. Duty paid, ready logbook. Viewing in ${town} — call or WhatsApp to arrange.`,
@@ -294,6 +294,9 @@ const GEN_BASES: GenBase[] = [
   { make: "Audi", model: "A4", grades: ["1.8T", "2.0T", "S-Line"], body: BodyType.SEDAN, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 2300000, engineCc: 1800, drive: "2WD" },
   { make: "BMW", model: "320i", grades: ["Base", "M Sport", "Luxury"], body: BodyType.SEDAN, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2015, 2016, 2017], basePrice: 2200000, engineCc: 2000, drive: "2WD" },
   { make: "Land Rover", model: "Defender 110", grades: ["County", "XS", "Adventure"], body: BodyType.SUV, fuel: FuelType.DIESEL, gear: Transmission.MANUAL, condition: CarCondition.LOCALLY_USED, years: [2014, 2015, 2016], basePrice: 4200000, engineCc: 2200, drive: "4WD" },
+  { make: "Lexus", model: "RX", grades: ["RX 300", "RX 450h", "F Sport"], body: BodyType.SUV, fuel: FuelType.HYBRID, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 4950000, engineCc: 3500, drive: "AWD" },
+  { make: "Hyundai", model: "Tucson", grades: ["GL", "Executive", "N Line"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 2450000, engineCc: 2000, drive: "2WD" },
+  { make: "Kia", model: "Sportage", grades: ["LX", "EX", "GT-Line"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 2350000, engineCc: 2000, drive: "2WD" },
 ];
 
 GEN_BASES.forEach((b, bi) => {
@@ -353,6 +356,17 @@ async function main() {
   for (const [oldE, newE] of renames) {
     const taken = await prisma.user.findUnique({ where: { email: newE } });
     if (!taken) await prisma.user.updateMany({ where: { email: oldE }, data: { email: newE } });
+  }
+
+  // Towns → counties migration (listings now filter by all 47 counties)
+  const townToCounty: Record<string, string> = {
+    Nairobi: "Nairobi", Mombasa: "Mombasa", Kisumu: "Kisumu", Nakuru: "Nakuru",
+    Eldoret: "Uasin Gishu", Thika: "Kiambu", Kiambu: "Kiambu", Machakos: "Machakos",
+    Nyeri: "Nyeri", Meru: "Meru",
+  };
+  for (const [town, county] of Object.entries(townToCounty)) {
+    await prisma.car.updateMany({ where: { location: town }, data: { location: county } });
+    await prisma.part.updateMany({ where: { location: town }, data: { location: county } });
   }
 
   const passwordHash = await bcrypt.hash("Password123!", 10);

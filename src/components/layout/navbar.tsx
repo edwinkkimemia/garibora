@@ -21,7 +21,7 @@ export async function Navbar() {
       <div className="container flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex shrink-0 items-center" aria-label="Motiva home">
           <span className="overflow-hidden rounded-lg">
-            <Image src="/logo.png" alt="Motiva — Find your next drive" width={220} height={52} className="h-9 w-auto md:h-12" priority />
+            <Image src="/logo.png" alt="Motiva — Find your next drive" width={240} height={80} quality={100} className="h-10 w-auto md:h-12" priority />
           </span>
         </Link>
         <nav className="hidden items-center gap-5 text-sm font-medium lg:flex">
