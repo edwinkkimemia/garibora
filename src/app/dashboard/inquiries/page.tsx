@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Phone } from "lucide-react";
+import type { Prisma } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
@@ -13,14 +14,25 @@ export default async function InquiriesPage({ searchParams }: { searchParams: Pr
   const session = await auth();
   const { filter } = await searchParams;
   const unreadOnly = filter === "unread";
-  const where = { car: { sellerId: session!.user!.id! }, ...(unreadOnly ? { read: false } : {}) };
+  const uid = session!.user!.id!;
+  const sellerScope: Prisma.InquiryWhereInput = {
+    OR: [
+      { car: { is: { sellerId: uid } } },
+      { part: { is: { sellerId: uid } } },
+    ],
+  };
+  const where: Prisma.InquiryWhereInput = { ...sellerScope, ...(unreadOnly ? { read: false } : {}) };
   const [inquiries, total, unread] = await Promise.all([
     prisma.inquiry.findMany({
-      where, include: { car: { select: { title: true, slug: true } } },
+      where,
+      include: {
+        car: { select: { title: true, slug: true } },
+        part: { select: { title: true, slug: true } },
+      },
       orderBy: { createdAt: "desc" }, take: 50,
     }).catch(() => []),
-    prisma.inquiry.count({ where: { car: { sellerId: session!.user!.id! } } }).catch(() => 0),
-    prisma.inquiry.count({ where: { car: { sellerId: session!.user!.id! }, read: false } }).catch(() => 0),
+    prisma.inquiry.count({ where: sellerScope }).catch(() => 0),
+    prisma.inquiry.count({ where: { ...sellerScope, read: false } }).catch(() => 0),
   ]);
 
   return (
@@ -35,30 +47,34 @@ export default async function InquiriesPage({ searchParams }: { searchParams: Pr
       </div>
 
       <div className="mt-4 grid gap-3">
-        {inquiries.map((q) => (
-          <Card key={q.id} className={q.read ? "" : "border-gold/60 bg-gold/5"}>
-            <CardContent className="pt-4">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="font-bold">{q.name} {!q.read && <Badge variant="success">New</Badge>}</p>
-                  <p className="text-xs text-muted-foreground">{new Date(q.createdAt).toLocaleString("en-KE")} • Re: <Link href={`/cars/${q.car.slug}`} className="font-semibold text-gold-dark hover:underline">{q.car.title}</Link></p>
+        {inquiries.map((q) => {
+          const listing = q.car ?? q.part;
+          const href = q.car ? `/cars/${q.car.slug}` : q.part ? `/parts/${q.part.slug}` : "#";
+          return (
+            <Card key={q.id} className={q.read ? "" : "border-gold/60 bg-gold/5"}>
+              <CardContent className="pt-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <p className="font-bold">{q.name} {!q.read && <Badge variant="success">New</Badge>}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(q.createdAt).toLocaleString("en-KE")} • Re: <Link href={href} className="font-semibold text-gold-dark hover:underline">{listing?.title ?? "Listing"}</Link></p>
+                  </div>
+                  {!q.read && (
+                    <form action={async () => { "use server"; await markInquiryReadAction(q.id); }}>
+                      <Button size="sm" variant="ghost">Mark read</Button>
+                    </form>
+                  )}
                 </div>
-                {!q.read && (
-                  <form action={async () => { "use server"; await markInquiryReadAction(q.id); }}>
-                    <Button size="sm" variant="ghost">Mark read</Button>
-                  </form>
-                )}
-              </div>
-              <p className="mt-2 rounded-xl bg-muted/70 p-3 text-sm italic">&ldquo;{q.message}&rdquo;</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <a href={whatsappLink(q.phone, `Hi ${q.name}, thanks for your interest in "${q.car.title}" on Motiva. When would you like to view it?`)} target="_blank" rel="noreferrer">
-                  <Button size="sm" className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />Reply on WhatsApp</Button>
-                </a>
-                <a href={`tel:${q.phone}`}><Button size="sm" variant="outline"><Phone />{q.phone}</Button></a>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                <p className="mt-2 rounded-xl bg-muted/70 p-3 text-sm italic">&ldquo;{q.message}&rdquo;</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <a href={whatsappLink(q.phone, `Hi ${q.name}, thanks for your interest in "${listing?.title ?? "your listing"}" on Motiva. When would you like to view it?`)} target="_blank" rel="noreferrer">
+                    <Button size="sm" className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />Reply on WhatsApp</Button>
+                  </a>
+                  <a href={`tel:${q.phone}`}><Button size="sm" variant="outline"><Phone />{q.phone}</Button></a>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
         {inquiries.length === 0 && (
           <div className="rounded-2xl border border-dashed p-10 text-center">
             <p className="font-bold">{unreadOnly ? "Inbox zero 🎉" : "No inquiries yet"}</p>

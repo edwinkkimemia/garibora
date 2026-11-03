@@ -17,9 +17,9 @@ export default async function DashboardPage() {
   const [byStatus, viewsAgg, unread, favs, recentInq, latest, top] = await Promise.all([
     prisma.car.groupBy({ by: ["status"], where: { sellerId: uid }, _count: true }).catch(() => []),
     prisma.car.aggregate({ where: { sellerId: uid }, _sum: { views: true } }).catch(() => ({ _sum: { views: 0 } })),
-    prisma.inquiry.count({ where: { car: { sellerId: uid }, read: false } }).catch(() => 0),
+    prisma.inquiry.count({ where: { read: false, OR: [{ car: { is: { sellerId: uid } } }, { part: { is: { sellerId: uid } } }] } }).catch(() => 0),
     prisma.favorite.count({ where: { userId: uid } }).catch(() => 0),
-    prisma.inquiry.findMany({ where: { car: { sellerId: uid } }, include: { car: { select: { title: true, slug: true } } }, orderBy: { createdAt: "desc" }, take: 5 }).catch(() => []),
+    prisma.inquiry.findMany({ where: { OR: [{ car: { is: { sellerId: uid } } }, { part: { is: { sellerId: uid } } }] }, include: { car: { select: { title: true, slug: true } }, part: { select: { title: true, slug: true } } }, orderBy: { createdAt: "desc" }, take: 5 }).catch(() => []),
     prisma.car.findMany({ where: { sellerId: uid }, include: { images: true, dealer: { select: { businessName: true } } }, orderBy: { createdAt: "desc" }, take: 4 }).catch(() => []),
     prisma.car.findMany({ where: { sellerId: uid, status: "ACTIVE" }, orderBy: { views: "desc" }, take: 5, select: { id: true, title: true, views: true, price: true } }).catch(() => []),
   ]);
@@ -68,17 +68,20 @@ export default async function DashboardPage() {
             <Link href="/dashboard/inquiries" className="text-xs font-bold text-gold-dark hover:underline">View all →</Link>
           </CardHeader>
           <CardContent className="grid gap-2">
-            {recentInq.map((q) => (
-              <div key={q.id} className={`rounded-xl border p-3 text-sm ${q.read ? "" : "border-gold/50 bg-gold/5"}`}>
-                <p><b>{q.name}</b> <span className="text-muted-foreground">• {q.phone}</span></p>
-                <p className="truncate text-muted-foreground">Re: {q.car.title}</p>
-                <div className="mt-2">
-                  <a href={whatsappLink(q.phone, `Hi ${q.name}, thanks for your interest in "${q.car.title}" on Motiva. When would you like to view it?`)} target="_blank" rel="noreferrer">
-                    <Button size="sm" className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />Reply</Button>
-                  </a>
+            {recentInq.map((q) => {
+              const listing = q.car ?? q.part;
+              return (
+                <div key={q.id} className={`rounded-xl border p-3 text-sm ${q.read ? "" : "border-gold/50 bg-gold/5"}`}>
+                  <p><b>{q.name}</b> <span className="text-muted-foreground">• {q.phone}</span></p>
+                  <p className="truncate text-muted-foreground">Re: {listing?.title ?? "Listing"}</p>
+                  <div className="mt-2">
+                    <a href={whatsappLink(q.phone, `Hi ${q.name}, thanks for your interest in "${listing?.title ?? "your listing"}" on Motiva. When would you like to view it?`)} target="_blank" rel="noreferrer">
+                      <Button size="sm" className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />Reply</Button>
+                    </a>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {recentInq.length === 0 && <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No inquiries yet — share your listings on WhatsApp to get leads.</p>}
           </CardContent>
         </Card>

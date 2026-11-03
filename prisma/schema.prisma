@@ -278,8 +278,10 @@ model Favorite {
 
 model Inquiry {
   id        String   @id @default(cuid())
-  carId     String
-  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  carId     String?
+  car       Car?     @relation(fields: [carId], references: [id], onDelete: Cascade)
+  partId    String?
+  part      Part?    @relation(fields: [partId], references: [id], onDelete: Cascade)
   buyerId   String?
   buyer     User?    @relation("BuyerInquiries", fields: [buyerId], references: [id], onDelete: SetNull)
   name      String
@@ -289,6 +291,7 @@ model Inquiry {
   createdAt DateTime @default(now())
 
   @@index([carId])
+  @@index([partId])
   @@index([buyerId])
 }
 
@@ -330,6 +333,7 @@ model Part {
   dealer   Dealer? @relation("DealerParts", fields: [dealerId], references: [id], onDelete: SetNull)
 
   images PartImage[]
+  inquiries Inquiry[]
 
   @@index([status, featured])
   @@index([category])

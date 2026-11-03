@@ -35,8 +35,13 @@ const purposeLabel: Record<string, string> = {
 export default async function PlansPage() {
   const session = await auth();
   const uid = session!.user!.id!;
-  const payments = await prisma.payment.findMany({ where: { userId: uid }, orderBy: { createdAt: "desc" }, take: 20 }).catch(() => []);
-  const hasActivePlan = await prisma.payment.count({ where: { userId: uid, purpose: { in: ["PLAN_GROWTH", "PLAN_PREMIUM"] }, status: "COMPLETED" } }).catch(() => 0);
+  const since = new Date(Date.now() - 30 * 24 * 3600 * 1000);
+  const [payments, activePlan] = await Promise.all([
+    prisma.payment.findMany({ where: { userId: uid }, orderBy: { createdAt: "desc" }, take: 20 }).catch(() => []),
+    prisma.payment.findFirst({ where: { userId: uid, purpose: { in: ["PLAN_GROWTH", "PLAN_PREMIUM"] }, status: "COMPLETED", createdAt: { gte: since } }, orderBy: { createdAt: "desc" } }).catch(() => null),
+  ]);
+  const activeUntil = activePlan ? new Date(new Date(activePlan.createdAt).getTime() + 30 * 24 * 3600 * 1000) : null;
+  const activeName = activePlan ? (purposeLabel[activePlan.purpose] ?? activePlan.purpose) : null;
 
   return (
     <div>
@@ -45,7 +50,9 @@ export default async function PlansPage() {
         <div>
           <h1 className="text-2xl font-extrabold md:text-3xl">Plans & billing</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {hasActivePlan > 0 ? "You have an active paid plan — asante for growing with Motiva." : "You're on the free Starter plan. Upgrade when you're ready."}
+            {activePlan && activeUntil
+              ? `${activeName} active till ${activeUntil.toLocaleDateString("en-KE", { day: "numeric", month: "short", year: "numeric" })} — one plan at a time.`
+              : "You're on the free Starter plan. Upgrade when you're ready."}
           </p>
         </div>
         <Link href="/pricing"><Button variant="outline" size="sm">Compare on pricing page</Button></Link>
@@ -65,7 +72,13 @@ export default async function PlansPage() {
                 {p.features.map((f) => <li key={f} className="flex items-start gap-2"><Check className="mt-0.5 size-4 shrink-0 text-emerald-600" />{f}</li>)}
               </ul>
               {"amount" in p && p.amount ? (
-                <div className="mt-4"><PayButton amount={p.amount as number} purpose={p.id} reference={uid} label={p.name} /></div>
+                activePlan ? (
+                  <p className="mt-4 rounded-xl bg-muted p-3 text-center text-sm font-semibold text-muted-foreground">
+                    {activeName} active till {activeUntil!.toLocaleDateString("en-KE", { day: "numeric", month: "short" })} — renew after it ends
+                  </p>
+                ) : (
+                  <div className="mt-4"><PayButton amount={p.amount as number} purpose={p.id} reference={uid} label={p.name} /></div>
+                )
               ) : (
                 <Link href="/sell"><Button className="mt-4 w-full" variant="outline">Start free</Button></Link>
               )}

@@ -90,12 +90,12 @@ export function PayButton({ amount, purpose, reference, label }: {
   return (
     <div>
       {phase === "idle" || phase === "failed" ? (
-        <div className="flex gap-2">
-          <div className="flex-1">
-            <Label htmlFor={`mpesa-${purpose}`} className="sr-only">M-Pesa number</Label>
-            <Input id={`mpesa-${purpose}`} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="M-Pesa: 0722…" inputMode="tel" />
+        <div className="space-y-2">
+          <div>
+            <Label htmlFor={`mpesa-${purpose}`}>M-Pesa number</Label>
+            <Input id={`mpesa-${purpose}`} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="0722…" inputMode="tel" />
           </div>
-          <Button onClick={start} className="bg-[#25D366] text-white hover:bg-[#1eb85a]"><Smartphone />Pay {formatKES(amount)}</Button>
+          <Button onClick={start} className="w-full bg-[#25D366] text-white hover:bg-[#1eb85a]"><Smartphone />Pay {formatKES(amount)}</Button>
         </div>
       ) : (
         <div className="flex items-center gap-2 rounded-xl bg-muted p-3 text-sm">

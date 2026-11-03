@@ -12,6 +12,10 @@ import { BoostModal } from "@/components/pay/boost-modal";
 
 const tabs = ["ALL", "ACTIVE", "PENDING", "SOLD", "REJECTED"] as const;
 
+/** A boost counts as live while flagged with no expiry or a future expiry. */
+const boostActive = (c: { featured: boolean; featuredUntil: Date | null }) =>
+  c.featured && (!c.featuredUntil || new Date(c.featuredUntil) > new Date());
+
 export default async function ListingsPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
   const session = await auth();
   const { status } = await searchParams;
@@ -53,7 +57,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
             <div className="min-w-0 flex-1">
               <p className="truncate font-bold">{c.title}</p>
               <p className="mt-0.5 text-sm font-extrabold text-navy">{formatKES(c.price)} <Badge variant={c.status === "ACTIVE" ? "success" : c.status === "PENDING" ? "outline" : "secondary"}>{c.status}</Badge></p>
-              {c.featured && (
+              {boostActive(c) && (
                 <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-gold/15 px-2 py-0.5 text-[11px] font-bold text-gold-dark">
                   <Zap className="size-3" /> Featured{c.featuredUntil ? ` till ${new Date(c.featuredUntil).toLocaleDateString("en-KE", { day: "numeric", month: "short" })}` : ""}
                 </p>
@@ -65,7 +69,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
               </p>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 <Link href={`/cars/${c.slug}`}><Button size="sm" variant="outline"><ExternalLink />View</Button></Link>
-                {c.status === "ACTIVE" && !c.featured && <BoostModal carId={c.id} carTitle={c.title} />}
+                {c.status === "ACTIVE" && !boostActive(c) && <BoostModal carId={c.id} carTitle={c.title} />}
                 {c.status === "ACTIVE" && <form action={async () => { "use server"; await markSoldAction(c.id); }}><Button size="sm" variant="secondary"><BadgeDollarSign />Mark sold</Button></form>}
                 {c.status === "SOLD" && <form action={async () => { "use server"; await relistAction(c.id); }}><Button size="sm" variant="secondary"><RotateCcw />Relist</Button></form>}
                 <form action={async () => { "use server"; await deleteListingAction(c.id); }}><Button size="sm" variant="ghost" className="text-red-600 hover:bg-red-50 hover:text-red-700"><Trash2 />Delete</Button></form>

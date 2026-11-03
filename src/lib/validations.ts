@@ -87,3 +87,10 @@ export const inquirySchema = z.object({
   phone: z.string().min(9, "Enter a valid phone e.g. 0722…"),
   message: z.string().min(5),
 });
+
+export const partInquirySchema = z.object({
+  partId: z.string(),
+  name: z.string().min(2),
+  phone: z.string().min(9, "Enter a valid phone e.g. 0722…"),
+  message: z.string().min(5),
+});

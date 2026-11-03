@@ -90,7 +90,7 @@ export default async function PartDetailPage({ params }: { params: Promise<{ slu
           </Card>
           <Card>
             <CardHeader><CardTitle className="text-base">Enquire about this part</CardTitle></CardHeader>
-            <CardContent><PartInquiryForm partTitle={part.title} price={part.price} phone={sellerPhone} /></CardContent>
+            <CardContent><PartInquiryForm partId={part.id} /></CardContent>
           </Card>
           <Link href="/parts"><Button variant="outline" className="w-full">← More parts</Button></Link>
         </aside>

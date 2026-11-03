@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { inquirySchema, listCarSchema, listPartSchema, registerSchema } from "@/lib/validations";
+import { inquirySchema, listCarSchema, listPartSchema, partInquirySchema, registerSchema } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
 import { canList } from "@/lib/permissions";
 
@@ -99,6 +99,19 @@ export async function inquiryAction(prev: unknown, formData: FormData) {
   return { ok: true };
 }
 
+export async function partInquiryAction(prev: unknown, formData: FormData) {
+  const parsed = partInquirySchema.safeParse({
+    partId: formData.get("partId"), name: formData.get("name"),
+    phone: formData.get("phone"), message: formData.get("message"),
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
+  const session = await auth();
+  await prisma.inquiry.create({
+    data: { ...parsed.data, buyerId: session?.user?.id ?? null },
+  });
+  return { ok: true };
+}
+
 export async function markSoldAction(carId: string) {
   const session = await auth();
   if (!session?.user?.id) return { error: "Login required" };
@@ -159,7 +172,16 @@ export async function relistAction(carId: string) {
 export async function markInquiryReadAction(inquiryId: string) {
   const session = await auth();
   if (!session?.user?.id) return;
-  await prisma.inquiry.updateMany({ where: { id: inquiryId, car: { sellerId: session.user.id } }, data: { read: true } });
+  await prisma.inquiry.updateMany({
+    where: {
+      id: inquiryId,
+      OR: [
+        { car: { is: { sellerId: session.user.id } } },
+        { part: { is: { sellerId: session.user.id } } },
+      ],
+    },
+    data: { read: true },
+  });
   revalidatePath("/dashboard/inquiries");
 }
 
