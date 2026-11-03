@@ -74,6 +74,7 @@ export async function stkPush(opts: {
     }),
   });
   const data = (await res.json()) as { ResponseCode?: string; ResponseDescription?: string; MerchantRequestID?: string; CheckoutRequestID?: string; errorMessage?: string };
+  console.log("[mpesa/stk]", { to: opts.phone, amount: opts.amount, ResponseCode: data.ResponseCode, ResponseDescription: data.ResponseDescription, checkout: data.CheckoutRequestID, merchant: data.MerchantRequestID });
   if (data.ResponseCode !== "0" || !data.CheckoutRequestID) {
     throw new Error(data.ResponseDescription || data.errorMessage || "STK push rejected by M-Pesa.");
   }

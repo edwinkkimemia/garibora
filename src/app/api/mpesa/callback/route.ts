@@ -14,6 +14,7 @@ export async function POST(req: Request) {
       };
     };
     const cb = body?.Body?.stkCallback;
+    console.log("[mpesa/callback]", JSON.stringify({ merchant: cb?.MerchantRequestID, checkout: cb?.CheckoutRequestID, code: cb?.ResultCode, desc: cb?.ResultDesc }));
     if (!cb?.CheckoutRequestID) return Response.json({ ok: false }, { status: 400 });
 
     await prisma.payment.updateMany({

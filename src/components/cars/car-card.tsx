@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Gauge, Fuel, Cog, BadgeCheck, Heart } from "lucide-react";
+import { MapPin, Gauge, Fuel, Cog, BadgeCheck, Heart, User } from "lucide-react";
 import { formatKES, formatMileage } from "@/lib/utils";
 import { Badge } from "@/components/ui/card";
 import { Watermark } from "@/components/ui/watermark";
@@ -10,8 +10,29 @@ type CarCardCar = {
   price: number; mileage: number; fuelType: string; transmission: string; location: string;
   verified: boolean; featured: boolean; negotiable: boolean;
   dailyRate?: number | null; listingType?: string;
+  dealer?: { businessName: string } | null;
   images: { url: string }[];
 };
+
+function SellerMark({ car }: { car: CarCardCar }) {
+  if (car.dealer) {
+    return (
+      <p className="mt-1 flex items-center gap-1 text-xs font-bold text-navy">
+        <BadgeCheck className="size-3.5 shrink-0 text-gold-dark" />
+        <span className="truncate">{car.dealer.businessName} • Dealer</span>
+      </p>
+    );
+  }
+  // dealer: null (explicitly loaded) = independent seller; undefined = unknown source
+  if ("dealer" in car && car.dealer === null) {
+    return (
+      <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-slate-500">
+        <User className="size-3.5 shrink-0" /> Private seller
+      </p>
+    );
+  }
+  return null;
+}
 
 export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid" | "list" }) {
   const photo = car.images[0]?.url ?? "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=800&auto=format&fit=crop";
@@ -25,6 +46,7 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="truncate font-semibold text-slate-900">{car.title}</h3>
+          <SellerMark car={car} />
           <p className="mt-1 text-lg font-extrabold text-navy">{formatKES(car.price)}{car.negotiable && <span className="ml-1 text-xs font-normal text-slate-500">neg</span>}</p>
           <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1"><Gauge className="size-3" />{formatMileage(car.mileage)}</span>
@@ -52,6 +74,7 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
       </div>
       <div className="p-4">
         <h3 className="line-clamp-1 font-semibold text-slate-900">{car.title}</h3>
+        <SellerMark car={car} />
         {car.dailyRate && car.listingType === "RENT" ? (
           <p className="mt-1 text-lg font-extrabold text-navy">{formatKES(car.dailyRate)}<span className="text-sm font-semibold text-slate-500">/day</span> <span className="ml-1 rounded-full bg-navy px-2 py-0.5 text-[11px] font-bold text-gold-light">For hire</span></p>
         ) : car.dailyRate ? (

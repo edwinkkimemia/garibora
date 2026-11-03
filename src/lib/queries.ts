@@ -73,7 +73,7 @@ export async function getSimilarCars(carId: string, make: string, bodyType: stri
       OR: [{ make }, { bodyType: bodyType as never }],
     },
     take: 4,
-    include: { images: true },
+    include: { images: true, dealer: { select: { businessName: true } } },
     orderBy: { createdAt: "desc" },
   });
 }
@@ -113,7 +113,7 @@ export async function getMarketInsight(make: string, model: string, excludeId: s
 export async function getDealerCars(dealerId: string, excludeId: string) {
   return prisma.car.findMany({
     where: { status: "ACTIVE", dealerId, id: { not: excludeId } },
-    take: 4, include: { images: true },
+    take: 4, include: { images: true, dealer: { select: { businessName: true } } },
     orderBy: { createdAt: "desc" },
   });
 }

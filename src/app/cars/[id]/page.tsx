@@ -143,13 +143,15 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
               </div>
               {car.dealer ? (
                 <div className="mt-4 rounded-xl border p-3 text-sm">
-                  <p className="font-bold">{car.dealer.businessName} {car.dealer.verified && <ShieldCheck className="inline size-4 text-green-600" />}</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-gold-dark">Verified dealer yard</p>
+                  <p className="mt-0.5 font-bold">{car.dealer.businessName} {car.dealer.verified && <ShieldCheck className="inline size-4 text-green-600" />}</p>
                   <p className="text-muted-foreground">{car.dealer.location} • ★ {car.dealer.rating.toFixed(1)} ({car.dealer.reviewCount})</p>
                   <Link href={`/dealers/${car.dealer.slug}`} className="mt-1 inline-block text-primary hover:underline">View dealer →</Link>
                 </div>
               ) : (
                 <div className="mt-4 rounded-xl border p-3 text-sm">
-                  <p className="flex items-center gap-1.5 font-bold">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Private seller</p>
+                  <p className="mt-0.5 flex items-center gap-1.5 font-bold">
                     <span className="grid size-7 place-items-center rounded-full bg-navy text-xs font-extrabold text-gold-light">{(car.seller.name || "P").charAt(0).toUpperCase()}</span>
                     {car.seller.name || "Private seller"}
                     {(car.seller.idVerified || car.seller.verified) && <ShieldCheck className="size-4 text-green-600" />}
