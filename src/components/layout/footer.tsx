@@ -4,12 +4,19 @@ import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Twitter, Youtube } fro
 import { siteConfig } from "@/config/site";
 
 const popular = [
-  { label: "Toyota Prado under 7M", href: "/cars?q=Prado&maxPrice=7000000" },
-  { label: "Nissan Note Hybrid", href: "/cars?q=Note" },
-  { label: "Toyota Hilux 4WD", href: "/cars?q=Hilux" },
-  { label: "Mazda CX-5 Diesel", href: "/cars?make=Mazda&bodyType=SUV" },
-  { label: "Mercedes C-Class", href: "/cars?make=Mercedes-Benz" },
+  { label: "Toyota Prado for sale", href: "/cars?q=Prado" },
+  { label: "Nissan Note e-Power", href: "/cars?q=Note" },
+  { label: "Hire a Hiace van", href: "/rentals?q=Hiace" },
   { label: "Cars under 1.5M", href: "/cars?maxPrice=1500000" },
+  { label: "Brand-new cars", href: "/cars?condition=NEW" },
+  { label: "Car parts & spares", href: "/parts" },
+];
+
+const socials = [
+  { icon: Facebook, label: "Facebook", href: "https://facebook.com/motivake" },
+  { icon: Instagram, label: "Instagram", href: "https://instagram.com/motivake" },
+  { icon: Twitter, label: "X (Twitter)", href: "https://x.com/motivake" },
+  { icon: Youtube, label: "YouTube", href: "https://youtube.com/@motivake" },
 ];
 
 export function Footer() {
@@ -27,17 +34,13 @@ export function Footer() {
           </div>
           <p className="mt-3 text-sm leading-relaxed text-slate-300">{siteConfig.tagline} {siteConfig.taglineAlt} Kenya&apos;s trusted marketplace for verified cars.</p>
           <div className="mt-4 flex gap-2">
-            {[
-              { icon: Facebook, label: "Facebook" },
-              { icon: Instagram, label: "Instagram" },
-              { icon: Twitter, label: "Twitter" },
-              { icon: Youtube, label: "YouTube" },
-            ].map((s) => (
-              <a key={s.label} href="#" aria-label={s.label} className="grid size-9 place-items-center rounded-xl border border-white/15 bg-white/5 transition hover:border-gold hover:text-gold-light">
+            {socials.map((s) => (
+              <a key={s.label} href={s.href} target="_blank" rel="noreferrer" aria-label={`${s.label} — @motivake`} className="grid size-9 place-items-center rounded-xl border border-white/15 bg-white/5 transition hover:border-gold hover:text-gold-light">
                 <s.icon className="size-4" />
               </a>
             ))}
           </div>
+          <p className="mt-2 text-xs text-slate-400">@motivake</p>
         </div>
         <nav aria-label="Marketplace">
           <h4 className="text-sm font-bold uppercase tracking-wider text-gold-light">Marketplace</h4>
@@ -55,8 +58,8 @@ export function Footer() {
             <li><Link href="/blog" className="hover:text-gold-light">Buying guides</Link></li>
           </ul>
         </nav>
-        <nav aria-label="Popular searches">
-          <h4 className="text-sm font-bold uppercase tracking-wider text-gold-light">Popular right now</h4>
+        <nav aria-label="Trending searches">
+          <h4 className="text-sm font-bold uppercase tracking-wider text-gold-light">Trending now</h4>
           <ul className="mt-3 space-y-2 text-sm">
             {popular.map((p) => <li key={p.label}><Link href={p.href} className="hover:text-gold-light">{p.label}</Link></li>)}
           </ul>
@@ -65,8 +68,8 @@ export function Footer() {
           <h4 className="text-sm font-bold uppercase tracking-wider text-gold-light">Talk to us</h4>
           <ul className="mt-3 space-y-2 text-sm text-slate-300">
             <li className="flex items-center gap-2"><MapPin className="size-4 shrink-0 text-gold" /> Kiambu Road, Nairobi, Kenya</li>
-            <li className="flex items-center gap-2"><Phone className="size-4 shrink-0 text-gold" /> +254 700 000 000</li>
-            <li className="flex items-center gap-2"><Mail className="size-4 shrink-0 text-gold" /> hello@motiva.co.ke</li>
+            <li className="flex items-center gap-2"><Phone className="size-4 shrink-0 text-gold" /> <a href="tel:+254729396174" className="hover:text-gold-light">+254 729 396 174</a></li>
+            <li className="flex items-center gap-2"><Mail className="size-4 shrink-0 text-gold" /> <a href="mailto:contact@motiva.co.ke" className="hover:text-gold-light">contact@motiva.co.ke</a></li>
             <li className="flex items-center gap-2"><Clock className="size-4 shrink-0 text-gold" /> Mon–Sat, 8am–6pm EAT</li>
           </ul>
           <p className="mt-4 text-xs leading-relaxed text-slate-400">Buyer protection: always verify the logbook on NTSA TIMS and transfer ownership together. Never pay before viewing.</p>

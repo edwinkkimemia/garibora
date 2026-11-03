@@ -9,7 +9,7 @@ import { whatsappLink } from "@/lib/utils";
 
 export const metadata = {
   title: "Contact us — Nairobi, Kenya",
-  description: "Talk to Motiva: Kiambu Road Nairobi, +254 700 000 000, hello@motiva.co.ke. Buyer help, seller onboarding and dealer verification.",
+  description: "Talk to Motiva: Kiambu Road Nairobi, +254 729 396 174, contact@motiva.co.ke. Buyer help, seller onboarding and dealer verification.",
 };
 
 export default function ContactPage() {
@@ -28,8 +28,8 @@ export default function ContactPage() {
           <div className="grid content-start gap-4 sm:grid-cols-2">
             {[
               { icon: MapPin, t: "Visit", d: "Kiambu Road, Nairobi, Kenya" },
-              { icon: Phone, t: "Call", d: "+254 700 000 000" },
-              { icon: Mail, t: "Email", d: "hello@motiva.co.ke" },
+              { icon: Phone, t: "Call / WhatsApp", d: "+254 729 396 174" },
+              { icon: Mail, t: "Email", d: "contact@motiva.co.ke" },
               { icon: Clock, t: "Hours", d: "Mon–Sat, 8am–6pm EAT" },
             ].map((c) => (
               <Card key={c.t}><CardContent className="pt-5">

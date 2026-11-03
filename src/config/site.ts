@@ -5,7 +5,7 @@ export const siteConfig = {
   description:
     "Motiva — Kenya's premium car marketplace. Verified dealers, inspected cars, transparent KES pricing. From Nairobi to Mombasa, Kisumu to Nakuru.",
   url: (process.env.NEXT_PUBLIC_APP_URL || "https://motiva.co.ke").replace(/\/$/, ""),
-  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "254700000000",
+  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "254729396174",
   locations: [
     "Nairobi",
     "Mombasa",
