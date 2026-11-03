@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   if (!session?.user) redirect("/login?next=/dashboard");
-  const me = await prisma.user.findUnique({ where: { id: session.user.id! }, select: { name: true, role: true, idVerified: true, verified: true } }).catch(() => null);
+  const me = await prisma.user.findUnique({ where: { id: session.user.id! }, select: { name: true, role: true, idVerified: true, dealerProfile: { select: { verified: true } } } }).catch(() => null);
   const links = [
     { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
     { href: "/dashboard/listings", label: "My listings", icon: CarFront },
@@ -29,7 +29,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <p className="truncate text-sm font-bold">{me?.name}</p>
               <p className="flex items-center gap-1 text-[11px] text-slate-300">
                 {me?.role}
-                {(me?.idVerified || me?.verified) && <BadgeCheck className="size-3 text-gold-light" />}
+                {(me?.idVerified || me?.dealerProfile?.verified) && <BadgeCheck className="size-3 text-gold-light" />}
               </p>
             </div>
           </div>
@@ -41,7 +41,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             ))}
           </nav>
           <Link href="/sell" className="mt-3 block"><Button className="w-full"><PlusCircle />New listing</Button></Link>
-          {!(me?.idVerified || me?.verified) && (
+          {!(me?.idVerified || me?.dealerProfile?.verified || me?.role === "ADMIN") && (
             <Link href="/dashboard/settings" className="mt-2 block rounded-xl border border-dashed border-gold/60 bg-gold/10 p-3 text-xs font-semibold text-navy hover:bg-gold/20">
               Get verified — buyers contact verified sellers 3× more →
             </Link>

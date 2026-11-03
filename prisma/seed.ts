@@ -438,6 +438,12 @@ async function main() {
     });
   }
 
+  // Demo accounts are pre-verified (trusted seed data) — real signups verify via KYC
+  await prisma.user.updateMany({
+    where: { email: { in: ["admin@motiva.co.ke", "seller@motiva.co.ke", "coast@motiva.co.ke", "lake@motiva.co.ke", "rift@motiva.co.ke"] } },
+    data: { idVerified: true, verifyNote: null },
+  });
+
   // Flag hire stock (monetization: rentals) — hire-only, kept fully
   // separate from sale stock. Deterministic + idempotent.
   const rentals: [string, number][] = [

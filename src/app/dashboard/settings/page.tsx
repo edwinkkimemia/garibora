@@ -11,16 +11,19 @@ export default async function SettingsPage() {
   const session = await auth();
   const user = await prisma.user.findUnique({
     where: { id: session!.user!.id! },
-    select: { name: true, email: true, phone: true, idNumber: true, kraPin: true, idDocUrl: true, kraPinDocUrl: true, bizPermitUrl: true, role: true, idVerified: true, verified: true, verifyNote: true, dealerProfile: { select: { businessName: true, location: true } } },
+    select: { name: true, email: true, phone: true, idNumber: true, kraPin: true, idDocUrl: true, kraPinDocUrl: true, bizPermitUrl: true, role: true, idVerified: true, verified: true, verifyNote: true, dealerProfile: { select: { businessName: true, location: true, verified: true } } },
   }).catch(() => null);
   if (!user) return <p className="text-sm text-muted-foreground">Could not load your profile.</p>;
 
   const submitted = !!(user.idNumber || user.kraPin || user.idDocUrl || user.kraPinDocUrl || user.bizPermitUrl);
+  const dealerVerified = user.dealerProfile?.verified ?? false;
   const verification = user.idVerified
     ? { label: "Verified seller", cls: "bg-emerald-50 text-emerald-700", icon: BadgeCheck }
-    : submitted
-      ? { label: "Documents under review (within 24h)", cls: "bg-amber-50 text-amber-800", icon: Clock }
-      : null;
+    : dealerVerified
+      ? { label: "Verified dealer yard", cls: "bg-emerald-50 text-emerald-700", icon: BadgeCheck }
+      : submitted
+        ? { label: "Documents under review (within 24h)", cls: "bg-amber-50 text-amber-800", icon: Clock }
+        : null;
 
   return (
     <div>

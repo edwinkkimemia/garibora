@@ -35,10 +35,11 @@ export async function registerAction(prev: unknown, formData: FormData) {
   redirect("/login?registered=1");
 }
 
-/** Sellers must be verified (ID approved, verified dealer, or admin) before listing. */
+/** Sellers must be genuinely verified before listing: approved ID, a verified
+ *  dealer yard, or admin. (The legacy `verified` flag alone is NOT enough.) */
 export function canList(u: { idVerified: boolean; verified: boolean; role: string; dealerProfile?: { verified: boolean } | null } | null | undefined) {
   if (!u) return false;
-  return u.idVerified || u.verified || u.role === "ADMIN" || (u.dealerProfile?.verified ?? false);
+  return u.idVerified || u.role === "ADMIN" || (u.dealerProfile?.verified ?? false);
 }
 
 export async function listCarAction(prev: unknown, formData: FormData) {
