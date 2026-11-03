@@ -106,8 +106,10 @@ model User {
 
   accounts      Account[]
   sessions      Session[]
+  // reverse relations
   cars          Car[]        @relation("SellerCars")
   parts         Part[]       @relation("SellerParts")
+  payments      Payment[]
   favorites     Favorite[]
   inquiriesSent Inquiry[]    @relation("BuyerInquiries")
   dealerProfile Dealer?
@@ -347,4 +349,30 @@ model PartImage {
   sortOrder Int     @default(0)
 
   @@index([partId])
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// ---------- M-Pesa Daraja payments (STK push) ----------
+model Payment {
+  id                String        @id @default(cuid())
+  userId            String?
+  user              User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  phone             String // 2547XXXXXXXX
+  amount            Int // KES
+  purpose           String // BOOST_FEATURED_7D | BOOST_TOP_3D | PLAN_GROWTH | PLAN_PREMIUM
+  reference         String // car id, plan id, or "general"
+  merchantRequestId String?
+  checkoutRequestId String?       @unique
+  status            PaymentStatus @default(PENDING)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([status])
+  @@index([checkoutRequestId])
 }

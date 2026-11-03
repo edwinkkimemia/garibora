@@ -2,8 +2,8 @@ import Link from "next/link";
 import { Zap, Store, Check, MessageCircle, Crown } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
+import { PayButton } from "@/components/pay/pay-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { baseMetadata } from "@/lib/seo";
 import { siteConfig } from "@/config/site";
 import { whatsappLink } from "@/lib/utils";
@@ -15,34 +15,32 @@ export const metadata = baseMetadata({
 });
 
 const boosts = [
-  { icon: Zap, name: "Featured — 7 days", price: "KSh 999", d: "Gold badge + top of search, homepage rail and category pages for a full week.", wa: "Hi Motiva! I want the Featured 7-day boost (KSh 999) for my car: …" },
-  { icon: MessageCircle, name: "Top slot — 3 days", price: "KSh 499", d: "Pinned to the top of search results in your town for 72 hours.", wa: "Hi Motiva! I want the Top-slot 3-day boost (KSh 499) for my car: …" },
+  { icon: Zap, name: "Featured — 7 days", price: "KSh 999", amount: 999, purpose: "BOOST_FEATURED_7D", d: "Gold badge + top of search, homepage rail and category pages for a full week." },
+  { icon: MessageCircle, name: "Top slot — 3 days", price: "KSh 499", amount: 499, purpose: "BOOST_TOP_3D", d: "Pinned to the top of search results in your town for 72 hours." },
 ];
 
 const plans = [
   {
-    icon: Store, name: "Starter", price: "Free", per: "forever", tag: "For casual sellers",
+    icon: Store, name: "Starter", price: "Free", amount: 0, purpose: "", per: "forever", tag: "For casual sellers", free: true,
     features: ["5 active listings", "WhatsApp inquiries", "Basic views stats", "Community support"],
-    wa: "Hi Motiva! I'm starting with the free plan.", hot: false,
+    hot: false,
   },
   {
-    icon: Crown, name: "Dealer Growth", price: "KSh 4,999", per: "/month", tag: "For active yards",
+    icon: Crown, name: "Dealer Growth", price: "KSh 4,999", amount: 4999, purpose: "PLAN_GROWTH", per: "/month", tag: "For active yards",
     features: ["50 active listings", "Verified yard badge", "1 free Featured boost / month", "Priority WhatsApp support", "Sold + inquiry analytics"],
-    wa: "Hi Motiva! I want the Dealer Growth plan (KSh 4,999/mo). My yard is …",
     hot: true,
   },
   {
-    icon: Store, name: "Dealer Premium", price: "KSh 9,999", per: "/month", tag: "For top dealers",
+    icon: Store, name: "Dealer Premium", price: "KSh 9,999", amount: 9999, purpose: "PLAN_PREMIUM", per: "/month", tag: "For top dealers",
     features: ["Unlimited listings", "Homepage dealer spotlight", "4 free Featured boosts / month", "Dedicated account manager", "First access to new features"],
-    wa: "Hi Motiva! I want Dealer Premium (KSh 9,999/mo). My yard is …",
     hot: false,
   },
 ];
 
 const steps = [
-  ["Pick a boost or plan", "Tap WhatsApp on any option — your message arrives pre-filled with what you want."],
-  ["Pay via M-Pesa", "Buy Goods Till No. 567890 (Motiva Ltd). Send the M-Pesa code back in chat."],
-  ["Live in minutes", "We verify payment and flip the switch — badge, top placement and all. You get a confirmation with the expiry date."],
+  ["Pick a boost or plan", "Tap Pay and enter your M-Pesa number — or pay manually to Till 1781595."],
+  ["Approve on your phone", "An STK push lands instantly. Enter your M-Pesa PIN — takes 10 seconds."],
+  ["Live in minutes", "We confirm payment and flip the switch — badge, top placement and all, with an expiry date."],
 ];
 
 const faqs = [
@@ -74,9 +72,8 @@ export default function PricingPage() {
               <CardContent>
                 <p className="text-3xl font-extrabold text-navy">{b.price}</p>
                 <p className="mt-1 text-sm text-muted-foreground">{b.d}</p>
-                <a href={whatsappLink(siteConfig.whatsappNumber, b.wa)} target="_blank" rel="noreferrer">
-                  <Button className="mt-4 w-full bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />Activate via WhatsApp</Button>
-                </a>
+                <div className="mt-4"><PayButton amount={b.amount} purpose={b.purpose} label={b.name} /></div>
+                <p className="mt-2 text-center text-xs text-muted-foreground">or pay manually to Till <b>1781595</b>, then <a className="font-semibold text-gold-dark hover:underline" target="_blank" rel="noreferrer" href={whatsappLink(siteConfig.whatsappNumber, `Hi Motiva! I paid ${b.price} to Till 1781595 for ${b.name}. M-Pesa code: …`)}>share the code on WhatsApp</a></p>
               </CardContent>
             </Card>
           ))}
@@ -96,9 +93,14 @@ export default function PricingPage() {
                 <ul className="mt-3 space-y-1.5 text-sm">
                   {p.features.map((f) => <li key={f} className="flex items-start gap-2"><Check className="mt-0.5 size-4 shrink-0 text-emerald-600" />{f}</li>)}
                 </ul>
-                <a href={whatsappLink(siteConfig.whatsappNumber, p.wa)} target="_blank" rel="noreferrer">
-                  <Button className={`mt-4 w-full ${p.hot ? "bg-navy text-gold-light hover:bg-navy-800" : ""}`} variant={p.hot ? "default" : "outline"}>Choose {p.name}</Button>
-                </a>
+                {p.free ? (
+                  <Link href="/sell"><Button className="mt-4 w-full" variant="outline">Start free</Button></Link>
+                ) : (
+                  <>
+                    <div className="mt-4"><PayButton amount={p.amount} purpose={p.purpose} label={p.name} /></div>
+                    <p className="mt-2 text-center text-xs text-muted-foreground">or Till <b>1781595</b> + <a className="font-semibold text-gold-dark hover:underline" target="_blank" rel="noreferrer" href={whatsappLink(siteConfig.whatsappNumber, `Hi Motiva! I paid ${p.price} to Till 1781595 for ${p.name}. M-Pesa code: …`)}>WhatsApp the code</a></p>
+                  </>
+                )}
               </CardContent>
             </Card>
           ))}
