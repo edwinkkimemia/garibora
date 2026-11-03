@@ -22,7 +22,7 @@ export default async function AdminListingsPage() {
   ]);
   return (
     <div>
-      <Breadcrumbs items={[{ label: "Admin", href: "/admin" }, { label: "Listing review" }]} />
+      <Breadcrumbs variant="inline" items={[{ label: "Admin", href: "/admin" }, { label: "Listing review" }]} />
       <h1 className="text-2xl font-extrabold">Review queue ({queue.length})</h1>
       <p className="mt-1 text-sm text-muted-foreground">Approving sets a car ACTIVE + verified. Check photos, price sanity and seller ID first.</p>
       <div className="mt-5 grid gap-3">

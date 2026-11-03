@@ -106,19 +106,30 @@ async function requireAdmin() {
   return me;
 }
 
-/** Seller updates own profile + submits ID for verification. */
+/** Seller: updates own profile + submits KYC documents for verification. */
 export async function updateProfileAction(prev: unknown, formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return { error: "Please log in." };
   const name = String(formData.get("name") || "").trim();
   const phone = String(formData.get("phone") || "").trim();
   const idNumber = String(formData.get("idNumber") || "").trim();
+  const kraPin = String(formData.get("kraPin") || "").trim().toUpperCase();
+  const first = (k: string) => {
+    const v = formData.getAll(k).filter(Boolean) as string[];
+    return v[0] ?? null;
+  };
   if (name.length < 2) return { error: "Enter your name." };
+  if (kraPin && !/^[A-Z]\d{9}[A-Z]$/.test(kraPin)) return { error: "KRA PIN looks invalid (e.g. A123456789Z)." };
   await prisma.user.update({
     where: { id: session.user.id },
-    data: { name, phone: phone || null, idNumber: idNumber || null },
+    data: {
+      name, phone: phone || null, idNumber: idNumber || null, kraPin: kraPin || null,
+      idDocUrl: first("idDoc") ?? undefined, kraPinDocUrl: first("kraPinDoc") ?? undefined,
+      bizPermitUrl: first("bizPermit") ?? undefined,
+    },
   });
   revalidatePath("/profile");
+  revalidatePath("/dashboard/settings");
   return { ok: true };
 }
 
@@ -199,6 +210,15 @@ export async function verifyUserAction(userId: string) {
   revalidatePath("/admin/users");
 }
 
+/** Admin: send verification back for corrections with a note. */
+export async function rejectVerificationAction(formData: FormData) {
+  await requireAdmin();
+  const userId = String(formData.get("userId") || "");
+  const note = String(formData.get("note") || "").trim() || "Documents unclear — please re-upload sharper photos.";
+  if (!userId) return;
+  await prisma.user.update({ where: { id: userId }, data: { idVerified: false, verifyNote: note } });
+  revalidatePath("/admin/users");
+}
 /** Admin: change a user's role (used directly as a form action). */
 export async function setUserRoleAction(formData: FormData) {
   try { await requireAdmin(); } catch { return; }

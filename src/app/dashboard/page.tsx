@@ -37,7 +37,7 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <Breadcrumbs items={[{ label: "Dashboard" }]} />
+      <Breadcrumbs variant="inline" items={[{ label: "Dashboard" }]} />
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-extrabold md:text-3xl">Karibu, {session?.user?.name?.split(" ")[0] ?? "member"} 👋</h1>

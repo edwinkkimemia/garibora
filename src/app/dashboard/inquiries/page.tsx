@@ -25,7 +25,7 @@ export default async function InquiriesPage({ searchParams }: { searchParams: Pr
 
   return (
     <div>
-      <Breadcrumbs items={[{ label: "Dashboard", href: "/dashboard" }, { label: "Inquiries" }]} />
+      <Breadcrumbs variant="inline" items={[{ label: "Dashboard", href: "/dashboard" }, { label: "Inquiries" }]} />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-extrabold md:text-3xl">Inquiries {unread > 0 && <Badge variant="success">{unread} unread</Badge>}</h1>
         <div className="flex gap-2">

@@ -93,9 +93,14 @@ model User {
   image         String?
   role          Role      @default(BUYER)
   verified      Boolean   @default(false)
-  // Seller verification (private sellers, not just dealers)
+  // Seller verification (private sellers, not just dealers) — ID + KRA + docs
   idNumber      String?
-  idVerified    Boolean   @default(false)
+  kraPin        String?
+  idDocUrl      String? // national ID / passport photo
+  kraPinDocUrl  String? // KRA PIN certificate photo
+  bizPermitUrl  String? // business permit (dealers / commercial sellers)
+  idVerified    Boolean @default(false)
+  verifyNote    String? // admin note (e.g. reason for rejection)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

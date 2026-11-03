@@ -26,7 +26,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
 
   return (
     <div>
-      <Breadcrumbs items={[{ label: "Dashboard", href: "/dashboard" }, { label: "My listings" }]} />
+      <Breadcrumbs variant="inline" items={[{ label: "Dashboard", href: "/dashboard" }, { label: "My listings" }]} />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-extrabold md:text-3xl">My listings</h1>
         <Link href="/sell"><Button size="sm"><PlusCircle />New listing</Button></Link>

@@ -1,29 +1,62 @@
+import Image from "next/image";
 import prisma from "@/lib/prisma";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/card";
 import { Input, Select } from "@/components/ui/input";
-import { verifyUserAction, setUserRoleAction } from "@/lib/actions";
+import { verifyUserAction, setUserRoleAction, rejectVerificationAction } from "@/lib/actions";
 
 export const metadata = { title: "Admin — users & sellers" };
 
+const pendingWhere = {
+  idVerified: false,
+  OR: [{ idNumber: { not: null } }, { kraPin: { not: null } }, { idDocUrl: { not: null } }, { kraPinDocUrl: { not: null } }, { bizPermitUrl: { not: null } }],
+};
+
+function Doc({ url, label }: { url: string | null; label: string }) {
+  if (!url) return <span className="rounded bg-muted px-2 py-1 text-[11px] text-muted-foreground">{label}: —</span>;
+  return (
+    <a href={url} target="_blank" rel="noreferrer" className="group relative block h-14 w-20 overflow-hidden rounded-lg border" title={`View ${label}`}>
+      <Image src={url} alt={label} fill className="object-cover transition group-hover:scale-105" sizes="100px" />
+      <span className="absolute bottom-0 inset-x-0 bg-navy/85 px-1 py-0.5 text-center text-[10px] font-bold text-gold-light">{label} ↗</span>
+    </a>
+  );
+}
+
 export default async function AdminUsersPage() {
   const [requests, users] = await Promise.all([
-    prisma.user.findMany({ where: { idNumber: { not: null }, idVerified: false }, orderBy: { createdAt: "desc" }, take: 30 }).catch(() => []),
+    prisma.user.findMany({ where: pendingWhere as never, orderBy: { createdAt: "desc" }, take: 30 }).catch(() => []),
     prisma.user.findMany({ orderBy: { createdAt: "desc" }, take: 50 }).catch(() => []),
   ]);
   return (
     <div>
-      <Breadcrumbs items={[{ label: "Admin", href: "/admin" }, { label: "Users & sellers" }]} />
+      <Breadcrumbs variant="inline" items={[{ label: "Admin", href: "/admin" }, { label: "Users & sellers" }]} />
       <h1 className="text-2xl font-extrabold">Seller verification ({requests.length} pending)</h1>
+      <p className="mt-1 text-sm text-muted-foreground">Check ID number + KRA PIN against the document photos, then verify or request changes.</p>
+
       <div className="mt-4 grid gap-3">
         {requests.map((u) => (
-          <div key={u.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-card p-4">
-            <div className="text-sm">
-              <p className="font-bold">{u.name} <Badge variant="outline">{u.role}</Badge></p>
-              <p className="text-muted-foreground">{u.email}{u.phone ? ` • ${u.phone}` : ""} • ID: <b>{u.idNumber}</b></p>
+          <div key={u.id} className="rounded-2xl border bg-card p-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="text-sm">
+                <p className="font-bold">{u.name} <Badge variant="outline">{u.role}</Badge></p>
+                <p className="text-muted-foreground">{u.email}{u.phone ? ` • ${u.phone}` : ""}</p>
+                <p className="mt-1 text-xs">ID: <b>{u.idNumber ?? "—"}</b> • KRA: <b>{u.kraPin ?? "—"}</b></p>
+              </div>
+              <form action={async () => { "use server"; await verifyUserAction(u.id); }}>
+                <Button size="sm">Verify seller ✓</Button>
+              </form>
             </div>
-            <form action={async () => { "use server"; await verifyUserAction(u.id); }}><Button size="sm">Verify seller ✓</Button></form>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Doc url={u.idDocUrl} label="ID" />
+              <Doc url={u.kraPinDocUrl} label="KRA PIN" />
+              <Doc url={u.bizPermitUrl} label="Permit" />
+            </div>
+            <form action={rejectVerificationAction} className="mt-3 flex gap-2">
+              <input type="hidden" name="userId" value={u.id} />
+              <Input name="note" placeholder="Reason (e.g. ID photo blurry, KRA name mismatch)…" className="h-8 text-xs" />
+              <Button size="sm" variant="outline" className="shrink-0">Request changes</Button>
+            </form>
           </div>
         ))}
         {requests.length === 0 && <p className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">No pending ID verifications.</p>}

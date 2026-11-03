@@ -16,7 +16,7 @@ export default async function RequestsPage() {
   }).catch(() => []);
   return (
     <div>
-      <Breadcrumbs items={[{ label: "Dashboard", href: "/dashboard" }, { label: "My requests" }]} />
+      <Breadcrumbs variant="inline" items={[{ label: "Dashboard", href: "/dashboard" }, { label: "My requests" }]} />
       <h1 className="text-2xl font-extrabold">Cars I asked about ({sent.length})</h1>
       <div className="mt-5 grid gap-4">
         {sent.map((q) => (

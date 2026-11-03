@@ -25,7 +25,7 @@ export default async function AdminPage() {
   ];
   return (
     <div>
-      <Breadcrumbs items={[{ label: "Admin" }]} />
+      <Breadcrumbs variant="inline" items={[{ label: "Admin" }]} />
       <h1 className="text-3xl font-extrabold">Admin overview</h1>
       <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {stats.map(([t, v, href]) => (

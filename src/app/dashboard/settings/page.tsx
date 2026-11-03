@@ -11,21 +11,25 @@ export default async function SettingsPage() {
   const session = await auth();
   const user = await prisma.user.findUnique({
     where: { id: session!.user!.id! },
-    select: { name: true, email: true, phone: true, idNumber: true, role: true, idVerified: true, verified: true, dealerProfile: { select: { businessName: true, location: true } } },
+    select: { name: true, email: true, phone: true, idNumber: true, kraPin: true, idDocUrl: true, kraPinDocUrl: true, bizPermitUrl: true, role: true, idVerified: true, verified: true, verifyNote: true, dealerProfile: { select: { businessName: true, location: true } } },
   }).catch(() => null);
   if (!user) return <p className="text-sm text-muted-foreground">Could not load your profile.</p>;
 
+  const submitted = !!(user.idNumber || user.kraPin || user.idDocUrl || user.kraPinDocUrl || user.bizPermitUrl);
   const verification = user.idVerified
     ? { label: "Verified seller", cls: "bg-emerald-50 text-emerald-700", icon: BadgeCheck }
-    : user.idNumber
-      ? { label: "ID under review (within 24h)", cls: "bg-amber-50 text-amber-800", icon: Clock }
+    : submitted
+      ? { label: "Documents under review (within 24h)", cls: "bg-amber-50 text-amber-800", icon: Clock }
       : null;
 
   return (
     <div>
-      <Breadcrumbs items={[{ label: "Dashboard", href: "/dashboard" }, { label: "Settings" }]} />
+      <Breadcrumbs variant="inline" items={[{ label: "Dashboard", href: "/dashboard" }, { label: "Settings" }]} />
       <h1 className="text-2xl font-extrabold md:text-3xl">Settings</h1>
       <p className="mt-1 text-sm text-muted-foreground">{user.email} • {user.role}</p>
+      {user.verifyNote && !user.idVerified && (
+        <p className="mt-2 rounded-xl bg-red-50 p-3 text-sm text-red-700"><b>Reviewer note:</b> {user.verifyNote} — update your documents below and resubmit.</p>
+      )}
       <div className="mt-3 flex flex-wrap gap-2">
         {verification ? (
           <span className={`flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold ${verification.cls}`}>
@@ -43,9 +47,9 @@ export default async function SettingsPage() {
         </CardContent></Card>
       )}
       <Card className="mt-4">
-        <CardHeader><CardTitle className="text-lg">Profile & verification</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-lg">Profile & verification documents</CardTitle></CardHeader>
         <CardContent>
-          <ProfileForm user={{ name: user.name, phone: user.phone, idNumber: user.idNumber }} />
+          <ProfileForm user={{ name: user.name, phone: user.phone, idNumber: user.idNumber, kraPin: user.kraPin, idDocUrl: user.idDocUrl, kraPinDocUrl: user.kraPinDocUrl, bizPermitUrl: user.bizPermitUrl }} />
           <p className="mt-3 text-xs text-muted-foreground">Verified sellers get a badge on listings and rank higher in search — buyers contact you 3× more.</p>
         </CardContent>
       </Card>
