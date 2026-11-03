@@ -49,31 +49,31 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
 
       <div className="mt-4 grid gap-3">
         {cars.map((c) => (
-          <div key={c.id} className="flex flex-col gap-3 rounded-2xl border bg-card p-3 shadow-sm sm:flex-row sm:items-center">
-            <Link href={`/cars/${c.slug}`} className="relative block h-28 w-full shrink-0 overflow-hidden rounded-xl bg-muted sm:h-24 sm:w-40">
+          <div key={c.id} className="grid gap-4 rounded-2xl border bg-card p-3 shadow-sm sm:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-[220px_minmax(0,1fr)_auto]">
+            <Link href={`/cars/${c.slug}`} className="relative block h-40 w-full shrink-0 overflow-hidden rounded-xl bg-muted sm:h-full sm:min-h-28">
               {c.images[0] && <Image src={c.images[0].url} alt={c.title} fill className="object-cover" sizes="200px" />}
               {c.verified && <span className="absolute left-1.5 top-1.5 rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white">Verified</span>}
             </Link>
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-bold">{c.title}</p>
-              <p className="mt-0.5 text-sm font-extrabold text-navy">{formatKES(c.price)} <Badge variant={c.status === "ACTIVE" ? "success" : c.status === "PENDING" ? "outline" : "secondary"}>{c.status}</Badge></p>
+            <div className="min-w-0">
+              <p className="truncate text-base font-bold">{c.title}</p>
+              <p className="mt-1 flex flex-wrap items-center gap-2 text-sm font-extrabold text-navy">{formatKES(c.price)} <Badge variant={c.status === "ACTIVE" ? "success" : c.status === "PENDING" ? "outline" : "secondary"}>{c.status}</Badge></p>
               {boostActive(c) && (
                 <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-gold/15 px-2 py-0.5 text-[11px] font-bold text-gold-dark">
                   <Zap className="size-3" /> Featured{c.featuredUntil ? ` till ${new Date(c.featuredUntil).toLocaleDateString("en-KE", { day: "numeric", month: "short" })}` : ""}
                 </p>
               )}
-              <p className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
+              <p className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1"><Eye className="size-3" />{c.views} views</span>
                 <span className="inline-flex items-center gap-1"><Heart className="size-3" />{c._count.favorites} saves</span>
                 <span className="inline-flex items-center gap-1"><MessageCircle className="size-3" />{c._count.inquiries} inquiries</span>
               </p>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                <Link href={`/cars/${c.slug}`}><Button size="sm" variant="outline"><ExternalLink />View</Button></Link>
-                {c.status === "ACTIVE" && !boostActive(c) && <BoostModal carId={c.id} carTitle={c.title} />}
-                {c.status === "ACTIVE" && <form action={async () => { "use server"; await markSoldAction(c.id); }}><Button size="sm" variant="secondary"><BadgeDollarSign />Mark sold</Button></form>}
-                {c.status === "SOLD" && <form action={async () => { "use server"; await relistAction(c.id); }}><Button size="sm" variant="secondary"><RotateCcw />Relist</Button></form>}
-                <form action={async () => { "use server"; await deleteListingAction(c.id); }}><Button size="sm" variant="ghost" className="text-red-600 hover:bg-red-50 hover:text-red-700"><Trash2 />Delete</Button></form>
-              </div>
+            </div>
+            <div className="flex flex-row flex-wrap gap-1.5 sm:col-span-2 sm:pt-1 lg:col-span-1 lg:w-36 lg:flex-col lg:items-stretch lg:justify-center lg:pt-0">
+              <Link href={`/cars/${c.slug}`} className="lg:w-full"><Button size="sm" variant="outline" className="w-full"><ExternalLink />View</Button></Link>
+                {c.status === "ACTIVE" && !boostActive(c) && <BoostModal carId={c.id} carTitle={c.title} triggerClassName="w-full" />}
+                {c.status === "ACTIVE" && <form action={async () => { "use server"; await markSoldAction(c.id); }}><Button size="sm" variant="secondary" className="w-full"><BadgeDollarSign />Mark sold</Button></form>}
+                {c.status === "SOLD" && <form action={async () => { "use server"; await relistAction(c.id); }}><Button size="sm" variant="secondary" className="w-full"><RotateCcw />Relist</Button></form>}
+                <form action={async () => { "use server"; await deleteListingAction(c.id); }}><Button size="sm" variant="ghost" className="w-full text-red-600 hover:bg-red-50 hover:text-red-700"><Trash2 />Delete</Button></form>
             </div>
           </div>
         ))}

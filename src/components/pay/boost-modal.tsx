@@ -12,13 +12,13 @@ const OPTIONS = [
 ];
 
 /** Boost flow: option cards + M-Pesa STK in a focused modal. */
-export function BoostModal({ carId, carTitle }: { carId: string; carTitle: string }) {
+export function BoostModal({ carId, carTitle, triggerClassName = "" }: { carId: string; carTitle: string; triggerClassName?: string }) {
   const [open, setOpen] = useState(false);
   const [opt, setOpt] = useState(OPTIONS[0]);
 
   if (!open) {
     return (
-      <Button size="sm" className="bg-gold text-navy hover:bg-gold-dark hover:text-white" onClick={() => setOpen(true)}>
+      <Button size="sm" className={`bg-gold text-navy hover:bg-gold-dark hover:text-white ${triggerClassName}`} onClick={() => setOpen(true)}>
         <Zap />Boost
       </Button>
     );
