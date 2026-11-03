@@ -11,6 +11,7 @@ export default async function DealerDetailPage({ params }: { params: Promise<{ s
   const { slug } = await params;
   const dealer = await prisma.dealer.findUnique({ where: { slug }, include: { cars: { where: { status: "ACTIVE" }, include: { images: true, dealer: { select: { businessName: true } } } } } }).catch(() => null);
   if (!dealer) notFound();
+  dealer.cars = shuffle(dealer.cars);
   return (
     <div className="container py-8">
       <Breadcrumbs items={[{ label: "Dealers", href: "/dealers" }, { label: dealer.businessName }]} />

@@ -37,3 +37,13 @@ export function whatsappLink(phone: string, text: string): string {
   const clean = phone.replace(/[^0-9]/g, "");
   return `https://wa.me/${clean}?text=${encodeURIComponent(text)}`;
 }
+
+/** Fisher–Yates shuffle — fresh discovery order on every refresh. */
+export function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ShieldCheck, Star } from "lucide-react";
 import prisma from "@/lib/prisma";
+import { shuffle } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { baseMetadata } from "@/lib/seo";
 
@@ -15,7 +16,8 @@ import { Button } from "@/components/ui/button";
 export const revalidate = 120;
 
 export default async function DealersPage() {
-  const dealers = await prisma.dealer.findMany({ where: { verified: true }, orderBy: { rating: "desc" }, take: 24 }).catch(() => []);
+  const dealersRaw = await prisma.dealer.findMany({ where: { verified: true }, orderBy: { rating: "desc" }, take: 24 }).catch(() => []);
+  const dealers = shuffle(dealersRaw);
   return (
     <div className="container py-8">
       <Breadcrumbs items={[{ label: "Dealers" }]} />

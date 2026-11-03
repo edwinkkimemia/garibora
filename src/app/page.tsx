@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/card";
 import { siteConfig } from "@/config/site";
 import prisma from "@/lib/prisma";
+import { shuffle } from "@/lib/utils";
 
 export const revalidate = 60;
 
@@ -23,7 +24,10 @@ async function getHomeData() {
       prisma.post.findMany({ where: { published: true }, take: 3, orderBy: { createdAt: "desc" } }),
       prisma.car.count({ where: { status: "ACTIVE" } }),
     ]);
-    return { featured, newCars, recent, hireCars, dealers, posts, total };
+    return {
+      featured: shuffle(featured), newCars: shuffle(newCars), recent: shuffle(recent),
+      hireCars: shuffle(hireCars), dealers: shuffle(dealers), posts, total,
+    };
   } catch {
     return { featured: [], newCars: [], recent: [], hireCars: [], dealers: [], posts: [], total: 0 };
   }

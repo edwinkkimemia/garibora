@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { shuffle } from "@/lib/utils";
 import type { CarFilters } from "@/lib/validations";
 import type { Prisma } from "@prisma/client";
 
@@ -51,7 +52,9 @@ export async function searchCars(filters: CarFilters, opts?: { rentalOnly?: bool
     }),
   ]);
 
-  return { cars, total, page, pageSize: PAGE_SIZE, totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)) };
+  // Default view reshuffles every refresh for discovery; explicit sorts + deep pages stay stable.
+  const visible = filters.sort === "newest" && page === 1 ? shuffle(cars) : cars;
+  return { cars: visible, total, page, pageSize: PAGE_SIZE, totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)) };
 }
 
 export async function getCarById(idOrSlug: string) {
@@ -66,7 +69,7 @@ export async function getCarById(idOrSlug: string) {
 }
 
 export async function getSimilarCars(carId: string, make: string, bodyType: string, listingType?: string) {
-  return prisma.car.findMany({
+  const cars = await prisma.car.findMany({
     where: {
       status: "ACTIVE", id: { not: carId },
       listingType: listingType === "RENT" ? { in: ["RENT", "BOTH"] } : { in: ["SALE", "BOTH"] },
@@ -76,6 +79,7 @@ export async function getSimilarCars(carId: string, make: string, bodyType: stri
     include: { images: true, dealer: { select: { businessName: true } } },
     orderBy: { createdAt: "desc" },
   });
+  return shuffle(cars);
 }
 
 /** Only boosts that haven't expired (null = organic/staff pick, always live). */
@@ -87,12 +91,13 @@ export function featuredLive(): Pick<Prisma.CarWhereInput, "featured" | "OR"> {
 }
 
 export async function getFeaturedCars() {
-  return prisma.car.findMany({
+  const cars = await prisma.car.findMany({
     where: { status: "ACTIVE", ...featuredLive() },
     take: 8,
     include: { images: true, dealer: true },
     orderBy: { createdAt: "desc" },
   });
+  return shuffle(cars);
 }
 
 /** Average price of comparable active cars (same make + model family). */
@@ -138,7 +143,8 @@ export async function searchParts(f: PartFilters) {
     prisma.part.count({ where: where as never }),
     prisma.part.findMany({ where: where as never, orderBy: orderBy as never, skip: (page - 1) * pageSize, take: pageSize, include: { images: { orderBy: { sortOrder: "asc" } } } }),
   ]);
-  return { parts, total, page, pageSize, totalPages: Math.max(1, Math.ceil(total / pageSize)) };
+  const visible = (!f.sort || f.sort === "newest") && page === 1 ? shuffle(parts) : parts;
+  return { parts: visible, total, page, pageSize, totalPages: Math.max(1, Math.ceil(total / pageSize)) };
 }
 
 export async function getPartBySlug(slug: string) {
@@ -150,15 +156,17 @@ export async function getPartBySlug(slug: string) {
 
 /** Parts like this one (same category), plus more from the same seller. */
 export async function getSimilarParts(partId: string, category: string) {
-  return prisma.part.findMany({
+  const parts = await prisma.part.findMany({
     where: { status: "ACTIVE", id: { not: partId }, category: category as never },
     take: 4, include: { images: true }, orderBy: { createdAt: "desc" },
   });
+  return shuffle(parts);
 }
 
 export async function getSellerParts(sellerId: string, excludeId: string) {
-  return prisma.part.findMany({
+  const parts = await prisma.part.findMany({
     where: { status: "ACTIVE", sellerId, id: { not: excludeId } },
     take: 4, include: { images: true }, orderBy: { createdAt: "desc" },
   });
+  return shuffle(parts);
 }
