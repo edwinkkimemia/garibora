@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { ShieldCheck, Phone, Star } from "lucide-react";
 import prisma from "@/lib/prisma";
+import { shuffle } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { CarCard } from "@/components/cars/car-card";
 import { Button } from "@/components/ui/button";

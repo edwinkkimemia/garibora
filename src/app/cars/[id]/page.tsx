@@ -155,7 +155,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
               <p className="mt-3 flex items-start gap-1 text-xs text-muted-foreground"><ShieldCheck className="mt-0.5 size-3 shrink-0" /> Safety: meet in public, verify logbook on NTSA, never pay before viewing.</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hidden lg:block">
             <CardHeader><CardTitle className="text-base">Request details</CardTitle></CardHeader>
             <CardContent><InquiryForm carId={car.id} /></CardContent>
           </Card>
@@ -171,7 +171,11 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
             </dl>
           </CardContent>
         </Card>
-        <Card className="order-4 min-w-0 lg:col-start-1">
+        <Card className="order-4 min-w-0 lg:hidden">
+          <CardHeader><CardTitle className="text-base">Request details</CardTitle></CardHeader>
+          <CardContent><InquiryForm carId={car.id} /></CardContent>
+        </Card>
+        <Card className="order-5 min-w-0 lg:col-start-1">
           <CardHeader><CardTitle>Seller&apos;s notes</CardTitle></CardHeader>
           <CardContent><p className="whitespace-pre-line text-sm leading-relaxed">{car.description}</p></CardContent>
         </Card>
