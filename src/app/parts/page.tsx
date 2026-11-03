@@ -1,8 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { CarCard } from "@/components/cars/car-card";
 import { PartCard, partLabel } from "@/components/parts/part-card";
-import { searchParts, type PartFilters } from "@/lib/queries";
+import { PartsEnquiry } from "@/components/parts/parts-enquiry";
+import { getFeaturedCars, searchParts, type PartFilters } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
 import { baseMetadata } from "@/lib/seo";
@@ -25,7 +28,10 @@ export default async function PartsPage({ searchParams }: { searchParams: Promis
     maxPrice: raw.maxPrice ? Number(raw.maxPrice) : undefined,
     sort: (raw.sort as PartFilters["sort"]) || "newest", page: raw.page ? Number(raw.page) : 1,
   };
-  const { parts, total, page, totalPages } = await searchParts(filters).catch(() => ({ parts: [], total: 0, page: 1, totalPages: 1 }));
+  const [{ parts, total, page, totalPages }, featured] = await Promise.all([
+    searchParts(filters).catch(() => ({ parts: [], total: 0, page: 1, totalPages: 1 })),
+    getFeaturedCars().catch(() => []),
+  ]);
 
   const qs = (over: Record<string, string>) => {
     const sp = new URLSearchParams();
@@ -88,7 +94,26 @@ export default async function PartsPage({ searchParams }: { searchParams: Promis
             {page < totalPages && <Link href={qs({ page: String(page + 1) })}><Button variant="outline">Next</Button></Link>}
           </div>
         )}
+
+        <PartsEnquiry />
       </div>
+
+      {featured.length > 0 && (
+        <section className="border-t bg-muted/40 py-12">
+          <div className="container">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-dark">Hand-picked</p>
+                <h2 className="mt-1 text-2xl font-extrabold md:text-3xl">Featured cars</h2>
+              </div>
+              <Link href="/cars"><Button variant="outline" size="sm">View all <ArrowRight /></Button></Link>
+            </div>
+            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {featured.slice(0, 4).map((c) => <CarCard key={c.id} car={c as never} />)}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
