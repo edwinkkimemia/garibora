@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LayoutDashboard, CarFront, Inbox, Send, PlusCircle, Settings, BadgeCheck } from "lucide-react";
+import { LayoutDashboard, CarFront, Inbox, Send, PlusCircle, Settings, BadgeCheck, Crown } from "lucide-react";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     { href: "/dashboard/listings", label: "My listings", icon: CarFront },
     { href: "/dashboard/inquiries", label: "Inquiries", icon: Inbox },
     { href: "/dashboard/requests", label: "My requests", icon: Send },
+    { href: "/dashboard/plans", label: "Plans & billing", icon: Crown },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
   return (

@@ -7,7 +7,6 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/card";
-import { PayButton } from "@/components/pay/pay-button";
 import { formatKES } from "@/lib/utils";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { whatsappLink } from "@/lib/utils";
@@ -108,23 +107,17 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      {/* Dealer plans — pay here */}
-      <Card className="mt-6 border-gold/50">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-base"><Crown className="size-4 text-gold-dark" /> Dealer plans — pay via M-Pesa</CardTitle>
-          <Link href="/pricing" className="text-xs font-bold text-gold-dark hover:underline">Compare plans →</Link>
-        </CardHeader>
-        <CardContent className="grid gap-3 md:grid-cols-2">
-          <div className="rounded-xl border p-3">
-            <p className="text-sm font-bold">Growth — KSh 4,999/mo <span className="ml-1 rounded-full bg-gold/15 px-2 py-0.5 text-[10px] text-gold-dark">POPULAR</span></p>
-            <div className="mt-2"><PayButton amount={4999} purpose="PLAN_GROWTH" reference={uid} label="Dealer Growth" /></div>
+      {/* Dealer plans upsell */}
+      <Link href="/dashboard/plans" className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-navy p-5 text-white transition hover:shadow-lg">
+        <div className="flex items-center gap-3">
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-gold text-navy"><Crown className="size-5" /></span>
+          <div>
+            <p className="font-extrabold">Selling more than a few cars? <span className="text-gold-light">Go Growth from KSh 4,999/mo.</span></p>
+            <p className="text-sm text-slate-300">50 listings, verified yard badge, monthly boosts — pay by M-Pesa.</p>
           </div>
-          <div className="rounded-xl border p-3">
-            <p className="text-sm font-bold">Premium — KSh 9,999/mo</p>
-            <div className="mt-2"><PayButton amount={9999} purpose="PLAN_PREMIUM" reference={uid} label="Dealer Premium" /></div>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+        <span className="rounded-xl bg-gold px-4 py-2 text-sm font-bold text-navy">View plans →</span>
+      </Link>
 
       {/* Top performing */}
       {top.length > 0 && (        <Card className="mt-6">
