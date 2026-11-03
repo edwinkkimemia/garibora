@@ -87,7 +87,6 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
           <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="size-4" />{car.location}, Kenya • {car.views} views</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <ShareButtons title={car.title} path={`/cars/${car.slug}`} />
           <FavoriteButton carId={car.id} saved={saved} />
           <a href={wa} target="_blank" rel="noreferrer"><Button className="bg-[#25D366] hover:bg-[#1eb85a]"><WhatsAppIcon />{isRent ? "WhatsApp to book" : "WhatsApp seller"}</Button></a>
         </div>
@@ -96,6 +95,10 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
         <div>
           <CarGallery images={car.images} title={car.title} />
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border bg-card p-3">
+            <p className="text-sm font-bold">Share this car</p>
+            <ShareButtons title={car.title} path={`/cars/${car.slug}`} />
+          </div>
           <Card className="mt-6">
             <CardHeader><CardTitle>Specifications</CardTitle></CardHeader>
             <CardContent>

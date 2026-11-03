@@ -53,13 +53,16 @@ export default async function PartDetailPage({ params }: { params: Promise<{ slu
           <h1 className="mt-2 text-2xl font-extrabold md:text-3xl">{part.title}</h1>
           <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="size-4" />{part.location}, Kenya</p>
         </div>
-        <ShareButtons title={part.title} path={`/parts/${part.slug}`} />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
         <div>
           <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border bg-muted">
             {part.images[0] && <Image src={part.images[0].url} alt={part.title} fill className="object-cover" priority sizes="800px" />}
+          </div>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border bg-card p-3">
+            <p className="text-sm font-bold">Share this part</p>
+            <ShareButtons title={part.title} path={`/parts/${part.slug}`} />
           </div>
           {part.images.length > 1 && (
             <div className="mt-3 grid grid-cols-4 gap-2">
