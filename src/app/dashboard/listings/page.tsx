@@ -6,9 +6,9 @@ import prisma from "@/lib/prisma";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/card";
-import { PayButton } from "@/components/pay/pay-button";
 import { formatKES } from "@/lib/utils";
 import { markSoldAction, deleteListingAction, relistAction } from "@/lib/actions";
+import { BoostModal } from "@/components/pay/boost-modal";
 
 const tabs = ["ALL", "ACTIVE", "PENDING", "SOLD", "REJECTED"] as const;
 
@@ -65,16 +65,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
               </p>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 <Link href={`/cars/${c.slug}`}><Button size="sm" variant="outline"><ExternalLink />View</Button></Link>
-                {c.status === "ACTIVE" && !c.featured && (
-                  <details className="group">
-                    <summary className="inline-flex h-8 cursor-pointer list-none items-center gap-1.5 rounded-xl bg-gold px-3 text-xs font-bold text-navy transition hover:bg-gold-dark hover:text-white [&::-webkit-details-marker]:hidden"><Zap className="size-3.5" />Boost</summary>
-                    <div className="mt-2 w-72 space-y-2 rounded-xl border bg-background p-3 shadow-lg">
-                      <p className="text-xs font-bold">Boost “{c.title.slice(0, 40)}…”</p>
-                      <PayButton amount={999} purpose="BOOST_FEATURED_7D" reference={c.id} label="Featured 7 days" />
-                      <PayButton amount={499} purpose="BOOST_TOP_3D" reference={c.id} label="Top slot 3 days" />
-                    </div>
-                  </details>
-                )}
+                {c.status === "ACTIVE" && !c.featured && <BoostModal carId={c.id} carTitle={c.title} />}
                 {c.status === "ACTIVE" && <form action={async () => { "use server"; await markSoldAction(c.id); }}><Button size="sm" variant="secondary"><BadgeDollarSign />Mark sold</Button></form>}
                 {c.status === "SOLD" && <form action={async () => { "use server"; await relistAction(c.id); }}><Button size="sm" variant="secondary"><RotateCcw />Relist</Button></form>}
                 <form action={async () => { "use server"; await deleteListingAction(c.id); }}><Button size="sm" variant="ghost" className="text-red-600 hover:bg-red-50 hover:text-red-700"><Trash2 />Delete</Button></form>
