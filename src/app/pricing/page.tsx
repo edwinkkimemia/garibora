@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Zap, Store, Check, MessageCircle, Crown } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
@@ -12,31 +13,31 @@ export const metadata = baseMetadata({
 });
 
 const boosts = [
-  { icon: Zap, name: "Featured — 7 days", price: "KSh 999", amount: 999, purpose: "BOOST_FEATURED_7D", d: "Gold badge + top of search, homepage rail and category pages for a full week." },
-  { icon: MessageCircle, name: "Top slot — 3 days", price: "KSh 499", amount: 499, purpose: "BOOST_TOP_3D", d: "Pinned to the top of search results in your town for 72 hours." },
+  { icon: Zap, name: "Featured — 7 days", price: "KSh 999", d: "Gold badge + top of search, homepage rail and category pages for a full week." },
+  { icon: MessageCircle, name: "Top slot — 3 days", price: "KSh 499", d: "Pinned to the top of search results in your town for 72 hours." },
 ];
 
 const plans = [
   {
-    icon: Store, name: "Starter", price: "Free", amount: 0, purpose: "", per: "forever", tag: "For casual sellers", free: true,
+    icon: Store, name: "Starter", price: "Free", per: "forever", tag: "For casual sellers", free: true,
     features: ["5 active listings", "WhatsApp inquiries", "Basic views stats", "Community support"],
     hot: false,
   },
   {
-    icon: Crown, name: "Dealer Growth", price: "KSh 4,999", amount: 4999, purpose: "PLAN_GROWTH", per: "/month", tag: "For active yards",
+    icon: Crown, name: "Dealer Growth", price: "KSh 4,999", per: "/month", tag: "For active yards",
     features: ["50 active listings", "Verified yard badge", "1 free Featured boost / month", "Priority WhatsApp support", "Sold + inquiry analytics"],
     hot: true,
   },
   {
-    icon: Store, name: "Dealer Premium", price: "KSh 9,999", amount: 9999, purpose: "PLAN_PREMIUM", per: "/month", tag: "For top dealers",
+    icon: Store, name: "Dealer Premium", price: "KSh 9,999", per: "/month", tag: "For top dealers",
     features: ["Unlimited listings", "Homepage dealer spotlight", "4 free Featured boosts / month", "Dedicated account manager", "First access to new features"],
     hot: false,
   },
 ];
 
 const steps = [
-  ["Pick a boost or plan", "Tap Pay and enter your M-Pesa number — or pay manually to Till 1781595."],
-  ["Approve on your phone", "An STK push lands instantly. Enter your M-Pesa PIN — takes 10 seconds."],
+  ["Pick a boost or plan", "Boosts live on each of your listings; dealer plans live on your dashboard overview."],
+  ["Tap Pay, enter M-Pesa number", "An STK push lands instantly. Enter your M-Pesa PIN — takes 10 seconds."],
   ["Live in minutes", "We confirm payment and flip the switch — badge, top placement and all, with an expiry date."],
 ];
 
@@ -46,17 +47,23 @@ const faqs = [
   { q: "Do dealers pay to list?", t: "Listing is free up to 5 cars. Yards doing volume take Growth or Premium for more slots, the verified badge and monthly boosts." },
   { q: "What happens when a boost expires?", t: "The car stays live as a normal listing — only the badge and top placement end. Renew anytime from your dashboard." },
   { q: "Is there commission on sales?", t: "No. You keep 100% of the sale price — you only ever pay for visibility." },
+  { q: "Can I pay with Till or Paybill manually?", t: "No — all payments go through instant STK push from your dashboard. It is faster, receipted automatically, and activates your boost or plan immediately." },
+  { q: "Do boosts auto-renew?", t: "Never. Every boost has a fixed expiry date shown on your listing. Renew manually whenever you like." },
 ];
 
 export default function PricingPage() {
   return (
     <div>
       <div className="container pt-8"><Breadcrumbs items={[{ label: "Pricing" }]} /></div>
-      <section className="bg-navy text-white">
-        <div className="container py-12">
+      <section className="relative overflow-hidden bg-navy text-white">
+        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-2/5 sm:block" aria-hidden>
+          <Image src="/hero.jpg" alt="" fill className="object-cover opacity-40" sizes="600px" />
+          <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/50 to-transparent" />
+        </div>
+        <div className="container relative py-12">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-light">No commission. Ever.</p>
           <h1 className="mt-2 max-w-2xl text-4xl font-extrabold md:text-5xl">Pay for visibility, keep the whole sale.</h1>
-          <p className="mt-3 max-w-xl text-slate-200">Listing is free. When you want to sell faster, boost a car or take a dealer plan — activated over M-Pesa in minutes.</p>
+          <p className="mt-3 max-w-xl text-slate-200">Listing is free. When you want to sell faster, boost a car or take a dealer plan — paid securely by M-Pesa STK push, active in minutes.</p>
         </div>
       </section>
 
