@@ -9,7 +9,9 @@ import { approveCarAction, rejectCarAction, approvePartAction, rejectPartAction,
 
 export const metadata = { title: "Admin — listing review" };
 
-export default async function AdminListingsPage() {
+export default async function AdminListingsPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+  const { tab } = await searchParams;
+  const active = tab === "parts" ? "parts" : "cars";
   const [queue, partQueue] = await Promise.all([
     prisma.car.findMany({
       where: { status: "PENDING" }, take: 30, orderBy: { createdAt: "desc" },
@@ -23,8 +25,17 @@ export default async function AdminListingsPage() {
   return (
     <div>
       <Breadcrumbs variant="inline" items={[{ label: "Admin", href: "/admin" }, { label: "Listing review" }]} />
-      <h1 className="text-2xl font-extrabold">Review queue ({queue.length})</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Approving sets a car ACTIVE + verified. Check photos, price sanity and seller ID first.</p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-extrabold md:text-3xl">Review queue</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Approving sets a car ACTIVE + verified. Check photos, price sanity and seller ID first.</p>
+        </div>
+        <div className="flex gap-2">
+          <Link href="/admin/listings"><Button size="sm" variant={active === "cars" ? "default" : "outline"}>Cars ({queue.length})</Button></Link>
+          <Link href="/admin/listings?tab=parts"><Button size="sm" variant={active === "parts" ? "default" : "outline"}>Parts ({partQueue.length})</Button></Link>
+        </div>
+      </div>
+      {active === "cars" ? (
       <div className="mt-5 grid gap-3">
         {queue.map((c) => (
           <div key={c.id} className="flex flex-wrap gap-4 rounded-2xl border bg-card p-3">
@@ -51,8 +62,9 @@ export default async function AdminListingsPage() {
         ))}
         {queue.length === 0 && <p className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">Car queue clear. 🎉</p>}
       </div>
-
-      <h2 className="mt-8 text-xl font-extrabold">Parts review ({partQueue.length})</h2>
+      ) : (
+      <>
+      <h2 className="mt-2 text-xl font-extrabold">Parts review ({partQueue.length})</h2>
       <div className="mt-3 grid gap-3">
         {partQueue.map((p) => (
           <div key={p.id} className="flex flex-wrap gap-4 rounded-2xl border bg-card p-3">
@@ -73,6 +85,8 @@ export default async function AdminListingsPage() {
         ))}
         {partQueue.length === 0 && <p className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">Parts queue clear. 🎉</p>}
       </div>
+      </>
+      )}
     </div>
   );
 }

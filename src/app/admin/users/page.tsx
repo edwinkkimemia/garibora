@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
@@ -23,11 +24,26 @@ function Doc({ url, label }: { url: string | null; label: string }) {
   );
 }
 
-export default async function AdminUsersPage() {
-  const [requests, users] = await Promise.all([
+export default async function AdminUsersPage({ searchParams }: { searchParams: Promise<{ q?: string; role?: string }> }) {
+  const { q, role } = await searchParams;
+  const query = (q || "").trim();
+  const roleFilter = ["BUYER", "SELLER", "DEALER", "ADMIN"].includes(role || "") ? role! : "";
+  const userWhere = {
+    ...(query ? { OR: [{ name: { contains: query, mode: "insensitive" } }, { email: { contains: query, mode: "insensitive" } }, { phone: { contains: query } }] } : {}),
+    ...(roleFilter ? { role: roleFilter as never } : {}),
+  };
+  const [requests, users, counts] = await Promise.all([
     prisma.user.findMany({ where: pendingWhere as never, orderBy: { createdAt: "desc" }, take: 30 }).catch(() => []),
-    prisma.user.findMany({ orderBy: { createdAt: "desc" }, take: 50 }).catch(() => []),
+    prisma.user.findMany({ where: userWhere as never, orderBy: { createdAt: "desc" }, take: 50 }).catch(() => []),
+    prisma.user.groupBy({ by: ["role"], _count: true }).catch(() => [] as { role: string; _count: number }[]),
   ]);
+  const qs = (over: Record<string, string>) => {
+    const sp = new URLSearchParams();
+    if (query) sp.set("q", query);
+    if (roleFilter) sp.set("role", roleFilter);
+    Object.entries(over).forEach(([k, v]) => { if (v) sp.set(k, v); else sp.delete(k); });
+    return `/admin/users?${sp.toString()}`;
+  };
   return (
     <div>
       <Breadcrumbs variant="inline" items={[{ label: "Admin", href: "/admin" }, { label: "Users & sellers" }]} />
@@ -62,7 +78,22 @@ export default async function AdminUsersPage() {
         {requests.length === 0 && <p className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">No pending ID verifications.</p>}
       </div>
 
-      <h2 className="mt-8 text-xl font-extrabold">All users ({users.length})</h2>
+      <h2 className="mt-8 flex flex-wrap items-center justify-between gap-3">
+      <span className="text-xl font-extrabold">All users</span>
+      <span className="text-xs font-normal text-muted-foreground">{counts.map((g) => `${g.role}: ${g._count}`).join(" • ")}</span>
+    </h2>
+    <form className="mt-3 flex flex-wrap gap-2" action="/admin/users" method="get">
+      <Input name="q" defaultValue={query} placeholder="Search name, email, phone…" className="w-64" />
+      {roleFilter && <input type="hidden" name="role" value={roleFilter} />}
+      <Button type="submit" size="sm" variant="secondary">Search</Button>
+      {(query || roleFilter) && <Link href="/admin/users"><Button size="sm" variant="ghost">Clear</Button></Link>}
+    </form>
+    <div className="mt-2 flex flex-wrap gap-2">
+      <Link href={qs({ role: "" })}><Button size="sm" variant={!roleFilter ? "default" : "outline"}>All</Button></Link>
+      {["BUYER", "SELLER", "DEALER", "ADMIN"].map((r) => (
+        <Link key={r} href={qs({ role: roleFilter === r ? "" : r })}><Button size="sm" variant={roleFilter === r ? "default" : "outline"}>{r}s</Button></Link>
+      ))}
+    </div>
       <div className="mt-3 overflow-x-auto rounded-2xl border">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead><tr className="border-b bg-muted/60 text-xs uppercase text-muted-foreground">

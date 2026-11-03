@@ -1,27 +1,30 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ShieldCheck } from "lucide-react";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
-  const me = session?.user?.id ? await prisma.user.findUnique({ where: { id: session.user.id } }).catch(() => null) : null;
+  const me = session?.user?.id ? await prisma.user.findUnique({ where: { id: session.user.id }, select: { name: true, role: true } }).catch(() => null) : null;
   if (!me || me.role !== "ADMIN") redirect("/login?next=/admin");
-  const links = [
-    { href: "/admin", label: "Overview" },
-    { href: "/admin/listings", label: "Listing review" },
-    { href: "/admin/users", label: "Users & sellers" },
-    { href: "/dashboard/settings", label: "My settings" },
-  ];
   return (
-    <div className="container grid gap-6 py-8 lg:grid-cols-[220px_1fr]">
-      <aside className="h-fit rounded-2xl border border-gold/40 bg-navy p-3 text-white lg:sticky lg:top-20">
-        <p className="px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-gold-light">Admin</p>
-        <nav className="grid gap-1">
-          {links.map((l) => <Link key={l.href} href={l.href} className="rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-white/10">{l.label}</Link>)}
-        </nav>
-      </aside>
-      <div>{children}</div>
+    <div className="mx-auto w-full max-w-[1500px] px-4 py-6 md:px-6">
+      <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
+        <aside className="h-fit rounded-2xl bg-navy p-3 text-white shadow-md lg:sticky lg:top-20">
+          <div className="flex items-center gap-2.5 rounded-xl bg-white/5 p-3">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold text-sm font-extrabold text-navy">
+              {(me.name || "A").charAt(0).toUpperCase()}
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold">{me.name}</p>
+              <p className="flex items-center gap-1 text-[11px] text-gold-light"><ShieldCheck className="size-3" /> Administrator</p>
+            </div>
+          </div>
+          <div className="mt-2"><AdminSidebar /></div>
+        </aside>
+        <div className="min-w-0">{children}</div>
+      </div>
     </div>
   );
 }
