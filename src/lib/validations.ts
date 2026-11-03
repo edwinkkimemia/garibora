@@ -67,6 +67,18 @@ export const registerSchema = z.object({
   phone: z.string().min(9).optional(),
   password: z.string().min(8, "Min 8 characters"),
   role: z.enum(["BUYER", "SELLER", "DEALER"]).default("BUYER"),
+  idNumber: z.string().optional(),
+  kraPin: z.string().optional(),
+  idDocUrl: z.string().url().optional(),
+  kraPinDocUrl: z.string().url().optional(),
+  bizPermitUrl: z.string().url().optional(),
+}).superRefine((v, ctx) => {
+  if (v.role !== "BUYER" && !v.idNumber) {
+    ctx.addIssue({ code: "custom", path: ["idNumber"], message: "Sellers must provide a national ID number" });
+  }
+  if (v.kraPin && !/^[A-Z0-9]\d{9}[A-Z0-9]$/i.test(v.kraPin)) {
+    ctx.addIssue({ code: "custom", path: ["kraPin"], message: "KRA PIN looks invalid (e.g. A123456789Z)" });
+  }
 });
 
 export const inquirySchema = z.object({

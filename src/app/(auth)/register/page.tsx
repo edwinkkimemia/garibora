@@ -1,17 +1,21 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { BadgeCheck, KeyRound, Banknote } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
+import { ImageUploader } from "@/components/upload/image-uploader";
 import { registerAction } from "@/lib/actions";
 import { siteConfig } from "@/config/site";
 
 export default function RegisterPage() {
   const [state, action, pending] = useActionState(registerAction, { error: "" } as { error?: string });
+  const [idDoc, setIdDoc] = useState<string[]>([]);
+  const [kraPinDoc, setKraPinDoc] = useState<string[]>([]);
+  const [bizPermit, setBizPermit] = useState<string[]>([]);
   return (
     <div className="container flex min-h-[calc(100vh-4rem)] flex-col justify-center py-4">
       <Breadcrumbs items={[{ label: "Sign up" }]} />
@@ -57,6 +61,20 @@ export default function RegisterPage() {
                 </Select>
               </div>
               <div><Label htmlFor="password">Password (min 8)</Label><Input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" /></div>
+            </div>
+
+            <div className="rounded-2xl border border-dashed border-gold/50 bg-gold/5 p-3">
+              <p className="text-sm font-bold">Seller verification <span className="font-normal text-muted-foreground">(required before you can list)</span></p>
+              <div className="mt-2 grid gap-2.5 sm:grid-cols-2">
+                <div><Label htmlFor="idNumber">National ID / Passport No. *</Label><Input id="idNumber" name="idNumber" placeholder="e.g. 12345678" /></div>
+                <div><Label htmlFor="kraPin">KRA PIN</Label><Input id="kraPin" name="kraPin" placeholder="e.g. A123456789Z" className="uppercase" /></div>
+              </div>
+              <div className="mt-2 grid gap-2.5 sm:grid-cols-3">
+                <div><Label>ID photo</Label><ImageUploader images={idDoc} setImages={setIdDoc} label="" max={1} fieldName="idDoc" watermark={false} /></div>
+                <div><Label>KRA cert</Label><ImageUploader images={kraPinDoc} setImages={setKraPinDoc} label="" max={1} fieldName="kraPinDoc" watermark={false} /></div>
+                <div><Label>Permit <span className="font-normal">(dealers)</span></Label><ImageUploader images={bizPermit} setImages={setBizPermit} label="" max={1} fieldName="bizPermit" watermark={false} /></div>
+              </div>
+              <p className="mt-1.5 text-[11px] text-muted-foreground">Buyers can skip this. Documents stay private — used only for verification, never watermarked.</p>
             </div>
             {state?.error && <p className="rounded-xl bg-red-50 p-2.5 text-sm font-medium text-red-700">{state.error}</p>}
             <Button className="w-full" size="lg" disabled={pending}>{pending ? "Creating…" : "Sign up free"}</Button>

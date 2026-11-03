@@ -9,10 +9,16 @@ import { inquirySchema, listCarSchema, listPartSchema, registerSchema } from "@/
 import { slugify } from "@/lib/utils";
 
 export async function registerAction(prev: unknown, formData: FormData) {
+  const one = (k: string) => {
+    const s = String(formData.get(k) || "").trim();
+    return s || undefined;
+  };
   const parsed = registerSchema.safeParse({
     name: formData.get("name"), email: formData.get("email"),
     phone: formData.get("phone"), password: formData.get("password"),
     role: formData.get("role") || "BUYER",
+    idNumber: one("idNumber"), kraPin: one("kraPin")?.toUpperCase(),
+    idDocUrl: one("idDoc"), kraPinDocUrl: one("kraPinDoc"), bizPermitUrl: one("bizPermit"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
   const email = parsed.data.email.toLowerCase();
@@ -20,14 +26,26 @@ export async function registerAction(prev: unknown, formData: FormData) {
   if (exists) return { error: "Email already registered. Please log in." };
   const passwordHash = await bcrypt.hash(parsed.data.password, 10);
   await prisma.user.create({
-    data: { name: parsed.data.name, email, phone: parsed.data.phone, passwordHash, role: parsed.data.role },
+    data: {
+      name: parsed.data.name, email, phone: parsed.data.phone, passwordHash, role: parsed.data.role,
+      idNumber: parsed.data.idNumber, kraPin: parsed.data.kraPin,
+      idDocUrl: parsed.data.idDocUrl, kraPinDocUrl: parsed.data.kraPinDocUrl, bizPermitUrl: parsed.data.bizPermitUrl,
+    },
   });
   redirect("/login?registered=1");
+}
+
+/** Sellers must be verified (ID approved, verified dealer, or admin) before listing. */
+export function canList(u: { idVerified: boolean; verified: boolean; role: string; dealerProfile?: { verified: boolean } | null } | null | undefined) {
+  if (!u) return false;
+  return u.idVerified || u.verified || u.role === "ADMIN" || (u.dealerProfile?.verified ?? false);
 }
 
 export async function listCarAction(prev: unknown, formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return { error: "Please log in to list a car." };
+  const lister = await prisma.user.findUnique({ where: { id: session.user.id }, include: { dealerProfile: true } });
+  if (!canList(lister)) return { error: "Verification required — finish it in Dashboard → Settings, then list." };
   const raw = {
     title: formData.get("title"), make: formData.get("make"), model: formData.get("model"),
     year: formData.get("year"), price: formData.get("price"), negotiable: formData.get("negotiable") === "on",
@@ -46,8 +64,8 @@ export async function listCarAction(prev: unknown, formData: FormData) {
     where: { slug: slugify(d.make) }, update: {},
     create: { name: d.make, slug: slugify(d.make) },
   });
-  // Attach dealer profile if seller is a dealer
-  const me = await prisma.user.findUnique({ where: { id: session.user.id }, include: { dealerProfile: true } });
+  // Attach dealer profile if seller is a dealer (lister already fetched for the gate above)
+  const me = lister!;
   const slug = `${slugify(`${d.year}-${d.make}-${d.model}`)}-${Date.now().toString(36)}`;
   const car = await prisma.car.create({
     data: {
@@ -153,6 +171,8 @@ export async function markInquiryReadAction(inquiryId: string) {
 export async function listPartAction(prev: unknown, formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return { error: "Please log in to list a part." };
+  const lister = await prisma.user.findUnique({ where: { id: session.user.id }, include: { dealerProfile: true } });
+  if (!canList(lister)) return { error: "Verification required — finish it in Dashboard → Settings, then list." };
   const parsed = listPartSchema.safeParse({
     title: formData.get("title"), category: formData.get("category"), condition: formData.get("condition"),
     price: formData.get("price"), negotiable: formData.get("negotiable") === "on",
@@ -161,7 +181,7 @@ export async function listPartAction(prev: unknown, formData: FormData) {
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the form" };
   const d = parsed.data;
-  const me = await prisma.user.findUnique({ where: { id: session.user.id }, include: { dealerProfile: true } });
+  const me = lister!;
   const slug = `${slugify(d.title)}-${Date.now().toString(36)}`;
   await prisma.part.create({
     data: {

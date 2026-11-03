@@ -23,7 +23,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
  * returns a JPEG ready for upload. All branding happens client-side,
  * so every stored image carries the watermark automatically.
  */
-async function watermark(file: File, logo: HTMLImageElement): Promise<File> {
+async function stampImage(file: File, logo: HTMLImageElement): Promise<File> {
   const bmp = await createImageBitmap(file);
   const canvas = document.createElement("canvas");
   canvas.width = bmp.width;
@@ -61,14 +61,16 @@ async function watermark(file: File, logo: HTMLImageElement): Promise<File> {
 }
 
 /**
- * Photo uploader: direct UploadThing uploads (auto-watermarked) when
- * configured, otherwise paste image URLs. Emits hidden `images` inputs.
+ * Photo uploader: direct UploadThing uploads when configured,
+ * otherwise paste image URLs. Emits hidden `images` inputs.
+ * Pass watermark={false} for official documents (IDs, certificates)
+ * which must stay unaltered.
  */
 export function ImageUploader({
-  images, setImages, label = "Photos", max = 12, fieldName = "images",
+  images, setImages, label = "Photos", max = 12, fieldName = "images", watermark = true,
 }: {
   images: string[]; setImages: (u: string[]) => void;
-  label?: string; max?: number; fieldName?: string;
+  label?: string; max?: number; fieldName?: string; watermark?: boolean;
 }) {
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState("");
@@ -97,10 +99,13 @@ export function ImageUploader({
     const picked = [...files].filter((f) => f.type.startsWith("image/")).slice(0, max - images.length);
     if (picked.length === 0) return;
     try {
-      setBusy("Adding Motiva watermark…");
-      const logo = await loadImage("/logo.png");
-      setBusy(`Uploading ${picked.length} photo${picked.length > 1 ? "s" : ""}…`);
-      const stamped = await Promise.all(picked.map((f) => watermark(f, logo)));
+      let stamped = picked;
+      if (watermark) {
+        setBusy("Adding Motiva watermark…");
+        const logo = await loadImage("/logo.png");
+        stamped = await Promise.all(picked.map((f) => stampImage(f, logo)));
+      }
+      setBusy(`Uploading ${stamped.length} photo${stamped.length > 1 ? "s" : ""}…`);
       await startUpload(stamped);
     } catch {
       setBusy("");
@@ -117,10 +122,10 @@ export function ImageUploader({
       {enabled ? (
         <div className="mt-2">
           <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-navy px-4 py-2.5 text-sm font-bold text-gold-light transition hover:bg-navy-800">
-            <Upload className="size-4" /> {isUploading || busy ? busy || "Uploading…" : "Upload photos"}
+            <Upload className="size-4" /> {isUploading || busy ? busy || "Uploading…" : watermark ? "Upload photos" : "Upload documents"}
             <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" disabled={isUploading} onChange={(e) => onFiles(e.target.files)} />
           </label>
-          <p className="mt-1 text-xs text-muted-foreground">Motiva watermark added automatically • JPG/PNG up to 4MB each</p>
+          <p className="mt-1 text-xs text-muted-foreground">{watermark ? "Motiva watermark added automatically • " : "Documents are stored exactly as photographed • "}JPG/PNG up to 4MB each</p>
         </div>
       ) : (
         <div className="mt-2 flex gap-2">

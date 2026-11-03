@@ -45,21 +45,21 @@ export function ProfileForm({ user }: Props) {
         <p className="flex items-center gap-2 text-sm font-bold"><IdCard className="size-4 text-gold-dark" /> ID document photo</p>
         <p className="text-xs text-muted-foreground">Clear photo of your national ID (front) or passport bio page.</p>
         {user.idDocUrl && !idDoc.length ? <div className="mt-2 max-w-[220px]"><ExistingDoc url={user.idDocUrl} label="ID document" /></div> : null}
-        <div className="mt-2"><ImageUploader images={idDoc} setImages={setIdDoc} label="" max={1} fieldName="idDoc" /></div>
+        <div className="mt-2"><ImageUploader images={idDoc} setImages={setIdDoc} label="" max={1} fieldName="idDoc" watermark={false} /></div>
       </div>
 
       <div className="rounded-2xl border border-dashed p-4">
         <p className="flex items-center gap-2 text-sm font-bold"><FileBadge className="size-4 text-gold-dark" /> KRA PIN certificate</p>
         <p className="text-xs text-muted-foreground">Photo or PDF screenshot of your KRA PIN certificate.</p>
         {user.kraPinDocUrl && !kraPinDoc.length ? <div className="mt-2 max-w-[220px]"><ExistingDoc url={user.kraPinDocUrl} label="KRA PIN" /></div> : null}
-        <div className="mt-2"><ImageUploader images={kraPinDoc} setImages={setKraPinDoc} label="" max={1} fieldName="kraPinDoc" /></div>
+        <div className="mt-2"><ImageUploader images={kraPinDoc} setImages={setKraPinDoc} label="" max={1} fieldName="kraPinDoc" watermark={false} /></div>
       </div>
 
       <div className="rounded-2xl border border-dashed p-4">
         <p className="flex items-center gap-2 text-sm font-bold"><Store className="size-4 text-gold-dark" /> Business permit <span className="font-normal text-muted-foreground">(dealers & commercial sellers)</span></p>
         <p className="text-xs text-muted-foreground">Single business permit or trade licence for your yard/shop.</p>
         {user.bizPermitUrl && !bizPermit.length ? <div className="mt-2 max-w-[220px]"><ExistingDoc url={user.bizPermitUrl} label="Business permit" /></div> : null}
-        <div className="mt-2"><ImageUploader images={bizPermit} setImages={setBizPermit} label="" max={1} fieldName="bizPermit" /></div>
+        <div className="mt-2"><ImageUploader images={bizPermit} setImages={setBizPermit} label="" max={1} fieldName="bizPermit" watermark={false} /></div>
       </div>
 
       {state?.error && <p className="text-sm text-red-600">{state.error}</p>}

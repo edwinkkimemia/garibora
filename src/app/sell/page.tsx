@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Camera, ClipboardCheck, MessageCircle, ShieldCheck } from "lucide-react";
+import { Camera, ClipboardCheck, MessageCircle, ShieldCheck, BadgeCheck } from "lucide-react";
 import { auth } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import { canList } from "@/lib/actions";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { SellForm } from "@/components/sell/sell-form";
 import { SellPartForm } from "@/components/sell/sell-part-form";
@@ -25,6 +27,10 @@ export default async function SellPage({ searchParams }: { searchParams: Promise
   if (!session?.user) redirect("/login?next=/sell");
   const { type } = await searchParams;
   const isPart = type === "part";
+  const me = session?.user?.id
+    ? await prisma.user.findUnique({ where: { id: session.user.id }, include: { dealerProfile: true } }).catch(() => null)
+    : null;
+  const allowed = canList(me);
 
   return (
     <div>
@@ -48,6 +54,20 @@ export default async function SellPage({ searchParams }: { searchParams: Promise
       </section>
 
       <div className="mx-auto w-full max-w-[1500px] px-4 py-8 md:px-6">
+        {!allowed ? (
+          <div className="mx-auto max-w-xl rounded-3xl border border-gold/50 bg-card p-8 text-center">
+            <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-navy text-gold-light"><ShieldCheck className="size-7" /></span>
+            <h2 className="mt-4 text-2xl font-extrabold">Verify yourself before listing</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Every seller submits a national ID and KRA PIN so buyers can deal with confidence.
+              It takes 2 minutes and review is usually within 24 hours.
+            </p>
+            <div className="mt-5 flex flex-wrap justify-center gap-2">
+              <Link href="/dashboard/settings"><Button size="lg"><BadgeCheck />Get verified now</Button></Link>
+              <Link href="/how-it-works"><Button size="lg" variant="outline">How selling works</Button></Link>
+            </div>
+          </div>
+        ) : (
         <div className="grid items-start gap-6 lg:grid-cols-[1fr_340px]">
           <div className="min-w-0">{isPart ? <SellPartForm /> : <SellForm />}</div>
           <aside className="grid gap-4 lg:sticky lg:top-20">
@@ -73,6 +93,7 @@ export default async function SellPage({ searchParams }: { searchParams: Promise
             </Card>
           </aside>
         </div>
+        )}
       </div>
     </div>
   );
