@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { fulfillPayment } from "@/lib/fulfill";
 
 /** Daraja C2B result callback — Safaricom posts here after the user acts. */
 export async function POST(req: Request) {
@@ -21,8 +22,10 @@ export async function POST(req: Request) {
       where: { checkoutRequestId: cb.CheckoutRequestID },
       data: { status: cb.ResultCode === 0 ? "COMPLETED" : cb.ResultCode === 1032 ? "CANCELLED" : "FAILED" },
     });
-    // Activation (featured/plan) is done by the team on seeing COMPLETED —
-    // see /admin or the pricing page. Auto-provisioning hooks in here as next step.
+    if (cb.ResultCode === 0) {
+      const done = await prisma.payment.findFirst({ where: { checkoutRequestId: cb.CheckoutRequestID }, select: { id: true } });
+      if (done) await fulfillPayment(done.id).catch(() => ({ applied: false }));
+    }
     return Response.json({ ok: true });
   } catch {
     return Response.json({ ok: false }, { status: 400 });

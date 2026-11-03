@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { queryStk } from "@/lib/mpesa";
+import { fulfillPayment } from "@/lib/fulfill";
 
 /**
  * GET /api/mpesa/status?checkoutId=…[&refresh=1]
@@ -20,6 +21,10 @@ export async function GET(req: Request) {
       const live = await queryStk(checkoutId);
       if (live !== "PENDING") {
         await prisma.payment.update({ where: { checkoutRequestId: checkoutId }, data: { status: live } });
+        if (live === "COMPLETED") {
+          const done = await prisma.payment.findUnique({ where: { checkoutRequestId: checkoutId }, select: { id: true } });
+          if (done) await fulfillPayment(done.id).catch(() => ({ applied: false }));
+        }
         return Response.json({ status: live, amount: p.amount, purpose: p.purpose, refreshed: true });
       }
     } catch {
