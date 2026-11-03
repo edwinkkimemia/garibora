@@ -221,6 +221,8 @@ model Car {
   // Listing type: sale, hire, or both (monetization: rentals)
   listingType ListingType @default(SALE)
   dailyRate   Int? // KES per day, when rentable
+  // Featuring (monetization: paid boosts)
+  featuredUntil DateTime? // paid boost expiry; null = organic/staff pick
 
   // Extra specs
   engineCc   Int?

@@ -204,6 +204,13 @@ export async function rejectPartAction(partId: string) {
   await prisma.part.update({ where: { id: partId }, data: { status: "REJECTED" } });
   revalidatePath("/admin/listings");
 }
+/** Admin: feature a car for 7 days (paid boost activation). */
+export async function featureCarAction(carId: string) {
+  await requireAdmin();
+  await prisma.car.update({ where: { id: carId }, data: { status: "ACTIVE", verified: true, featured: true, featuredUntil: new Date(Date.now() + 7 * 24 * 3600 * 1000) } });
+  revalidatePath("/admin/listings");
+  revalidatePath("/cars");
+}
 /** Admin: approve a pending listing (goes ACTIVE + verified). */
 export async function approveCarAction(carId: string) {
   await requireAdmin();

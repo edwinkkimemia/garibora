@@ -78,9 +78,17 @@ export async function getSimilarCars(carId: string, make: string, bodyType: stri
   });
 }
 
+/** Only boosts that haven't expired (null = organic/staff pick, always live). */
+export function featuredLive(): Pick<Prisma.CarWhereInput, "featured" | "OR"> {
+  return {
+    featured: true,
+    OR: [{ featuredUntil: null }, { featuredUntil: { gte: new Date() } }],
+  };
+}
+
 export async function getFeaturedCars() {
   return prisma.car.findMany({
-    where: { status: "ACTIVE", featured: true },
+    where: { status: "ACTIVE", ...featuredLive() },
     take: 8,
     include: { images: true, dealer: true },
     orderBy: { createdAt: "desc" },

@@ -5,7 +5,7 @@ import { siteConfig } from "@/config/site";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url;
   const staticRoutes = [
-    "", "/cars", "/rentals", "/parts", "/financing", "/insurance", "/sell", "/dealers", "/blog", "/about",
+    "", "/cars", "/rentals", "/parts", "/financing", "/insurance", "/pricing", "/sell", "/dealers", "/blog", "/about",
     "/how-it-works", "/contact", "/terms", "/privacy",
     "/login", "/register", "/favorites",
   ].map((r) => ({ url: `${base}${r}`, lastModified: new Date() }));

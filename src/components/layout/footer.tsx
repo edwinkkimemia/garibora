@@ -55,6 +55,7 @@ export function Footer() {
             <li><Link href="/insurance" className="hover:text-gold-light">Car insurance</Link></li>
             <li><Link href="/dealers" className="hover:text-gold-light">Verified dealers</Link></li>
             <li><Link href="/sell" className="hover:text-gold-light">Sell your car</Link></li>
+            <li><Link href="/pricing" className="hover:text-gold-light">Pricing & boosts</Link></li>
             <li><Link href="/blog" className="hover:text-gold-light">Buying guides</Link></li>
           </ul>
         </nav>

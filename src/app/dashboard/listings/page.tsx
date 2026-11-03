@@ -1,13 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, Heart, MessageCircle, PlusCircle, ExternalLink, RotateCcw, Trash2, BadgeDollarSign } from "lucide-react";
+import { Eye, Heart, MessageCircle, PlusCircle, ExternalLink, RotateCcw, Trash2, BadgeDollarSign, Zap } from "lucide-react";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/card";
-import { formatKES } from "@/lib/utils";
+import { formatKES, whatsappLink } from "@/lib/utils";
 import { markSoldAction, deleteListingAction, relistAction } from "@/lib/actions";
+import { siteConfig } from "@/config/site";
 
 const tabs = ["ALL", "ACTIVE", "PENDING", "SOLD", "REJECTED"] as const;
 
@@ -52,6 +53,11 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
             <div className="min-w-0 flex-1">
               <p className="truncate font-bold">{c.title}</p>
               <p className="mt-0.5 text-sm font-extrabold text-navy">{formatKES(c.price)} <Badge variant={c.status === "ACTIVE" ? "success" : c.status === "PENDING" ? "outline" : "secondary"}>{c.status}</Badge></p>
+              {c.featured && (
+                <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-gold/15 px-2 py-0.5 text-[11px] font-bold text-gold-dark">
+                  <Zap className="size-3" /> Featured{c.featuredUntil ? ` till ${new Date(c.featuredUntil).toLocaleDateString("en-KE", { day: "numeric", month: "short" })}` : ""}
+                </p>
+              )}
               <p className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1"><Eye className="size-3" />{c.views} views</span>
                 <span className="inline-flex items-center gap-1"><Heart className="size-3" />{c._count.favorites} saves</span>
@@ -59,6 +65,11 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
               </p>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 <Link href={`/cars/${c.slug}`}><Button size="sm" variant="outline"><ExternalLink />View</Button></Link>
+                {c.status === "ACTIVE" && !c.featured && (
+                  <a href={whatsappLink(siteConfig.whatsappNumber, `Hi Motiva! I want the Featured 7-day boost (KSh 999) for my car: ${c.title}`)} target="_blank" rel="noreferrer">
+                    <Button size="sm" className="bg-gold text-navy hover:bg-gold-dark hover:text-white"><Zap />Boost</Button>
+                  </a>
+                )}
                 {c.status === "ACTIVE" && <form action={async () => { "use server"; await markSoldAction(c.id); }}><Button size="sm" variant="secondary"><BadgeDollarSign />Mark sold</Button></form>}
                 {c.status === "SOLD" && <form action={async () => { "use server"; await relistAction(c.id); }}><Button size="sm" variant="secondary"><RotateCcw />Relist</Button></form>}
                 <form action={async () => { "use server"; await deleteListingAction(c.id); }}><Button size="sm" variant="ghost" className="text-red-600 hover:bg-red-50 hover:text-red-700"><Trash2 />Delete</Button></form>

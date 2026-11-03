@@ -5,7 +5,7 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/card";
 import { formatKES } from "@/lib/utils";
-import { approveCarAction, rejectCarAction, approvePartAction, rejectPartAction } from "@/lib/actions";
+import { approveCarAction, rejectCarAction, approvePartAction, rejectPartAction, featureCarAction } from "@/lib/actions";
 
 export const metadata = { title: "Admin — listing review" };
 
@@ -42,6 +42,7 @@ export default async function AdminListingsPage() {
               <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{c.description}</p>
               <div className="mt-2 flex gap-2">
                 <form action={async () => { "use server"; await approveCarAction(c.id); }}><Button size="sm">Approve ✓</Button></form>
+                <form action={async () => { "use server"; await featureCarAction(c.id); }}><Button size="sm" className="bg-gold text-navy hover:bg-gold-dark hover:text-white">Feature 7d</Button></form>
                 <form action={async () => { "use server"; await rejectCarAction(c.id); }}><Button size="sm" variant="destructive">Reject</Button></form>
                 <Link href={`/cars/${c.slug}`}><Button size="sm" variant="ghost">Preview</Button></Link>
               </div>

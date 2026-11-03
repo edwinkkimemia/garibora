@@ -31,7 +31,8 @@ export async function GET() {
 - Hire a car (rentals): ${base}/rentals
 - Genuine & used car parts: ${base}/parts
 - Car financing & loan calculator: ${base}/financing
-- Car insurance estimator: ${base}/insurance`,
+- Car insurance estimator: ${base}/insurance
+- Pricing — featured boosts & dealer plans: ${base}/pricing`,
     `- Verified dealers: ${base}/dealers`,
     `- Buying guides: ${base}/blog`,
     `- How it works: ${base}/how-it-works`,

@@ -15,7 +15,7 @@ async function getHomeData() {
   try {
     const sale = { status: "ACTIVE", listingType: "SALE" } as const;
     const [featured, newCars, recent, hireCars, dealers, posts, total] = await Promise.all([
-      prisma.car.findMany({ where: { ...sale, featured: true }, take: 8, include: { images: true }, orderBy: { createdAt: "desc" } }),
+      prisma.car.findMany({ where: { ...sale, featured: true, OR: [{ featuredUntil: null }, { featuredUntil: { gte: new Date() } }] }, take: 8, include: { images: true }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: { ...sale, condition: "NEW" }, take: 4, include: { images: true }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: sale, take: 8, include: { images: true }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: { status: "ACTIVE", listingType: "RENT" }, take: 4, include: { images: true }, orderBy: { createdAt: "desc" } }),

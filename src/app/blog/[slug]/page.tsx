@@ -19,7 +19,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     orderBy: { createdAt: "desc" }, take: 4,
   }).catch(() => []);
   const featuredCars = await prisma.car.findMany({
-    where: { status: "ACTIVE", listingType: "SALE", featured: true },
+    where: { status: "ACTIVE", listingType: "SALE", featured: true, OR: [{ featuredUntil: null }, { featuredUntil: { gte: new Date() } }] },
     select: { slug: true, title: true, price: true, images: { select: { url: true }, take: 1 } },
     orderBy: { createdAt: "desc" }, take: 3,
   }).catch(() => []);

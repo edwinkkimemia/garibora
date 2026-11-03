@@ -10,6 +10,7 @@ const links = [
   { href: "/rentals", label: "Rent a car" },
   { href: "/parts", label: "Car parts" },
   { href: "/financing", label: "Financing" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/insurance", label: "Insurance" },
   { href: "/sell", label: "Sell your car" },
   { href: "/dealers", label: "Dealers" },
