@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { MapPin, Gauge, Fuel, Cog, Calendar, ShieldCheck, BadgeCheck, Phone } from "lucide-react";
+import { MapPin, Gauge, Fuel, Cog, Calendar, ShieldCheck, BadgeCheck, Phone, ArrowRight } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { CarGallery } from "@/components/cars/car-gallery";
 import { FavoriteButton } from "@/components/cars/favorite-button";
 import { ShareButtons } from "@/components/cars/share-buttons";
 import { CarCard } from "@/components/cars/car-card";
+import { PartCard } from "@/components/parts/part-card";
 import { InquiryForm } from "@/components/cars/inquiry-form";
 import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,9 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
   const dealerCars = car.dealerId
     ? await getDealerCars(car.dealerId, car.id).catch(() => [])
     : [];
+  const upkeepParts = await prisma.part.findMany({
+    where: { status: "ACTIVE" }, take: 4, include: { images: true }, orderBy: { createdAt: "desc" },
+  }).catch(() => []);
   const sellerPhone = car.dealer?.whatsapp || car.dealer?.phone || car.seller.phone || siteConfig.whatsappNumber;
   const isRent = car.listingType === "RENT";
   const wa = whatsappLink(sellerPhone, isRent
@@ -92,30 +96,16 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
         </div>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
-        <div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="order-1 min-w-0 lg:col-start-1">
           <CarGallery images={car.images} title={car.title} />
           <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border bg-card p-3">
             <p className="text-sm font-bold">Share this car</p>
             <ShareButtons title={car.title} path={`/cars/${car.slug}`} />
           </div>
-          <Card className="mt-6">
-            <CardHeader><CardTitle>Specifications</CardTitle></CardHeader>
-            <CardContent>
-              <dl className="grid grid-cols-2 gap-3 text-sm md:grid-cols-3">
-                {specs.map(([k, v]) => (
-                  <div key={k} className="rounded-xl bg-muted/60 p-3"><dt className="text-xs text-muted-foreground">{k}</dt><dd className="mt-0.5 font-semibold">{v}</dd></div>
-                ))}
-              </dl>
-            </CardContent>
-          </Card>
-          <Card className="mt-6">
-            <CardHeader><CardTitle>Seller&apos;s notes</CardTitle></CardHeader>
-            <CardContent><p className="whitespace-pre-line text-sm leading-relaxed">{car.description}</p></CardContent>
-          </Card>
         </div>
 
-        <aside className="space-y-4">
+        <aside className="order-2 min-w-0 space-y-4 lg:col-start-2 lg:row-start-1 lg:row-span-3">
           <Card>
             <CardContent className="pt-5">
               {isRent && car.dailyRate ? (
@@ -170,6 +160,21 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
             <CardContent><InquiryForm carId={car.id} /></CardContent>
           </Card>
         </aside>
+
+        <Card className="order-3 min-w-0 lg:col-start-1">
+          <CardHeader><CardTitle>Specifications</CardTitle></CardHeader>
+          <CardContent>
+            <dl className="grid grid-cols-2 gap-3 text-sm md:grid-cols-3">
+              {specs.map(([k, v]) => (
+                <div key={k} className="rounded-xl bg-muted/60 p-3"><dt className="text-xs text-muted-foreground">{k}</dt><dd className="mt-0.5 font-semibold">{v}</dd></div>
+              ))}
+            </dl>
+          </CardContent>
+        </Card>
+        <Card className="order-4 min-w-0 lg:col-start-1">
+          <CardHeader><CardTitle>Seller&apos;s notes</CardTitle></CardHeader>
+          <CardContent><p className="whitespace-pre-line text-sm leading-relaxed">{car.description}</p></CardContent>
+        </Card>
       </div>
 
       {dealerCars.length > 0 && (
@@ -200,6 +205,21 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
           <h2 className="text-xl font-extrabold">Similar cars</h2>
           <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {similar.map((c) => <CarCard key={c.id} car={c as never} />)}
+          </div>
+        </div>
+      )}
+
+      {upkeepParts.length > 0 && (
+        <div className="mt-12">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-dark">Keep it running</p>
+              <h2 className="mt-1 text-xl font-extrabold">Parts & accessories you may need</h2>
+            </div>
+            <Link href="/parts"><Button variant="outline" size="sm">All parts <ArrowRight /></Button></Link>
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {upkeepParts.map((p) => <PartCard key={p.id} part={p as never} />)}
           </div>
         </div>
       )}
