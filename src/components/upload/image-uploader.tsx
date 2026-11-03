@@ -138,15 +138,19 @@ export function ImageUploader({
         <ul className="mt-3 grid grid-cols-3 gap-2 md:grid-cols-4">
           {images.map((u, i) => (
             <li key={u} className="relative aspect-[4/3] overflow-hidden rounded-xl border">
-              <NextImage src={u} alt={`Upload ${i + 1}`} fill className="object-cover" sizes="150px" />
-              {i === 0 && <span className="absolute left-1 top-1 rounded-full bg-gold px-2 py-0.5 text-[10px] font-bold text-navy">Cover</span>}
-              <button type="button" aria-label="Remove photo" onClick={() => setImages(images.filter((x) => x !== u))}
+              <NextImage src={u} alt={`${watermark ? "Upload" : "Document"} ${i + 1}`} fill className="object-cover" sizes="150px" />
+              {i === 0 && watermark && <span className="absolute left-1 top-1 rounded-full bg-gold px-2 py-0.5 text-[10px] font-bold text-navy">Cover</span>}
+              <button type="button" aria-label="Remove" onClick={() => setImages(images.filter((x) => x !== u))}
                 className="absolute right-1 top-1 grid size-6 place-items-center rounded-full bg-black/70 text-white hover:bg-black"><X className="size-3" /></button>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="mt-2 text-sm text-muted-foreground">Add at least 1 photo. Tip: exterior 360°, interior, dashboard mileage, engine bay.</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {watermark
+            ? "Add at least 1 photo. Tip: exterior 360°, interior, dashboard mileage, engine bay."
+            : "Add a clear, readable photo — all corners visible, no glare."}
+        </p>
       )}
       {!enabled && (
         <p className="mt-2 text-xs text-muted-foreground">Direct uploads activate once UPLOADTHING_TOKEN is set (see README) — URL paste works meanwhile.</p>

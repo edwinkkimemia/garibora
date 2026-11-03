@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Camera, ClipboardCheck, MessageCircle, ShieldCheck, BadgeCheck } from "lucide-react";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { canList } from "@/lib/actions";
+import { canList } from "@/lib/permissions";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { SellForm } from "@/components/sell/sell-form";
 import { SellPartForm } from "@/components/sell/sell-part-form";

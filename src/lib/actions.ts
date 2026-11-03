@@ -7,6 +7,7 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { inquirySchema, listCarSchema, listPartSchema, registerSchema } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
+import { canList } from "@/lib/permissions";
 
 export async function registerAction(prev: unknown, formData: FormData) {
   const one = (k: string) => {
@@ -35,13 +36,7 @@ export async function registerAction(prev: unknown, formData: FormData) {
   redirect("/login?registered=1");
 }
 
-/** Sellers must be genuinely verified before listing: approved ID, a verified
- *  dealer yard, or admin. (The legacy `verified` flag alone is NOT enough.) */
-export function canList(u: { idVerified: boolean; verified: boolean; role: string; dealerProfile?: { verified: boolean } | null } | null | undefined) {
-  if (!u) return false;
-  return u.idVerified || u.role === "ADMIN" || (u.dealerProfile?.verified ?? false);
-}
-
+/** Seller: list a car (goes to PENDING review). */
 export async function listCarAction(prev: unknown, formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return { error: "Please log in to list a car." };
