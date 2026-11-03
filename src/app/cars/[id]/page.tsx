@@ -171,13 +171,13 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
             </dl>
           </CardContent>
         </Card>
-        <Card className="order-4 min-w-0 lg:hidden">
-          <CardHeader><CardTitle className="text-base">Request details</CardTitle></CardHeader>
-          <CardContent><InquiryForm carId={car.id} /></CardContent>
-        </Card>
-        <Card className="order-5 min-w-0 lg:col-start-1">
+        <Card className="order-4 min-w-0 lg:col-start-1">
           <CardHeader><CardTitle>Seller&apos;s notes</CardTitle></CardHeader>
           <CardContent><p className="whitespace-pre-line text-sm leading-relaxed">{car.description}</p></CardContent>
+        </Card>
+        <Card className="order-5 min-w-0 lg:hidden">
+          <CardHeader><CardTitle className="text-base">Request details</CardTitle></CardHeader>
+          <CardContent><InquiryForm carId={car.id} /></CardContent>
         </Card>
       </div>
 

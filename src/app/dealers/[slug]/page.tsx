@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { ShieldCheck, Phone, Star } from "lucide-react";
+import { ShieldCheck, Phone, Star, MapPin, Navigation, BadgeCheck } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { shuffle } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
@@ -29,6 +29,30 @@ export default async function DealerDetailPage({ params }: { params: Promise<{ s
         </div>
       </div>
       <p className="mt-3 max-w-2xl text-sm">{dealer.description}</p>
+
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
+        <div className="rounded-2xl border bg-card p-5">
+          <p className="flex items-center gap-2 font-extrabold"><MapPin className="size-5 text-gold-dark" /> Visit the yard</p>
+          <p className="mt-2 text-sm"><b>{dealer.businessName}</b><br />{dealer.location}, Kenya</p>
+          <p className="mt-1 text-xs text-muted-foreground">Open Mon–Sat, 8am–6pm. Call ahead so the car is washed, fuelled and ready for your test drive.</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${dealer.businessName} ${dealer.location} Kenya`)}`} target="_blank" rel="noreferrer">
+              <Button size="sm" variant="outline"><Navigation />Get directions</Button>
+            </a>
+            {dealer.phone && <a href={`tel:${dealer.phone}`}><Button size="sm" variant="secondary"><Phone />{dealer.phone}</Button></a>}
+          </div>
+        </div>
+        <div className="rounded-2xl border border-gold/40 bg-gold/5 p-5">
+          <p className="flex items-center gap-2 font-extrabold"><ShieldCheck className="size-5 text-emerald-600" /> What the Verified badge means</p>
+          <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
+            <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-emerald-600" /> National ID and KRA PIN of the owner checked against the business name.</li>
+            <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-emerald-600" /> Physical yard visited and geotagged — this address is real.</li>
+            <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-emerald-600" /> Every listing re-checked for duty status and honest mileage.</li>
+            <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-emerald-600" /> Still verify each car on NTSA TIMS before paying — trust, then confirm.</li>
+          </ul>
+        </div>
+      </div>
+
       <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {dealer.cars.map((c) => <CarCard key={c.id} car={c as never} />)}
       </div>

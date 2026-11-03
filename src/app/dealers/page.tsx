@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck, Star } from "lucide-react";
+import { ShieldCheck, Star, MapPin, BadgeCheck } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { shuffle } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
@@ -27,12 +27,25 @@ export default async function DealersPage() {
         {dealers.map((d) => (
           <Card key={d.id}><CardContent className="pt-5">
             <p className="flex items-center gap-1 font-bold">{d.businessName} <ShieldCheck className="size-4 text-green-600" /></p>
-            <p className="text-sm text-muted-foreground">{d.location} • ★ {d.rating.toFixed(1)} ({d.reviewCount} reviews)</p>
+            <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="size-3.5 shrink-0 text-gold-dark" />{d.location}, Kenya • ★ {d.rating.toFixed(1)} ({d.reviewCount} reviews)</p>
             <p className="mt-2 line-clamp-2 text-sm">{d.description}</p>
-            <Link href={`/dealers/${d.slug}`}><Button variant="outline" size="sm" className="mt-3">View stock →</Button></Link>
+            <div className="mt-3 flex gap-2">
+              <Link href={`/dealers/${d.slug}`}><Button variant="outline" size="sm">View stock →</Button></Link>
+              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${d.businessName} ${d.location} Kenya`)}`} target="_blank" rel="noreferrer"><Button variant="ghost" size="sm"><MapPin />Yard</Button></a>
+            </div>
           </CardContent></Card>
         ))}
         {dealers.length === 0 && <p className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground md:col-span-3">Seed the database to see demo dealers.</p>}
+      </div>
+
+      <div className="mt-10 rounded-3xl border border-gold/40 bg-gold/5 p-6 md:p-8">
+        <p className="flex items-center gap-2 font-extrabold"><ShieldCheck className="size-5 text-emerald-600" /> What the Verified badge guarantees</p>
+        <div className="mt-3 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
+          <p className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-emerald-600" /> The dealer&apos;s national ID and KRA PIN were checked against the registered business name.</p>
+          <p className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-emerald-600" /> The yard&apos;s physical location was confirmed — every card links straight to it on Google Maps.</p>
+          <p className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-emerald-600" /> Ratings come from completed Motiva deals, not paid reviews.</p>
+          <p className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-emerald-600" /> Badge lost on the first proven misrepresentation — verification is continuous, not one-off.</p>
+        </div>
       </div>
     </div>
   );
