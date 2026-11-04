@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Gauge, Fuel, Cog, Calendar, ShieldCheck, BadgeCheck, Phone, ArrowRight, Star } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { CarGallery } from "@/components/cars/car-gallery";
