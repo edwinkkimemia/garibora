@@ -140,8 +140,8 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
                     <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold text-sm font-extrabold text-navy">{car.dealer.businessName.charAt(0)}</span>
                     <div className="min-w-0">
                       <p className="flex items-center gap-1 truncate text-sm font-bold">
+                        {car.dealer.verified && <BadgeCheck className="size-4 shrink-0 text-gold-dark" />}
                         {car.dealer.businessName}
-                        {car.dealer.verified && <BadgeCheck className="size-4 shrink-0 text-gold-light" />}
                       </p>
                       <p className="text-[11px] uppercase tracking-wider text-gold-light">Verified dealer yard</p>
                     </div>
@@ -161,10 +161,10 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
                     <span className="grid size-10 shrink-0 place-items-center rounded-full bg-navy text-sm font-extrabold text-gold-light">{(car.seller.name || "P").charAt(0).toUpperCase()}</span>
                     <div className="min-w-0">
                       <p className="flex items-center gap-1 truncate text-sm font-bold">
-                        {car.seller.name || "Private seller"}
                         {(car.seller.idVerified || car.seller.verified) && <BadgeCheck className="size-4 shrink-0 text-emerald-600" />}
+                        {car.seller.name || "Private seller"}
                       </p>
-                      <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Independent seller{(car.seller.idVerified || car.seller.verified) ? " • ID verified" : ""}</p>
+                      <p className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground"><MapPin className="size-3 shrink-0" />{car.location}, Kenya</p>
                     </div>
                   </div>
                   <p className="flex items-center gap-1 px-3 py-2 text-xs text-muted-foreground"><MapPin className="size-3.5 shrink-0" />{car.location}, Kenya — arrange viewing in a public place</p>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Gauge, Fuel, Cog, BadgeCheck, Heart, User } from "lucide-react";
+import { MapPin, Gauge, Fuel, Cog, BadgeCheck, Heart } from "lucide-react";
 import { formatKES, formatMileage } from "@/lib/utils";
 import { Badge } from "@/components/ui/card";
 import { Watermark } from "@/components/ui/watermark";
@@ -28,9 +28,8 @@ function SellerMark({ car }: { car: CarCardCar }) {
   if ("dealer" in car && car.dealer === null) {
     return (
       <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-slate-700">
-        <User className="size-3.5 shrink-0 text-slate-400" />
+        <BadgeCheck className="size-3.5 shrink-0 text-emerald-600" />
         <span className="truncate">{car.seller?.name || "Private seller"}</span>
-        <span className="shrink-0 font-normal text-slate-400">• Private</span>
       </p>
     );
   }
