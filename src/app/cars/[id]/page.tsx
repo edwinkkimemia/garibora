@@ -135,24 +135,45 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
                 {car.seller.phone && <a href={`tel:${car.seller.phone}`}><Button variant="outline" className="w-full"><Phone />Call</Button></a>}
               </div>
               {car.dealer ? (
-                <div className="mt-4 rounded-xl border p-3 text-sm">
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-gold-dark">Verified dealer yard</p>
-                  <p className="mt-0.5 font-bold">{car.dealer.businessName} {car.dealer.verified && <ShieldCheck className="inline size-4 text-green-600" />}</p>
-                  <p className="text-muted-foreground">{car.dealer.location} • ★ {car.dealer.rating.toFixed(1)} ({car.dealer.reviewCount})</p>
-                  <Link href={`/dealers/${car.dealer.slug}`} className="mt-1 inline-block text-primary hover:underline">View dealer →</Link>
+                <div className="mt-4 overflow-hidden rounded-xl border border-gold/50">
+                  <div className="flex items-center gap-2.5 bg-navy p-3 text-white">
+                    <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold text-sm font-extrabold text-navy">{car.dealer.businessName.charAt(0)}</span>
+                    <div className="min-w-0">
+                      <p className="flex items-center gap-1 truncate text-sm font-bold">
+                        {car.dealer.businessName}
+                        {car.dealer.verified && <BadgeCheck className="size-4 shrink-0 text-gold-light" />}
+                      </p>
+                      <p className="text-[11px] uppercase tracking-wider text-gold-light">Verified dealer yard</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 divide-x divide-border bg-card text-center">
+                    <div className="p-2.5"><p className="flex items-center justify-center gap-1 text-sm font-extrabold text-navy"><Star className="size-3.5 fill-gold text-gold" />{car.dealer.rating.toFixed(1)}</p><p className="text-[10px] text-muted-foreground">{car.dealer.reviewCount} reviews</p></div>
+                    <div className="p-2.5"><p className="flex items-center justify-center gap-1 text-sm font-extrabold text-navy"><MapPin className="size-3.5" />{car.dealer.location.split(",")[0]}</p><p className="text-[10px] text-muted-foreground">Yard location</p></div>
+                    <div className="p-2.5"><p className="flex items-center justify-center gap-1 text-sm font-extrabold text-emerald-700"><ShieldCheck className="size-3.5" />ID-checked</p><p className="text-[10px] text-muted-foreground">Duty reviewed</p></div>
+                  </div>
+                  <div className="p-3 pt-0">
+                    <Link href={`/dealers/${car.dealer.slug}`}><Button variant="outline" size="sm" className="w-full">View all stock →</Button></Link>
+                  </div>
                 </div>
               ) : (
-                <div className="mt-4 rounded-xl border p-3 text-sm">
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Private seller</p>
-                  <p className="mt-0.5 flex items-center gap-1.5 font-bold">
-                    <span className="grid size-7 place-items-center rounded-full bg-navy text-xs font-extrabold text-gold-light">{(car.seller.name || "P").charAt(0).toUpperCase()}</span>
-                    {car.seller.name || "Private seller"}
-                    {(car.seller.idVerified || car.seller.verified) && <ShieldCheck className="size-4 text-green-600" />}
-                  </p>
-                  <p className="mt-1 text-muted-foreground">Independent seller • {car.location}{(car.seller.idVerified || car.seller.verified) ? " • ID verified" : ""}</p>
+                <div className="mt-4 overflow-hidden rounded-xl border">
+                  <div className="flex items-center gap-2.5 bg-muted/70 p-3">
+                    <span className="grid size-10 shrink-0 place-items-center rounded-full bg-navy text-sm font-extrabold text-gold-light">{(car.seller.name || "P").charAt(0).toUpperCase()}</span>
+                    <div className="min-w-0">
+                      <p className="flex items-center gap-1 truncate text-sm font-bold">
+                        {car.seller.name || "Private seller"}
+                        {(car.seller.idVerified || car.seller.verified) && <BadgeCheck className="size-4 shrink-0 text-emerald-600" />}
+                      </p>
+                      <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Independent seller{(car.seller.idVerified || car.seller.verified) ? " • ID verified" : ""}</p>
+                    </div>
+                  </div>
+                  <p className="flex items-center gap-1 px-3 py-2 text-xs text-muted-foreground"><MapPin className="size-3.5 shrink-0" />{car.location}, Kenya — arrange viewing in a public place</p>
                 </div>
               )}
-              <p className="mt-3 flex items-start gap-1 text-xs text-muted-foreground"><ShieldCheck className="mt-0.5 size-3 shrink-0" /> Safety: meet in public, verify logbook on NTSA, never pay before viewing.</p>
+              <div className="mt-3 flex items-start gap-1.5 rounded-xl bg-gold/10 p-3 text-xs leading-relaxed text-navy">
+                <ShieldCheck className="mt-0.5 size-4 shrink-0 text-gold-dark" />
+                <p><b>Stay safe:</b> meet in public, verify the logbook on NTSA TIMS, and never pay before viewing the car.</p>
+              </div>
             </CardContent>
           </Card>
           <Card className="hidden lg:block">
