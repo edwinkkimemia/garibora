@@ -3,15 +3,6 @@ import Image from "next/image";
 import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
-const popular = [
-  { label: "Toyota Prado for sale", href: "/cars?q=Prado" },
-  { label: "Nissan Note e-Power", href: "/cars?q=Note" },
-  { label: "Hire a Hiace van", href: "/rentals?q=Hiace" },
-  { label: "Cars under 1.5M", href: "/cars?maxPrice=1500000" },
-  { label: "Brand-new cars", href: "/cars?condition=NEW" },
-  { label: "Car parts & spares", href: "/parts" },
-];
-
 const socials = [
   { icon: Facebook, label: "Facebook", href: "https://facebook.com/motivake" },
   { icon: Instagram, label: "Instagram", href: "https://instagram.com/motivake" },
@@ -24,7 +15,7 @@ export function Footer() {
     <footer className="bg-navy text-slate-200">
       {/* gold rule */}
       <div className="h-1 bg-gradient-to-r from-gold-dark via-gold-light to-gold-dark" />
-      <div className="container grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-4">
+      <div className="container grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-[1.2fr_1.6fr_1fr]">
         <div>
           <div className="flex items-center gap-2">
             <span className="overflow-hidden rounded-lg bg-white">
@@ -42,28 +33,31 @@ export function Footer() {
           </div>
           <p className="mt-2 text-xs text-slate-400">@motivake</p>
         </div>
-        <nav aria-label="Marketplace">
-          <h4 className="text-sm font-bold uppercase tracking-wider text-gold-light">Marketplace</h4>
-          <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href="/cars" className="hover:text-gold-light">All cars</Link></li>
-            <li><Link href="/cars?bodyType=SUV" className="hover:text-gold-light">SUVs</Link></li>
-            <li><Link href="/cars?bodyType=PICKUP" className="hover:text-gold-light">Pickups</Link></li>
-            <li><Link href="/cars?condition=NEW" className="hover:text-gold-light">New cars</Link></li>
-            <li><Link href="/rentals" className="hover:text-gold-light">Hire a car</Link></li>
-            <li><Link href="/parts" className="hover:text-gold-light">Car parts</Link></li>
-            <li><Link href="/financing" className="hover:text-gold-light">Car financing</Link></li>
-            <li><Link href="/insurance" className="hover:text-gold-light">Car insurance</Link></li>
-            <li><Link href="/dealers" className="hover:text-gold-light">Verified dealers</Link></li>
-            <li><Link href="/sell" className="hover:text-gold-light">Sell your car</Link></li>
-            <li><Link href="/pricing" className="hover:text-gold-light">Pricing & boosts</Link></li>
-            <li><Link href="/blog" className="hover:text-gold-light">Buying guides</Link></li>
-          </ul>
-        </nav>
-        <nav aria-label="Trending searches">
-          <h4 className="text-sm font-bold uppercase tracking-wider text-gold-light">Trending now</h4>
-          <ul className="mt-3 space-y-2 text-sm">
-            {popular.map((p) => <li key={p.label}><Link href={p.href} className="hover:text-gold-light">{p.label}</Link></li>)}
-          </ul>
+        <nav aria-label="Marketplace" className="grid grid-cols-2 gap-8">
+          <div>
+            <h4 className="text-sm font-bold uppercase tracking-wider text-gold-light">Buy & hire</h4>
+            <ul className="mt-3 space-y-2 text-sm">
+              <li><Link href="/cars" className="hover:text-gold-light">All cars</Link></li>
+              <li><Link href="/cars?bodyType=SUV" className="hover:text-gold-light">SUVs</Link></li>
+              <li><Link href="/cars?bodyType=PICKUP" className="hover:text-gold-light">Pickups</Link></li>
+              <li><Link href="/cars?condition=NEW" className="hover:text-gold-light">New cars</Link></li>
+              <li><Link href="/rentals" className="hover:text-gold-light">Hire a car</Link></li>
+              <li><Link href="/parts" className="hover:text-gold-light">Car parts</Link></li>
+              <li><Link href="/dealers" className="hover:text-gold-light">Verified dealers</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-sm font-bold uppercase tracking-wider text-gold-light">Sell & more</h4>
+            <ul className="mt-3 space-y-2 text-sm">
+              <li><Link href="/sell" className="hover:text-gold-light">Sell your car</Link></li>
+              <li><Link href="/sell?type=part" className="hover:text-gold-light">Sell a part</Link></li>
+              <li><Link href="/financing" className="hover:text-gold-light">Car financing</Link></li>
+              <li><Link href="/insurance" className="hover:text-gold-light">Car insurance</Link></li>
+              <li><Link href="/pricing" className="hover:text-gold-light">Pricing & boosts</Link></li>
+              <li><Link href="/blog" className="hover:text-gold-light">Buying guides</Link></li>
+              <li><Link href="/about" className="hover:text-gold-light">About us</Link></li>
+            </ul>
+          </div>
         </nav>
         <div>
           <h4 className="text-sm font-bold uppercase tracking-wider text-gold-light">Talk to us</h4>
