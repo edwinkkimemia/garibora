@@ -137,11 +137,15 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
               {car.dealer ? (
                 <div className="mt-4 overflow-hidden rounded-xl border border-gold/50">
                   <div className="flex items-center gap-2.5 bg-navy p-3 text-white">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold text-sm font-extrabold text-navy">{car.dealer.businessName.charAt(0)}</span>
+                    {car.dealer.logoUrl ? (
+                      <span className="relative size-10 shrink-0 overflow-hidden rounded-full bg-white"><Image src={car.dealer.logoUrl} alt="" fill className="object-cover" sizes="40px" /></span>
+                    ) : (
+                      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold text-sm font-extrabold text-navy">{car.dealer.businessName.charAt(0)}</span>
+                    )}
                     <div className="min-w-0">
                       <p className="flex items-center gap-1 truncate text-sm font-bold">
-                        {car.dealer.verified && <BadgeCheck className="size-4 shrink-0 text-gold-dark" />}
                         {car.dealer.businessName}
+                        {car.dealer.verified && <BadgeCheck className="size-4 shrink-0 text-gold-dark" />}
                       </p>
                       <p className="text-[11px] uppercase tracking-wider text-gold-light">Verified dealer yard</p>
                     </div>
@@ -158,11 +162,15 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
               ) : (
                 <div className="mt-4 overflow-hidden rounded-xl border">
                   <div className="flex items-center gap-2.5 bg-muted/70 p-3">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-full bg-navy text-sm font-extrabold text-gold-light">{(car.seller.name || "P").charAt(0).toUpperCase()}</span>
+                    {car.seller.image ? (
+                      <span className="relative size-10 shrink-0 overflow-hidden rounded-full bg-muted"><Image src={car.seller.image} alt="" fill className="object-cover" sizes="40px" /></span>
+                    ) : (
+                      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-navy text-sm font-extrabold text-gold-light">{(car.seller.name || "P").charAt(0).toUpperCase()}</span>
+                    )}
                     <div className="min-w-0">
                       <p className="flex items-center gap-1 truncate text-sm font-bold">
-                        {(car.seller.idVerified || car.seller.verified) && <BadgeCheck className="size-4 shrink-0 text-emerald-600" />}
                         {car.seller.name || "Private seller"}
+                        {(car.seller.idVerified || car.seller.verified) && <BadgeCheck className="size-4 shrink-0 text-emerald-600" />}
                       </p>
                       <p className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground"><MapPin className="size-3 shrink-0" />{car.location}, Kenya</p>
                     </div>

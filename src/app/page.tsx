@@ -16,10 +16,10 @@ async function getHomeData() {
   try {
     const sale = { status: "ACTIVE", listingType: "SALE" } as const;
     const [featured, newCars, recent, hireCars, dealers, posts, total] = await Promise.all([
-      prisma.car.findMany({ where: { ...sale, featured: true, OR: [{ featuredUntil: null }, { featuredUntil: { gte: new Date() } }] }, take: 8, include: { images: true, dealer: { select: { businessName: true } }, seller: { select: { name: true } } }, orderBy: { createdAt: "desc" } }),
-      prisma.car.findMany({ where: { ...sale, condition: "NEW" }, take: 4, include: { images: true, dealer: { select: { businessName: true } }, seller: { select: { name: true } } }, orderBy: { createdAt: "desc" } }),
-      prisma.car.findMany({ where: sale, take: 8, include: { images: true, dealer: { select: { businessName: true } }, seller: { select: { name: true } } }, orderBy: { createdAt: "desc" } }),
-      prisma.car.findMany({ where: { status: "ACTIVE", listingType: "RENT" }, take: 4, include: { images: true, dealer: { select: { businessName: true } }, seller: { select: { name: true } } }, orderBy: { createdAt: "desc" } }),
+      prisma.car.findMany({ where: { ...sale, featured: true, OR: [{ featuredUntil: null }, { featuredUntil: { gte: new Date() } }] }, take: 8, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
+      prisma.car.findMany({ where: { ...sale, condition: "NEW" }, take: 4, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
+      prisma.car.findMany({ where: sale, take: 8, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
+      prisma.car.findMany({ where: { status: "ACTIVE", listingType: "RENT" }, take: 4, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
       prisma.dealer.findMany({ where: { verified: true }, take: 3, orderBy: { rating: "desc" } }),
       prisma.post.findMany({ where: { published: true }, take: 3, orderBy: { createdAt: "desc" } }),
       prisma.car.count({ where: { status: "ACTIVE" } }),

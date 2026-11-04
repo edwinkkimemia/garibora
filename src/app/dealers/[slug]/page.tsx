@@ -10,7 +10,7 @@ import { whatsappLink } from "@/lib/utils";
 
 export default async function DealerDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const dealer = await prisma.dealer.findUnique({ where: { slug }, include: { cars: { where: { status: "ACTIVE" }, include: { images: true, dealer: { select: { businessName: true } }, seller: { select: { name: true } } } } } }).catch(() => null);
+  const dealer = await prisma.dealer.findUnique({ where: { slug }, include: { cars: { where: { status: "ACTIVE" }, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } } } } }).catch(() => null);
   if (!dealer) notFound();
   dealer.cars = shuffle(dealer.cars);
   return (

@@ -20,7 +20,7 @@ export default async function DashboardPage() {
     prisma.inquiry.count({ where: { read: false, OR: [{ car: { is: { sellerId: uid } } }, { part: { is: { sellerId: uid } } }] } }).catch(() => 0),
     prisma.favorite.count({ where: { userId: uid } }).catch(() => 0),
     prisma.inquiry.findMany({ where: { OR: [{ car: { is: { sellerId: uid } } }, { part: { is: { sellerId: uid } } }] }, include: { car: { select: { title: true, slug: true } }, part: { select: { title: true, slug: true } } }, orderBy: { createdAt: "desc" }, take: 5 }).catch(() => []),
-    prisma.car.findMany({ where: { sellerId: uid }, include: { images: true, dealer: { select: { businessName: true } }, seller: { select: { name: true } } }, orderBy: { createdAt: "desc" }, take: 4 }).catch(() => []),
+    prisma.car.findMany({ where: { sellerId: uid }, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" }, take: 4 }).catch(() => []),
     prisma.car.findMany({ where: { sellerId: uid, status: "ACTIVE" }, orderBy: { views: "desc" }, take: 5, select: { id: true, title: true, views: true, price: true } }).catch(() => []),
   ]);
   const count = (s: string) => byStatus.find((g) => g.status === s)?._count ?? 0;
