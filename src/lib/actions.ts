@@ -14,8 +14,7 @@ export async function registerAction(prev: unknown, formData: FormData) {
     const s = String(formData.get(k) || "").trim();
     return s || undefined;
   };
-  const parsed = registerSchema.safeParse({
-    name: formData.get("name"), email: formData.get("email"),
+  const parsed = registerSchema.safeParse({    name: formData.get("name"), email: formData.get("email"),
     phone: formData.get("phone"), password: formData.get("password"),
     role: formData.get("role") || "BUYER",
     idNumber: one("idNumber"), kraPin: one("kraPin")?.toUpperCase(),
@@ -226,6 +225,39 @@ export async function rejectPartAction(partId: string) {
   await prisma.part.update({ where: { id: partId }, data: { status: "REJECTED" } });
   revalidatePath("/admin/listings");
 }
+/** Saved searches: store the current filter set for alerts. */
+export async function saveSearchAction(prev: unknown, formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Log in to save searches." };
+  const name = String(formData.get("name") || "My search").slice(0, 60);
+  let filters: Record<string, string> = {};
+  try {
+    const raw = JSON.parse(String(formData.get("filters") || "{}")) as Record<string, unknown>;
+    for (const [k, v] of Object.entries(raw)) if (typeof v === "string" || typeof v === "number") filters[k] = String(v);
+  } catch { return { error: "Bad filters." }; }
+  const count = await prisma.savedSearch.count({ where: { userId: session.user.id } });
+  if (count >= 10) return { error: "You already have 10 saved searches — delete one first." };
+  await prisma.savedSearch.create({
+    data: { userId: session.user.id, name, filters, lastNotifiedAt: new Date() },
+  });
+  revalidatePath("/dashboard/saved-searches");
+  return { ok: true as const };
+}
+
+export async function deleteSavedSearchAction(id: string) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  await prisma.savedSearch.deleteMany({ where: { id, userId: session.user.id } });
+  revalidatePath("/dashboard/saved-searches");
+}
+
+export async function markNotificationsReadAction() {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  await prisma.notification.updateMany({ where: { userId: session.user.id, read: false }, data: { read: true } });
+  revalidatePath("/dashboard/notifications");
+}
+
 /** Admin: feature a car for 7 days (paid boost activation). */
 export async function featureCarAction(carId: string) {
   await requireAdmin();

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { DesktopNav } from "@/components/layout/desktop-nav";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { UserMenu } from "@/components/layout/user-menu";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { auth } from "@/lib/auth";
 
 export async function Navbar() {
@@ -39,6 +40,7 @@ export async function Navbar() {
 
           {session?.user ? (
             <>
+              <span className="hidden sm:block"><NotificationBell /></span>
               <UserMenu name={session.user.name} email={session.user.email} />
               <Link href="/sell">
                 <Button size="sm" className="bg-gold text-navy hover:bg-gold-dark hover:text-white"><PlusCircle />Sell</Button>

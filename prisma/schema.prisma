@@ -113,6 +113,8 @@ model User {
   cars          Car[]        @relation("SellerCars")
   parts         Part[]       @relation("SellerParts")
   payments      Payment[]
+  savedSearches SavedSearch[]
+  notifications Notification[]
   favorites     Favorite[]
   inquiriesSent Inquiry[]    @relation("BuyerInquiries")
   dealerProfile Dealer?
@@ -383,4 +385,30 @@ model Payment {
 
   @@index([status])
   @@index([checkoutRequestId])
+}
+
+// ---------- Saved searches + in-app alerts ----------
+model SavedSearch {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String // e.g. "Prado under 7M in Nairobi"
+  filters        Json // CarFilters subset: q, make, bodyType, fuelType, condition, location, maxPrice, maxMileage...
+  lastNotifiedAt DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  link      String? // e.g. /cars?make=Toyota
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
 }

@@ -4,6 +4,7 @@ import { MapPin, Gauge, Fuel, Cog, BadgeCheck, Heart } from "lucide-react";
 import { formatKES, formatMileage } from "@/lib/utils";
 import { Badge } from "@/components/ui/card";
 import { Watermark } from "@/components/ui/watermark";
+import { CompareButton } from "@/components/compare/compare";
 
 type CarCardCar = {
   id: string; slug: string; title: string; make: string; model: string; year: number;
@@ -74,6 +75,9 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
             <span className="inline-flex items-center gap-1"><Cog className="size-3" />{car.transmission}</span>
             <span className="inline-flex items-center gap-1"><MapPin className="size-3" />{car.location}</span>
           </p>
+          <div className="mt-2" onClick={(e) => e.preventDefault()}>
+            <CompareButton id={car.id} title={car.title} />
+          </div>
         </div>
       </Link>
     );
@@ -102,9 +106,12 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
         ) : (
           <p className="mt-1 text-lg font-extrabold text-navy">{formatKES(car.price)}</p>
         )}
-        <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+        <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
           <span>{car.year}</span><span>•</span><span>{formatMileage(car.mileage)}</span><span>•</span><span>{car.transmission}</span><span>•</span><span>{car.location}</span>
         </p>
+        <div className="mt-2" onClick={(e) => e.preventDefault()}>
+          <CompareButton id={car.id} title={car.title} />
+        </div>
       </div>
     </Link>
   );

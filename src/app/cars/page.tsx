@@ -2,7 +2,8 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { CarCard } from "@/components/cars/car-card";
 import { FiltersPanel } from "@/components/cars/filters-panel";
-import { searchCars } from "@/lib/queries";
+import { SaveSearchButton } from "@/components/search/save-search-button";
+import { searchCars, getSearchFacets } from "@/lib/queries";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { carFilterSchema } from "@/lib/validations";
 import { baseMetadata } from "@/lib/seo";
@@ -19,7 +20,8 @@ export default async function CarsPage({ searchParams }: { searchParams: Promise
   const raw = await searchParams;
   const parsed = carFilterSchema.safeParse(raw);
   const filters = parsed.success ? parsed.data : { sort: "newest" as const, page: 1 };
-  const { cars, total, page, totalPages } = await searchCars(filters as never).catch(() => ({ cars: [], total: 0, page: 1, totalPages: 1 }));
+  const { cars, total, page, totalPages, expanded } = await searchCars(filters as never).catch(() => ({ cars: [], total: 0, page: 1, totalPages: 1, expanded: [] as string[] }));
+  const facets = (await getSearchFacets().catch(() => null)) ?? undefined;
 
   const makeLink = (p: number) => {
     const sp = new URLSearchParams();
@@ -33,9 +35,18 @@ export default async function CarsPage({ searchParams }: { searchParams: Promise
       <Breadcrumbs items={[{ label: "Cars" }]} />
       <h1 className="text-3xl font-extrabold">Cars for sale in Kenya</h1>
       <p className="mt-1 text-muted-foreground">{total} verified results • Prices in KES</p>
+      {expanded.length > 1 && (
+        <p className="mt-2 inline-block rounded-full bg-gold/10 px-3 py-1 text-xs font-semibold text-navy">
+          Smart search also matched: {expanded.filter((t) => t !== expanded[0]).join(" • ")}
+        </p>
+      )}
       <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
-        <aside><div className="lg:sticky lg:top-20"><Suspense><FiltersPanel /></Suspense></div></aside>
+        <aside><div className="lg:sticky lg:top-20"><Suspense><FiltersPanel facets={facets} /></Suspense><div className="mt-3 hidden lg:block"><Suspense><SaveSearchButton /></Suspense></div></div></aside>
         <div>
+          <div className="mb-3 flex items-center justify-between lg:hidden">
+            <span className="text-sm text-muted-foreground">{total} results</span>
+            <Suspense><SaveSearchButton /></Suspense>
+          </div>
           {cars.length === 0 ? (
             <div className="rounded-2xl border border-dashed p-12 text-center">
               <p className="font-bold">No cars match your filters</p>

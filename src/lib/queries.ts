@@ -1,25 +1,18 @@
 import prisma from "@/lib/prisma";
 import { shuffle } from "@/lib/utils";
+import { expandQuery, rankCarIds } from "@/lib/search";
 import type { CarFilters } from "@/lib/validations";
 import type { Prisma } from "@prisma/client";
 
 const PAGE_SIZE = 12;
 
-export async function searchCars(filters: CarFilters, opts?: { rentalOnly?: boolean }) {
+/** Shared where-builder for cars (used by search, facets, saved-search matching). */
+export function buildCarWhere(filters: CarFilters, opts?: { rentalOnly?: boolean }) {
   const where: Prisma.CarWhereInput = { status: "ACTIVE" };
 
   // Rentals live in their own vertical; sale search excludes rent-only stock
   where.listingType = opts?.rentalOnly ? { in: ["RENT", "BOTH"] } : { in: ["SALE", "BOTH"] };
 
-  if (filters.q) {
-    // Prisma full-text-ish: case-insensitive contains across key fields.
-    // For scale, swap with Meilisearch/Algolia; interface stays the same.
-    where.OR = [
-      { title: { contains: filters.q, mode: "insensitive" } },
-      { make: { contains: filters.q, mode: "insensitive" } },
-      { model: { contains: filters.q, mode: "insensitive" } },
-    ];
-  }
   if (filters.make) where.make = { equals: filters.make, mode: "insensitive" };
   if (filters.model) where.model = { contains: filters.model, mode: "insensitive" };
   if (filters.location) where.location = filters.location;
@@ -32,6 +25,44 @@ export async function searchCars(filters: CarFilters, opts?: { rentalOnly?: bool
   if (filters.minYear || filters.maxYear)
     where.year = { gte: filters.minYear, lte: filters.maxYear };
   if (filters.maxMileage) where.mileage = { lte: filters.maxMileage };
+  return where;
+}
+
+const carInclude = {
+  images: { orderBy: { sortOrder: "asc" as const } },
+  dealer: { select: { businessName: true, logoUrl: true } },
+  seller: { select: { name: true, image: true } },
+};
+
+export async function searchCars(filters: CarFilters, opts?: { rentalOnly?: boolean }) {
+  const where = buildCarWhere(filters, opts);
+  const page = Math.max(1, filters.page || 1);
+
+  // Keyword path: typo-tolerant trigram retrieval + relevance ranking.
+  const q = filters.q?.trim();
+  if (q) {
+    const terms = expandQuery(q);
+    const ranked = await rankCarIds(terms, { listingType: opts?.rentalOnly ? "RENT" : "SALE", limit: 400 });
+    if (ranked.length === 0) {
+      return { cars: [], total: 0, page, pageSize: PAGE_SIZE, totalPages: 1, expanded: terms };
+    }
+    const rankOf = new Map(ranked.map((r, i) => [r.id, i] as const));
+    const matched = await prisma.car.findMany({
+      where: { ...where, id: { in: ranked.map((r) => r.id) } },
+      include: carInclude,
+    });
+    // Relevance order, unless the user picked an explicit sort.
+    if (!filters.sort || filters.sort === "newest") {
+      matched.sort((a, b) => (rankOf.get(a.id) ?? 9999) - (rankOf.get(b.id) ?? 9999));
+    } else if (filters.sort === "price-asc") matched.sort((a, b) => a.price - b.price);
+    else if (filters.sort === "price-desc") matched.sort((a, b) => b.price - a.price);
+    else if (filters.sort === "year-desc") matched.sort((a, b) => b.year - a.year);
+    else if (filters.sort === "mileage-asc") matched.sort((a, b) => a.mileage - b.mileage);
+    const total = matched.length;
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    const cars = matched.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    return { cars, total, page, pageSize: PAGE_SIZE, totalPages, expanded: terms };
+  }
 
   const orderBy: Prisma.CarOrderByWithRelationInput =
     filters.sort === "price-asc" ? { price: "asc" }
@@ -40,7 +71,6 @@ export async function searchCars(filters: CarFilters, opts?: { rentalOnly?: bool
     : filters.sort === "mileage-asc" ? { mileage: "asc" }
     : { createdAt: "desc" };
 
-  const page = Math.max(1, filters.page || 1);
   const [total, cars] = await Promise.all([
     prisma.car.count({ where }),
     prisma.car.findMany({
@@ -48,13 +78,32 @@ export async function searchCars(filters: CarFilters, opts?: { rentalOnly?: bool
       orderBy,
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
-      include: { images: { orderBy: { sortOrder: "asc" } }, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } },
+      include: carInclude,
     }),
   ]);
 
   // Default view reshuffles every refresh for discovery; explicit sorts + deep pages stay stable.
   const visible = filters.sort === "newest" && page === 1 ? shuffle(cars) : cars;
-  return { cars: visible, total, page, pageSize: PAGE_SIZE, totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)) };
+  return { cars: visible, total, page, pageSize: PAGE_SIZE, totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)), expanded: [] as string[] };
+}
+
+/** Live counts for filter options (makes, body types, locations). */
+export type Facet = { value: string; count: number };
+export async function getSearchFacets(opts?: { rentalOnly?: boolean }) {
+  const sale: Prisma.CarWhereInput["listingType"] = { in: ["SALE", "BOTH"] };
+  const rent: Prisma.CarWhereInput["listingType"] = { in: ["RENT", "BOTH"] };
+  const where = { status: "ACTIVE", listingType: opts?.rentalOnly ? rent : sale } as Prisma.CarWhereInput;
+  const [makes, bodies, locations] = await Promise.all([
+    prisma.car.groupBy({ by: ["make"], where, _count: true }),
+    prisma.car.groupBy({ by: ["bodyType"], where, _count: true }),
+    prisma.car.groupBy({ by: ["location"], where, _count: true }),
+  ]);
+  const sort = <T extends { _count: number }>(a: T[]) => a.sort((x, y) => y._count - x._count);
+  return {
+    makes: sort(makes).map((g) => ({ value: g.make, count: g._count })),
+    bodyTypes: sort(bodies).map((g) => ({ value: String(g.bodyType), count: g._count })),
+    locations: sort(locations).map((g) => ({ value: g.location, count: g._count })),
+  };
 }
 
 export async function getCarById(idOrSlug: string) {

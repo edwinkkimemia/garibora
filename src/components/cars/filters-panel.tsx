@@ -20,7 +20,9 @@ const sorts = [
   { v: "mileage-asc", l: "Mileage: lowest" },
 ];
 
-export function FiltersPanel() {
+export type FacetList = { value: string; count: number }[];
+
+export function FiltersPanel({ facets }: { facets?: { makes: FacetList; bodyTypes: FacetList } }) {
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
@@ -35,6 +37,8 @@ export function FiltersPanel() {
   }
 
   const get = (k: string) => sp.get(k) ?? "";
+  const countFor = (list: FacetList | undefined, v: string) => list?.find((f) => f.value === v)?.count ?? 0;
+  const optLabel = (name: string, count: number) => (count > 0 ? `${name} (${count})` : name);
   const activeCount = ["q", "make", "location", "bodyType", "condition", "transmission", "fuelType", "minPrice", "maxPrice", "minYear", "maxMileage"].filter((k) => sp.get(k)).length;
 
   return (
@@ -55,7 +59,7 @@ export function FiltersPanel() {
         <div className="col-span-2"><Input placeholder="Keyword…" defaultValue={get("q")} onChange={(e) => set("q", e.target.value)} aria-label="Keyword" /></div>
         <Select value={get("make")} onChange={(e) => set("make", e.target.value)} aria-label="Make">
           <option value="">All makes</option>
-          {siteConfig.makes.map((m) => <option key={m} value={m}>{m}</option>)}
+          {siteConfig.makes.map((m) => <option key={m} value={m}>{optLabel(m, countFor(facets?.makes, m))}</option>)}
         </Select>
         <Input
           list="ke-locations" value={get("location")} onChange={(e) => set("location", e.target.value)}
@@ -66,7 +70,7 @@ export function FiltersPanel() {
         </datalist>
         <Select value={get("bodyType")} onChange={(e) => set("bodyType", e.target.value)} aria-label="Body type">
           <option value="">All types</option>
-          {bodies.map((b) => <option key={b} value={b}>{b}</option>)}
+          {bodies.map((b) => <option key={b} value={b}>{optLabel(b.replace(/_/g, " "), countFor(facets?.bodyTypes, b))}</option>)}
         </Select>
         <Select value={get("condition")} onChange={(e) => set("condition", e.target.value)} aria-label="Condition">
           <option value="">Any condition</option>
