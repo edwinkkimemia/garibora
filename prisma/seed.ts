@@ -458,6 +458,12 @@ async function main() {
     data: { idVerified: true, verifyNote: null },
   });
 
+  // Demo staff picks get a rolling 30-day window so dashboards always show an expiry
+  await prisma.car.updateMany({
+    where: { featured: true, featuredUntil: null },
+    data: { featuredUntil: new Date(Date.now() + 30 * 24 * 3600 * 1000) },
+  });
+
   // Flag hire stock (monetization: rentals) — hire-only, kept fully
   // separate from sale stock. Deterministic + idempotent.
   const rentals: [string, number][] = [

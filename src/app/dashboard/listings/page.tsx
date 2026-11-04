@@ -59,7 +59,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
               <p className="mt-1 flex flex-wrap items-center gap-2 text-sm font-extrabold text-navy">{formatKES(c.price)} <Badge variant={c.status === "ACTIVE" ? "success" : c.status === "PENDING" ? "outline" : "secondary"}>{c.status}</Badge></p>
               {boostActive(c) && (
                 <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-gold/15 px-2 py-0.5 text-[11px] font-bold text-gold-dark">
-                  <Zap className="size-3" /> Featured{c.featuredUntil ? ` till ${new Date(c.featuredUntil).toLocaleDateString("en-KE", { day: "numeric", month: "short" })}` : ""}
+                  <Zap className="size-3" /> {c.featuredUntil ? `Featured till ${new Date(c.featuredUntil).toLocaleDateString("en-KE", { day: "numeric", month: "short" })}` : "Featured • Staff pick"}
                 </p>
               )}
               <p className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
