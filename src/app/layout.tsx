@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Archivo } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
@@ -8,7 +8,7 @@ import { WhatsAppFloat } from "@/components/layout/whatsapp-float";
 import { Providers } from "@/components/providers";
 import { baseMetadata } from "@/lib/seo";
 
-const inter = Inter({ subsets: ["latin"] });
+const archivo = Archivo({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export const metadata: Metadata = baseMetadata();
 
@@ -17,7 +17,7 @@ export const viewport: Viewport = { themeColor: "#0C1F3F" };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-KE" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={archivo.className}>
         <Providers>
           <Navbar />
           <main className="min-h-[70vh]">{children}</main>
