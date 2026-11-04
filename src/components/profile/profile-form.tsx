@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import Image from "next/image";
 import { IdCard, FileBadge, Store } from "lucide-react";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { ImageUploader } from "@/components/upload/image-uploader";
@@ -38,13 +39,7 @@ export function ProfileForm({ user }: Props) {
   return (
     <form action={action} className="space-y-4">
       <div className="flex items-center gap-4 rounded-2xl border bg-muted/40 p-4">
-        <span className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-navy text-xl font-extrabold text-gold-light">
-          {currentAvatar ? (
-            <Image src={currentAvatar} alt="Profile photo" fill className="object-cover" sizes="64px" />
-          ) : (
-            (user.name || "G").charAt(0).toUpperCase()
-          )}
-        </span>
+        <Avatar src={currentAvatar} name={user.name || "G"} className="size-16" />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-bold">Profile photo</p>
           <p className="text-xs text-muted-foreground">Shows next to your name, reviews and listings. Square photos look best.</p>

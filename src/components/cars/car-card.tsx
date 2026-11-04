@@ -4,6 +4,7 @@ import { MapPin, Gauge, Fuel, Cog, BadgeCheck, Heart } from "lucide-react";
 import { formatKES, formatMileage } from "@/lib/utils";
 import { Badge } from "@/components/ui/card";
 import { Watermark } from "@/components/ui/watermark";
+import { Avatar } from "@/components/ui/avatar";
 import { CompareButton } from "@/components/compare/compare";
 
 type CarCardCar = {
@@ -16,26 +17,11 @@ type CarCardCar = {
   images: { url: string }[];
 };
 
-function SellerAvatar({ url, name, size = "size-5" }: { url?: string | null; name: string; size?: string }) {
-  if (url) {
-    return (
-      <span className={`relative ${size} shrink-0 overflow-hidden rounded-full bg-muted`}>
-        <Image src={url} alt="" fill className="object-cover" sizes="40px" />
-      </span>
-    );
-  }
-  return (
-    <span className={`grid ${size} shrink-0 place-items-center rounded-full bg-navy text-[10px] font-extrabold text-gold-light`}>
-      {name.charAt(0).toUpperCase()}
-    </span>
-  );
-}
-
 function SellerMark({ car }: { car: CarCardCar }) {
   if (car.dealer) {
     return (
       <p className="mt-1 flex items-center gap-1.5 text-xs font-bold text-navy">
-        <SellerAvatar url={car.dealer.logoUrl} name={car.dealer.businessName} />
+        <Avatar src={car.dealer.logoUrl} name={car.dealer.businessName} className="size-5" />
         <span className="truncate">{car.dealer.businessName} <span className="font-medium text-muted-foreground">• Dealer</span></span>
         <BadgeCheck className="size-3.5 shrink-0 text-gold-dark" />
       </p>
@@ -46,7 +32,7 @@ function SellerMark({ car }: { car: CarCardCar }) {
     const name = car.seller?.name || "Private seller";
     return (
       <p className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-        <SellerAvatar url={car.seller?.image} name={name} />
+        <Avatar src={car.seller?.image} name={name} className="size-5" />
         <span className="truncate">{name}</span>
         <BadgeCheck className="size-3.5 shrink-0 text-emerald-600" />
       </p>

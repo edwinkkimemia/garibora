@@ -11,6 +11,7 @@ import { CarCard } from "@/components/cars/car-card";
 import { PartCard } from "@/components/parts/part-card";
 import { InquiryForm } from "@/components/cars/inquiry-form";
 import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getCarById, getSimilarCars, getMarketInsight, getDealerCars } from "@/lib/queries";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
@@ -138,11 +139,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
               {car.dealer ? (
                 <div className="mt-4 overflow-hidden rounded-xl border border-gold/50">
                   <div className="flex items-center gap-2.5 bg-navy p-3 text-white">
-                    {car.dealer.logoUrl ? (
-                      <span className="relative size-10 shrink-0 overflow-hidden rounded-full bg-white"><Image src={car.dealer.logoUrl} alt="" fill className="object-cover" sizes="40px" /></span>
-                    ) : (
-                      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold text-sm font-extrabold text-navy">{car.dealer.businessName.charAt(0)}</span>
-                    )}
+                    <Avatar src={car.dealer.logoUrl} name={car.dealer.businessName} className="size-10" />
                     <div className="min-w-0">
                       <p className="flex items-center gap-1 truncate text-sm font-bold">
                         {car.dealer.businessName}
@@ -163,11 +160,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
               ) : (
                 <div className="mt-4 overflow-hidden rounded-xl border">
                   <div className="flex items-center gap-2.5 bg-muted/70 p-3">
-                    {car.seller.image ? (
-                      <span className="relative size-10 shrink-0 overflow-hidden rounded-full bg-muted"><Image src={car.seller.image} alt="" fill className="object-cover" sizes="40px" /></span>
-                    ) : (
-                      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-navy text-sm font-extrabold text-gold-light">{(car.seller.name || "P").charAt(0).toUpperCase()}</span>
-                    )}
+                    <Avatar src={car.seller.image} name={car.seller.name || "Private seller"} className="size-10" />
                     <div className="min-w-0">
                       <p className="flex items-center gap-1 truncate text-sm font-bold">
                         {car.seller.name || "Private seller"}
