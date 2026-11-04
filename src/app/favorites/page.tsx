@@ -10,7 +10,7 @@ export default async function FavoritesPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login?next=/favorites");
   const favs = await prisma.favorite.findMany({
-    where: { userId: session.user.id }, include: { car: { include: { images: true, dealer: { select: { businessName: true } } } } },
+    where: { userId: session.user.id }, include: { car: { include: { images: true, dealer: { select: { businessName: true } }, seller: { select: { name: true } } } } },
     orderBy: { createdAt: "desc" },
   }).catch(() => []);
   return (

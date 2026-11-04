@@ -48,7 +48,7 @@ export async function searchCars(filters: CarFilters, opts?: { rentalOnly?: bool
       orderBy,
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
-      include: { images: { orderBy: { sortOrder: "asc" } }, dealer: true },
+      include: { images: { orderBy: { sortOrder: "asc" } }, dealer: true, seller: { select: { name: true } } },
     }),
   ]);
 
@@ -76,7 +76,7 @@ export async function getSimilarCars(carId: string, make: string, bodyType: stri
       OR: [{ make }, { bodyType: bodyType as never }],
     },
     take: 4,
-    include: { images: true, dealer: { select: { businessName: true } } },
+    include: { images: true, dealer: { select: { businessName: true } }, seller: { select: { name: true } } },
     orderBy: { createdAt: "desc" },
   });
   return shuffle(cars);
@@ -94,7 +94,7 @@ export async function getFeaturedCars() {
   const cars = await prisma.car.findMany({
     where: { status: "ACTIVE", ...featuredLive() },
     take: 8,
-    include: { images: true, dealer: true },
+    include: { images: true, dealer: true, seller: { select: { name: true } } },
     orderBy: { createdAt: "desc" },
   });
   return shuffle(cars);

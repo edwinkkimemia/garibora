@@ -11,6 +11,7 @@ type CarCardCar = {
   verified: boolean; featured: boolean; negotiable: boolean;
   dailyRate?: number | null; listingType?: string;
   dealer?: { businessName: string } | null;
+  seller?: { name: string | null } | null;
   images: { url: string }[];
 };
 
@@ -26,8 +27,10 @@ function SellerMark({ car }: { car: CarCardCar }) {
   // dealer: null (explicitly loaded) = independent seller; undefined = unknown source
   if ("dealer" in car && car.dealer === null) {
     return (
-      <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-slate-500">
-        <User className="size-3.5 shrink-0" /> Private seller
+      <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-slate-700">
+        <User className="size-3.5 shrink-0 text-slate-400" />
+        <span className="truncate">{car.seller?.name || "Private seller"}</span>
+        <span className="shrink-0 font-normal text-slate-400">• Private</span>
       </p>
     );
   }
