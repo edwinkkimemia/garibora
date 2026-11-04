@@ -67,10 +67,10 @@ async function stampImage(file: File, logo: HTMLImageElement): Promise<File> {
  * which must stay unaltered.
  */
 export function ImageUploader({
-  images, setImages, label = "Photos", max = 12, fieldName = "images", watermark = true,
+  images, setImages, label = "Photos", max = 12, fieldName = "images", watermark = true, emptyHint,
 }: {
   images: string[]; setImages: (u: string[]) => void;
-  label?: string; max?: number; fieldName?: string; watermark?: boolean;
+  label?: string; max?: number; fieldName?: string; watermark?: boolean; emptyHint?: string;
 }) {
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState("");
@@ -147,9 +147,9 @@ export function ImageUploader({
         </ul>
       ) : (
         <p className="mt-2 text-sm text-muted-foreground">
-          {watermark
+          {emptyHint ?? (watermark
             ? "Add at least 1 photo. Tip: exterior 360°, interior, dashboard mileage, engine bay."
-            : "Add a clear, readable photo — all corners visible, no glare."}
+            : "Add a clear, readable document — all corners visible, no glare.")}
         </p>
       )}
       {!enabled && (

@@ -139,8 +139,7 @@ export async function updateProfileAction(prev: unknown, formData: FormData) {
   const name = String(formData.get("name") || "").trim();
   const phone = String(formData.get("phone") || "").trim();
   const idNumber = String(formData.get("idNumber") || "").trim();
-  const kraPin = String(formData.get("kraPin") || "").trim().toUpperCase();
-  const first = (k: string) => {
+  const kraPin = String(formData.get("kraPin") || "").trim().toUpperCase();  const first = (k: string) => {
     const v = formData.getAll(k).filter(Boolean) as string[];
     return v[0] ?? null;
   };
@@ -150,6 +149,7 @@ export async function updateProfileAction(prev: unknown, formData: FormData) {
     where: { id: session.user.id },
     data: {
       name, phone: phone || null, idNumber: idNumber || null, kraPin: kraPin || null,
+      image: first("avatar") ?? undefined,
       idDocUrl: first("idDoc") ?? undefined, kraPinDocUrl: first("kraPinDoc") ?? undefined,
       bizPermitUrl: first("bizPermit") ?? undefined,
     },

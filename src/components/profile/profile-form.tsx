@@ -11,6 +11,7 @@ import { updateProfileAction } from "@/lib/actions";
 type Props = {
   user: {
     name: string | null; phone: string | null; idNumber: string | null; kraPin: string | null;
+    image: string | null;
     idDocUrl: string | null; kraPinDocUrl: string | null; bizPermitUrl: string | null;
   };
 };
@@ -28,12 +29,28 @@ function ExistingDoc({ url, label }: { url: string | null; label: string }) {
 /** Full KYC: personal details + national ID + KRA PIN + supporting documents. */
 export function ProfileForm({ user }: Props) {
   const [state, action, pending] = useActionState(updateProfileAction, {} as { error?: string; ok?: boolean });
+  const [avatar, setAvatar] = useState<string[]>([]);
   const [idDoc, setIdDoc] = useState<string[]>([]);
   const [kraPinDoc, setKraPinDoc] = useState<string[]>([]);
   const [bizPermit, setBizPermit] = useState<string[]>([]);
+  const currentAvatar = avatar[0] ?? user.image;
 
   return (
     <form action={action} className="space-y-4">
+      <div className="flex items-center gap-4 rounded-2xl border bg-muted/40 p-4">
+        <span className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-navy text-xl font-extrabold text-gold-light">
+          {currentAvatar ? (
+            <Image src={currentAvatar} alt="Profile photo" fill className="object-cover" sizes="64px" />
+          ) : (
+            (user.name || "G").charAt(0).toUpperCase()
+          )}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-bold">Profile photo</p>
+          <p className="text-xs text-muted-foreground">Shows next to your name, reviews and listings. Square photos look best.</p>
+          <div className="mt-1"><ImageUploader images={avatar} setImages={setAvatar} label="" max={1} fieldName="avatar" watermark={false} emptyHint="Upload a clear headshot — JPG or PNG." /></div>
+        </div>
+      </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <div><Label htmlFor="name">Full name</Label><Input id="name" name="name" defaultValue={user.name ?? ""} required /></div>
         <div><Label htmlFor="phone">Phone / WhatsApp</Label><Input id="phone" name="phone" defaultValue={user.phone ?? ""} placeholder="0722…" /></div>

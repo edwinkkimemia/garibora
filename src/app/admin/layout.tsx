@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import { ShieldCheck } from "lucide-react";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
@@ -6,16 +7,22 @@ import { AdminSidebar } from "@/components/admin/admin-sidebar";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
-  const me = session?.user?.id ? await prisma.user.findUnique({ where: { id: session.user.id }, select: { name: true, role: true } }).catch(() => null) : null;
+  const me = session?.user?.id ? await prisma.user.findUnique({ where: { id: session.user.id }, select: { name: true, role: true, image: true } }).catch(() => null) : null;
   if (!me || me.role !== "ADMIN") redirect("/login?next=/admin");
   return (
     <div className="mx-auto w-full max-w-[1500px] px-4 py-6 md:px-6">
       <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
         <aside className="h-fit rounded-2xl bg-navy p-3 text-white shadow-md lg:sticky lg:top-20">
           <div className="flex items-center gap-2.5 rounded-xl bg-white/5 p-3">
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold text-sm font-extrabold text-navy">
-              {(me.name || "A").charAt(0).toUpperCase()}
-            </span>
+            {me?.image ? (
+              <span className="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-gold">
+                <Image src={me.image} alt="" fill className="object-cover" sizes="40px" />
+              </span>
+            ) : (
+              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold text-sm font-extrabold text-navy">
+                {(me.name || "A").charAt(0).toUpperCase()}
+              </span>
+            )}
             <div className="min-w-0">
               <p className="truncate text-sm font-bold">{me.name}</p>
               <p className="flex items-center gap-1 text-[11px] text-gold-light"><ShieldCheck className="size-3" /> Administrator</p>

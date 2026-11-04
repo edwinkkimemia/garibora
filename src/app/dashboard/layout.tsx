@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { LayoutDashboard, CarFront, Inbox, Send, PlusCircle, Settings, BadgeCheck, Crown, LogOut, BellRing, BookmarkCheck } from "lucide-react";
 import { auth } from "@/lib/auth";
@@ -11,7 +12,7 @@ import { cn } from "@/lib/utils";
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   if (!session?.user) redirect("/login?next=/dashboard");
-  const me = await prisma.user.findUnique({ where: { id: session.user.id! }, select: { name: true, role: true, idVerified: true, dealerProfile: { select: { verified: true } } } }).catch(() => null);
+  const me = await prisma.user.findUnique({ where: { id: session.user.id! }, select: { name: true, role: true, idVerified: true, image: true, dealerProfile: { select: { verified: true } } } }).catch(() => null);
   const links = [
     { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
     { href: "/dashboard/listings", label: "My listings", icon: CarFront },
@@ -29,9 +30,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <DashboardMobileNav unverified={unverified} />
         <aside className="hidden h-fit rounded-2xl border bg-card p-4 shadow-sm lg:sticky lg:top-20 lg:block">
           <div className="flex items-center gap-3 rounded-xl bg-navy p-3 text-white">
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold text-sm font-extrabold text-navy">
-              {(me?.name || "G").charAt(0).toUpperCase()}
-            </span>
+            {me?.image ? (
+              <span className="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-gold">
+                <Image src={me.image} alt="" fill className="object-cover" sizes="40px" />
+              </span>
+            ) : (
+              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold text-sm font-extrabold text-navy">
+                {(me?.name || "G").charAt(0).toUpperCase()}
+              </span>
+            )}
             <div className="min-w-0">
               <p className="truncate text-sm font-bold">{me?.name}</p>
               <p className="flex items-center gap-1 text-[11px] text-slate-300">
