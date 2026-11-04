@@ -42,7 +42,7 @@ export default function ContactPage() {
             </a>
           </div>
           <Card><CardHeader><CardTitle className="text-lg">Send a message</CardTitle></CardHeader>
-            <CardContent><form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+            <CardContent><form className="space-y-3" action={async () => { "use server"; }}>
               <div><Label>Name</Label><Input required placeholder="Your name" /></div>
               <div><Label>Email</Label><Input type="email" required placeholder="you@example.com" /></div>
               <div><Label>Topic</Label><Input placeholder="Buying, selling, dealer onboarding…" /></div>

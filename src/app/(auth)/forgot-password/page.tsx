@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
         <div className="p-5 md:p-7">
           <h1 className="text-xl font-extrabold md:text-2xl">Reset password</h1>
           <p className="mt-0.5 text-sm text-muted-foreground">Enter your email — we&apos;ll send a reset link.</p>
-          <form className="mt-4 space-y-2.5" onSubmit={(e) => e.preventDefault()}>
+          <form className="mt-4 space-y-2.5" action={async () => { "use server"; }}>
             <div><Label htmlFor="email">Email</Label><Input id="email" type="email" required placeholder="you@example.com" autoComplete="email" /></div>
             <Button className="w-full" size="lg">Send reset link</Button>
           </form>

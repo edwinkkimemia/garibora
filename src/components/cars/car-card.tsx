@@ -75,7 +75,7 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
             <span className="inline-flex items-center gap-1"><Cog className="size-3" />{car.transmission}</span>
             <span className="inline-flex items-center gap-1"><MapPin className="size-3" />{car.location}</span>
           </p>
-          <div className="mt-2" onClick={(e) => e.preventDefault()}>
+          <div className="mt-2">
             <CompareButton id={car.id} title={car.title} />
           </div>
         </div>
@@ -109,7 +109,7 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
         <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
           <span>{car.year}</span><span>•</span><span>{formatMileage(car.mileage)}</span><span>•</span><span>{car.transmission}</span><span>•</span><span>{car.location}</span>
         </p>
-        <div className="mt-2" onClick={(e) => e.preventDefault()}>
+        <div className="mt-2">
           <CompareButton id={car.id} title={car.title} />
         </div>
       </div>
