@@ -458,11 +458,68 @@ async function main() {
     data: { idVerified: true, verifyNote: null },
   });
 
-  // Demo staff picks get a rolling 30-day window so dashboards always show an expiry
+  // ---------- Demo staff picks: rolling 30-day window so dashboards always show an expiry ----------
   await prisma.car.updateMany({
     where: { featured: true, featuredUntil: null },
     data: { featuredUntil: new Date(Date.now() + 30 * 24 * 3600 * 1000) },
   });
+
+
+  // ---------- 5 individual (private) sellers, 3 listings each ----------
+  const privateSellers = [
+    { key: "wanjiku", email: "wanjiku@motiva.co.ke", name: "Wanjiku Mwangi", phone: "+254722123456", idNumber: "23456789" },
+    { key: "otieno", email: "otieno@motiva.co.ke", name: "David Otieno", phone: "+254733987654", idNumber: "34567890" },
+    { key: "faith", email: "faith@motiva.co.ke", name: "Faith Achieng", phone: "+254711223344", idNumber: "45678901" },
+    { key: "peter", email: "peter@motiva.co.ke", name: "Peter Kamau", phone: "+254722887766", idNumber: "56789012" },
+    { key: "grace", email: "grace@motiva.co.ke", name: "Grace Wambui", phone: "+254744556677", idNumber: "67890123" },
+  ];
+  const privateIds: Record<string, string> = {};
+  for (const s of privateSellers) {
+    const u = await prisma.user.upsert({
+      where: { email: s.email },
+      update: { idVerified: true, verifyNote: null },
+      create: { email: s.email, name: s.name, phone: s.phone, role: "SELLER", verified: true, idVerified: true, idNumber: s.idNumber, passwordHash },
+    });
+    privateIds[s.key] = u.id;
+  }
+  type PrivCar = {
+    title: string; make: string; model: string; year: number; price: number; mileage: number;
+    transmission: Transmission; fuelType: FuelType; bodyType: BodyType; condition: CarCondition;
+    location: string; description: string; verified: boolean; engineCc: number; drive: string;
+    color: string; images: string[]; seller: string;
+  };
+  const privCars: PrivCar[] = [
+    { title: "2016 Toyota Vitz Jewela 1.3", make: "Toyota", model: "Vitz", year: 2016, price: 1050000, mileage: 72000, transmission: Transmission.CVT, fuelType: FuelType.PETROL, bodyType: BodyType.HATCHBACK, condition: CarCondition.FOREIGN_USED, location: "Nairobi", description: "Lady-driven Vitz Jewela, accident-free, new tyres, push start. Duty paid, ready transfer.", verified: true, engineCc: 1300, drive: "2WD", color: "Silver", images: [img("photo-1541899481282-d53bffe3c35d")], seller: "wanjiku" },
+    { title: "2015 Mazda Demio 13S SkyActiv", make: "Mazda", model: "Demio", year: 2015, price: 920000, mileage: 81000, transmission: Transmission.AUTOMATIC, fuelType: FuelType.PETROL, bodyType: BodyType.HATCHBACK, condition: CarCondition.FOREIGN_USED, location: "Nairobi", description: "Clean Demio, i-stop working, very economical. Viewing in Kilimani.", verified: false, engineCc: 1300, drive: "2WD", color: "Blue", images: [img("photo-1541899481282-d53bffe3c35d")], seller: "wanjiku" },
+    { title: "2017 Suzuki Swift XG 1.2", make: "Suzuki", model: "Swift", year: 2017, price: 1150000, mileage: 64000, transmission: Transmission.CVT, fuelType: FuelType.PETROL, bodyType: BodyType.HATCHBACK, condition: CarCondition.FOREIGN_USED, location: "Nairobi", description: "Well kept Swift, first owner in Kenya, full service records.", verified: true, engineCc: 1200, drive: "2WD", color: "White", images: [img("photo-1535732820275-9ffd998cac22")], seller: "wanjiku" },
+    { title: "2014 Nissan Tiida 15M", make: "Nissan", model: "Tiida", year: 2014, price: 780000, mileage: 105000, transmission: Transmission.AUTOMATIC, fuelType: FuelType.PETROL, bodyType: BodyType.HATCHBACK, condition: CarCondition.LOCALLY_USED, location: "Kisumu", description: "Reliable town car, engine and gearbox perfect. Priced for quick sale.", verified: false, engineCc: 1500, drive: "2WD", color: "Grey", images: [img("photo-1549317661-bd32c8ce0db2")], seller: "otieno" },
+    { title: "2013 Toyota Ractis G 1.5", make: "Toyota", model: "Ractis", year: 2013, price: 850000, mileage: 98000, transmission: Transmission.CVT, fuelType: FuelType.PETROL, bodyType: BodyType.HATCHBACK, condition: CarCondition.LOCALLY_USED, location: "Kisumu", description: "Spacious Ractis, family car, accident-free. New battery and service.", verified: true, engineCc: 1500, drive: "2WD", color: "Black", images: [img("photo-1621007947382-bb3c3994e3fb")], seller: "otieno" },
+    { title: "2015 Honda Fit RS 1.5", make: "Honda", model: "Fit", year: 2015, price: 1180000, mileage: 84000, transmission: Transmission.CVT, fuelType: FuelType.PETROL, bodyType: BodyType.HATCHBACK, condition: CarCondition.FOREIGN_USED, location: "Kisumu", description: "Sporty Fit RS with paddle shifts, original paint, duty paid.", verified: true, engineCc: 1500, drive: "2WD", color: "Red", images: [img("photo-1535732820275-9ffd998cac22")], seller: "otieno" },
+    { title: "2016 Nissan Note X DIG-S", make: "Nissan", model: "Note", year: 2016, price: 1050000, mileage: 76000, transmission: Transmission.CVT, fuelType: FuelType.PETROL, bodyType: BodyType.HATCHBACK, condition: CarCondition.FOREIGN_USED, location: "Mombasa", description: "Supercharged Note, powerful yet economical. Clean interior.", verified: true, engineCc: 1200, drive: "2WD", color: "Wine Red", images: [img("photo-1552519507-da3b142c6e3d")], seller: "faith" },
+    { title: "2015 Toyota Passo X L Package", make: "Toyota", model: "Passo", year: 2015, price: 780000, mileage: 91000, transmission: Transmission.CVT, fuelType: FuelType.PETROL, bodyType: BodyType.HATCHBACK, condition: CarCondition.FOREIGN_USED, location: "Mombasa", description: "Neat Passo, ideal first car, low running costs.", verified: false, engineCc: 1000, drive: "2WD", color: "Silver", images: [img("photo-1541899481282-d53bffe3c35d")], seller: "faith" },
+    { title: "2017 Mazda Demio XD Diesel", make: "Mazda", model: "Demio", year: 2017, price: 1100000, mileage: 69000, transmission: Transmission.AUTOMATIC, fuelType: FuelType.DIESEL, bodyType: BodyType.HATCHBACK, condition: CarCondition.FOREIGN_USED, location: "Mombasa", description: "Rare diesel Demio, 25km/l real world. Auction sheet available.", verified: true, engineCc: 1500, drive: "2WD", color: "Soul Red", images: [img("photo-1594502184342-2e12f877aa73")], seller: "faith" },
+    { title: "2014 Toyota Fielder X 1.5", make: "Toyota", model: "Fielder", year: 2014, price: 1250000, mileage: 112000, transmission: Transmission.CVT, fuelType: FuelType.PETROL, bodyType: BodyType.WAGON, condition: CarCondition.LOCALLY_USED, location: "Nakuru", description: "Fielder wagon, perfect family and business car. Mechanically sound.", verified: true, engineCc: 1500, drive: "2WD", color: "White", images: [img("photo-1621007947382-bb3c3994e3fb")], seller: "peter" },
+    { title: "2016 Subaru Impreza 1.6i-L EyeSight", make: "Subaru", model: "Impreza", year: 2016, price: 1300000, mileage: 88000, transmission: Transmission.CVT, fuelType: FuelType.PETROL, bodyType: BodyType.SEDAN, condition: CarCondition.FOREIGN_USED, location: "Nakuru", description: "EyeSight safety, symmetrical AWD, stable on highways.", verified: false, engineCc: 1600, drive: "2WD", color: "Dark Grey", images: [img("photo-1547038577-da80abbc4f19")], seller: "peter" },
+    { title: "2015 Mitsubishi Lancer EX 1.8", make: "Mitsubishi", model: "Lancer", year: 2015, price: 950000, mileage: 99000, transmission: Transmission.CVT, fuelType: FuelType.PETROL, bodyType: BodyType.SEDAN, condition: CarCondition.FOREIGN_USED, location: "Nakuru", description: "Sporty Lancer EX, solid body, cold AC. Duty paid.", verified: true, engineCc: 1800, drive: "2WD", color: "Silver", images: [img("photo-1502877338535-766e1452684a")], seller: "peter" },
+    { title: "2017 Daihatsu Mira X SA III", make: "Daihatsu", model: "Mira", year: 2017, price: 750000, mileage: 58000, transmission: Transmission.CVT, fuelType: FuelType.PETROL, bodyType: BodyType.HATCHBACK, condition: CarCondition.FOREIGN_USED, location: "Eldoret", description: "Tiny runner, sips fuel, easy parking. Perfect town errands car.", verified: true, engineCc: 660, drive: "2WD", color: "White", images: [img("photo-1541899481282-d53bffe3c35d")], seller: "grace" },
+    { title: "2016 Toyota Porte G 1.5", make: "Toyota", model: "Porte", year: 2016, price: 1050000, mileage: 73000, transmission: Transmission.CVT, fuelType: FuelType.PETROL, bodyType: BodyType.HATCHBACK, condition: CarCondition.FOREIGN_USED, location: "Eldoret", description: "Sliding-door Porte, easy access, great for family with kids.", verified: false, engineCc: 1500, drive: "2WD", color: "Pearl", images: [img("photo-1621007947382-bb3c3994e3fb")], seller: "grace" },
+    { title: "2015 Nissan Juke 15RX Urban Selection", make: "Nissan", model: "Juke", year: 2015, price: 1280000, mileage: 92000, transmission: Transmission.CVT, fuelType: FuelType.PETROL, bodyType: BodyType.SUV, condition: CarCondition.FOREIGN_USED, location: "Uasin Gishu", description: "Stylish Juke crossover, high seating, well maintained.", verified: true, engineCc: 1500, drive: "2WD", color: "Black", images: [img("photo-1547038577-da80abbc4f19")], seller: "grace" },
+  ];
+  for (const c of privCars) {
+    if (await prisma.car.findFirst({ where: { title: c.title } })) continue;
+    const brand = await prisma.brand.upsert({ where: { slug: slugify(c.make) }, update: {}, create: { name: c.make, slug: slugify(c.make) } });
+    await prisma.car.create({
+      data: {
+        title: c.title, slug: `${slugify(`${c.year}-${c.make}-${c.model}`)}-${Math.random().toString(36).slice(2, 7)}`,
+        make: c.make, model: c.model, year: c.year, price: c.price, mileage: c.mileage,
+        transmission: c.transmission, fuelType: c.fuelType, bodyType: c.bodyType, condition: c.condition,
+        location: c.location, description: c.description, featured: false, verified: c.verified, status: "ACTIVE",
+        sellerId: privateIds[c.seller], dealerId: null, brandId: brand.id,
+        engineCc: c.engineCc, drive: c.drive, color: c.color, dutyPaid: true,
+        images: { create: c.images.map((url, i) => ({ url, isPrimary: i === 0, sortOrder: i })) },
+      },
+    });
+  }
 
   // Flag hire stock (monetization: rentals) — hire-only, kept fully
   // separate from sale stock. Deterministic + idempotent.
