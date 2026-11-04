@@ -4,6 +4,7 @@ import { ShieldCheck, BadgeCheck, Banknote, Star, ArrowRight, ClipboardCheck, Ke
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { SearchBar } from "@/components/home/search-bar";
 import { CarCard } from "@/components/cars/car-card";
+import { PartCard } from "@/components/parts/part-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/card";
 import { siteConfig } from "@/config/site";
@@ -15,21 +16,22 @@ export const revalidate = 60;
 async function getHomeData() {
   try {
     const sale = { status: "ACTIVE", listingType: "SALE" } as const;
-    const [featured, newCars, recent, hireCars, dealers, posts, total] = await Promise.all([
+    const [featured, newCars, recent, hireCars, partDeals, dealers, posts, total] = await Promise.all([
       prisma.car.findMany({ where: { ...sale, featured: true, OR: [{ featuredUntil: null }, { featuredUntil: { gte: new Date() } }] }, take: 8, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: { ...sale, condition: "NEW" }, take: 4, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: sale, take: 8, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: { status: "ACTIVE", listingType: "RENT" }, take: 4, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
+      prisma.part.findMany({ where: { status: "ACTIVE" }, take: 4, include: { images: true }, orderBy: { createdAt: "desc" } }),
       prisma.dealer.findMany({ where: { verified: true }, take: 3, orderBy: { rating: "desc" } }),
       prisma.post.findMany({ where: { published: true }, take: 3, orderBy: { createdAt: "desc" } }),
       prisma.car.count({ where: { status: "ACTIVE" } }),
     ]);
     return {
       featured: shuffle(featured), newCars: shuffle(newCars), recent: shuffle(recent),
-      hireCars: shuffle(hireCars), dealers: shuffle(dealers), posts, total,
+      hireCars: shuffle(hireCars), partDeals: shuffle(partDeals), dealers: shuffle(dealers), posts, total,
     };
   } catch {
-    return { featured: [], newCars: [], recent: [], hireCars: [], dealers: [], posts: [], total: 0 };
+    return { featured: [], newCars: [], recent: [], hireCars: [], partDeals: [], dealers: [], posts: [], total: 0 };
   }
 }
 
@@ -61,7 +63,7 @@ const testimonials = [
 ];
 
 export default async function HomePage() {
-  const { featured, newCars, recent, hireCars, dealers, posts, total } = await getHomeData();
+  const { featured, newCars, recent, hireCars, partDeals, dealers, posts, total } = await getHomeData();
 
   return (
     <div>
@@ -178,6 +180,24 @@ export default async function HomePage() {
           {recent.map((c) => <CarCard key={c.id} car={c as never} />)}
         </div>
       </section>
+
+      {/* PARTS */}
+      {partDeals.length > 0 && (
+        <section className="bg-muted/50 py-12">
+          <div className="container">
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-dark">Genuine & quality used</p>
+                <h2 className="mt-1 text-2xl font-extrabold md:text-3xl">Shop car parts</h2>
+              </div>
+              <Link href="/parts"><Button variant="outline" size="sm">All parts <ArrowRight /></Button></Link>
+            </div>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {partDeals.map((p) => <PartCard key={p.id} part={p as never} />)}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* HIRE */}
       {hireCars.length > 0 && (
