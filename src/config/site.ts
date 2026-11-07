@@ -60,7 +60,7 @@ export const siteConfig = {
     "Toyota", "Nissan", "Mercedes-Benz", "BMW", "Honda", "Mazda", "Subaru",
     "Volkswagen", "Audi", "Mitsubishi", "Suzuki", "Land Rover", "Ford", "Isuzu",
     "Lexus", "Volvo", "Porsche", "Jeep", "Peugeot", "Hyundai", "Kia", "Jaguar",
-    "Mini", "Daihatsu", "Hino", "UD Trucks",
+    "Mini", "Daihatsu", "Hino", "UD Trucks", "Tata",
   ],
   bodyTypes: [
     { value: "SUV", label: "SUVs", blurb: "Prado, RAV4, CX-5" },

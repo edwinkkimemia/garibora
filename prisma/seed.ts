@@ -301,6 +301,8 @@ const GEN_BASES: GenBase[] = [
   { make: "Peugeot", model: "3008", grades: ["Active", "Allure", "GT"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 2350000, engineCc: 1600, drive: "2WD" },
   { make: "Jeep", model: "Compass", grades: ["Sport", "Longitude", "Limited"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 2650000, engineCc: 1400, drive: "4WD" },
   { make: "Porsche", model: "Cayenne", grades: ["Base", "S", "GTS"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 8900000, engineCc: 3000, drive: "AWD" },
+  { make: "Tata", model: "Xenon", grades: ["Single Cab", "Double Cab", "X2"], body: BodyType.PICKUP, fuel: FuelType.DIESEL, gear: Transmission.MANUAL, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 1850000, engineCc: 2200, drive: "4WD" },
+  { make: "Tata", model: "Prima", grades: ["2830", "3530", "4430"], body: BodyType.TRUCK, fuel: FuelType.DIESEL, gear: Transmission.MANUAL, condition: CarCondition.LOCALLY_USED, years: [2015, 2016, 2017], basePrice: 4200000, engineCc: 6700, drive: "2WD" },
 ];
 
 GEN_BASES.forEach((b, bi) => {
