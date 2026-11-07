@@ -154,10 +154,14 @@ export async function updateProfileAction(prev: unknown, formData: FormData) {
       bizPermitUrl: first("bizPermit") ?? undefined,
     },
   });
-  // Yard logo lives on the dealer profile (shown on listings, dealer pages, cards)
-  const logo = first("dealerLogo");
+  // Yard logo lives on the dealer profile (shown on listings, dealer pages, cards).
+  // Accepts both field names (form uses "logo").
+  const logo = first("dealerLogo") ?? first("logo");
   if (logo) {
     await prisma.dealer.updateMany({ where: { userId: session.user.id }, data: { logoUrl: logo } });
+  } else if (first("avatar")) {
+    // No yard logo yet? Reuse the freshly uploaded profile photo so the yard never shows blank.
+    await prisma.dealer.updateMany({ where: { userId: session.user.id, logoUrl: null }, data: { logoUrl: first("avatar")! } });
   }
   revalidatePath("/profile");
   revalidatePath("/dashboard/settings");
