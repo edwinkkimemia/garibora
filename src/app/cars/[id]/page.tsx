@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Gauge, Fuel, Cog, Calendar, ShieldCheck, BadgeCheck, Phone, ArrowRight, Star } from "lucide-react";
+import { MapPin, Gauge, Fuel, Cog, Calendar, BadgeCheck, Phone, ArrowRight, Star } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { CarGallery } from "@/components/cars/car-gallery";
 import { FavoriteButton } from "@/components/cars/favorite-button";
@@ -85,7 +85,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap gap-2">
-            {car.verified && <Badge variant="success"><BadgeCheck className="size-3" /> Inspected & verified</Badge>}
+            { car.verified && <Badge variant="success"><BadgeCheck className="size-3" /> Inspected & verified</Badge> }
             {car.status === "SOLD" && <Badge variant="secondary">SOLD</Badge>}
             <Badge variant="outline">{car.condition.replace("_", " ")}</Badge>
           </div>
@@ -143,7 +143,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
                     <div className="min-w-0">
                       <p className="flex items-center gap-1 truncate text-sm font-bold">
                         {car.dealer.businessName}
-                        {car.dealer.verified && <BadgeCheck className="size-4 shrink-0 text-gold-dark" />}
+                        { car.dealer.verified && <BadgeCheck className="size-4 shrink-0 text-gold-dark" /> }
                       </p>
                       <p className="text-[11px] uppercase tracking-wider text-gold-light">Verified dealer yard</p>
                     </div>
@@ -151,7 +151,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
                   <div className="grid grid-cols-3 divide-x divide-border bg-card text-center">
                     <div className="p-2.5"><p className="flex items-center justify-center gap-1 text-sm font-extrabold text-navy"><Star className="size-3.5 fill-gold text-gold" />{car.dealer.rating.toFixed(1)}</p><p className="text-[10px] text-muted-foreground">{car.dealer.reviewCount} reviews</p></div>
                     <div className="p-2.5"><p className="flex items-center justify-center gap-1 text-sm font-extrabold text-navy"><MapPin className="size-3.5" />{car.dealer.location.split(",")[0]}</p><p className="text-[10px] text-muted-foreground">Yard location</p></div>
-                    <div className="p-2.5"><p className="flex items-center justify-center gap-1 text-sm font-extrabold text-emerald-700"><ShieldCheck className="size-3.5" />ID-checked</p><p className="text-[10px] text-muted-foreground">Duty reviewed</p></div>
+                    <div className="p-2.5"><p className="flex items-center justify-center gap-1 text-sm font-extrabold text-emerald-700"><BadgeCheck className="size-3.5" />ID-checked</p><p className="text-[10px] text-muted-foreground">Duty reviewed</p></div>
                   </div>
                   <div className="p-3 pt-0">
                     <Link href={`/dealers/${car.dealer.slug}`}><Button variant="outline" size="sm" className="w-full">View all stock →</Button></Link>
@@ -164,7 +164,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
                     <div className="min-w-0">
                       <p className="flex items-center gap-1 truncate text-sm font-bold">
                         {car.seller.name || "Private seller"}
-                        {(car.seller.idVerified || car.seller.verified) && <BadgeCheck className="size-4 shrink-0 text-emerald-600" />}
+                        { (car.seller.idVerified || car.seller.verified) && <BadgeCheck className="size-4 shrink-0 text-emerald-600" /> }
                       </p>
                       <p className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground"><MapPin className="size-3 shrink-0" />{car.location}, Kenya</p>
                     </div>
@@ -173,7 +173,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
                 </div>
               )}
               <div className="mt-3 flex items-start gap-1.5 rounded-xl bg-gold/10 p-3 text-xs leading-relaxed text-navy">
-                <ShieldCheck className="mt-0.5 size-4 shrink-0 text-gold-dark" />
+                <BadgeCheck className="mt-0.5 size-4 shrink-0 text-gold-dark" />
                 <p><b>Stay safe:</b> meet in public, verify the logbook on NTSA TIMS, and never pay before viewing the car.</p>
               </div>
             </CardContent>
@@ -216,7 +216,7 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
       {/* BUYER SAFETY */}
       <div className="mt-12 overflow-hidden rounded-3xl border border-gold/40 bg-gradient-to-br from-navy via-navy-800 to-navy-700 p-6 text-white md:p-8">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="size-5 text-gold-light" />
+          <BadgeCheck className="size-5 text-gold-light" />
           <h2 className="text-xl font-extrabold">Buy safe, drive happy</h2>
         </div>
         <ul className="mt-4 grid gap-3 text-sm text-slate-200 md:grid-cols-2">

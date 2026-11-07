@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Camera, ClipboardCheck, MessageCircle, ShieldCheck, BadgeCheck } from "lucide-react";
+import { Camera, ClipboardCheck, MessageCircle, BadgeCheck } from "lucide-react";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { canList } from "@/lib/permissions";
@@ -19,7 +19,7 @@ const tips = [
   { icon: Camera, t: "Photos sell cars", d: "6+ shots: front 3/4, rear, interior, dashboard mileage, engine bay. Daylight, clean car." },
   { icon: ClipboardCheck, t: "Paperwork ready", d: "Logbook, KRA PIN match, duty receipt for imports. Transfer happens on NTSA TIMS together." },
   { icon: MessageCircle, t: "Reply fast", d: "Leads go cold in hours. WhatsApp inquiries land instantly — keep your phone close." },
-  { icon: ShieldCheck, t: "Get verified", d: "ID-verified sellers get the badge and 3× more inquiries. Verify free on your profile." },
+  { icon: BadgeCheck, t: "Get verified", d: "ID-verified sellers get the badge and 3× more inquiries. Verify free on your profile." },
 ];
 
 export default async function SellPage({ searchParams }: { searchParams: Promise<{ type?: string }> }) {
@@ -56,7 +56,7 @@ export default async function SellPage({ searchParams }: { searchParams: Promise
       <div className="mx-auto w-full max-w-[1500px] px-4 py-8 md:px-6">
         {!allowed ? (
           <div className="mx-auto max-w-xl rounded-3xl border border-gold/50 bg-card p-8 text-center">
-            <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-navy text-gold-light"><ShieldCheck className="size-7" /></span>
+            <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-navy text-gold-light"><BadgeCheck className="size-7" /></span>
             <h2 className="mt-4 text-2xl font-extrabold">Verify yourself before listing</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Every seller submits a national ID and KRA PIN so buyers can deal with confidence.

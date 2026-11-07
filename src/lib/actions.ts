@@ -154,6 +154,11 @@ export async function updateProfileAction(prev: unknown, formData: FormData) {
       bizPermitUrl: first("bizPermit") ?? undefined,
     },
   });
+  // Yard logo lives on the dealer profile (shown on listings, dealer pages, cards)
+  const logo = first("dealerLogo");
+  if (logo) {
+    await prisma.dealer.updateMany({ where: { userId: session.user.id }, data: { logoUrl: logo } });
+  }
   revalidatePath("/profile");
   revalidatePath("/dashboard/settings");
   return { ok: true };

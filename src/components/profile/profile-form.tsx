@@ -14,6 +14,7 @@ type Props = {
     name: string | null; phone: string | null; idNumber: string | null; kraPin: string | null;
     image: string | null;
     idDocUrl: string | null; kraPinDocUrl: string | null; bizPermitUrl: string | null;
+    dealer?: { businessName: string; logoUrl: string | null } | null;
   };
 };
 
@@ -31,6 +32,7 @@ function ExistingDoc({ url, label }: { url: string | null; label: string }) {
 export function ProfileForm({ user }: Props) {
   const [state, action, pending] = useActionState(updateProfileAction, {} as { error?: string; ok?: boolean });
   const [avatar, setAvatar] = useState<string[]>([]);
+  const [logo, setLogo] = useState<string[]>([]);
   const [idDoc, setIdDoc] = useState<string[]>([]);
   const [kraPinDoc, setKraPinDoc] = useState<string[]>([]);
   const [bizPermit, setBizPermit] = useState<string[]>([]);
@@ -46,6 +48,16 @@ export function ProfileForm({ user }: Props) {
           <div className="mt-1"><ImageUploader images={avatar} setImages={setAvatar} label="" max={1} fieldName="avatar" watermark={false} emptyHint="Upload a clear headshot — JPG or PNG." /></div>
         </div>
       </div>
+      {user.dealer && (
+        <div className="flex items-center gap-4 rounded-2xl border border-gold/50 bg-gold/5 p-4">
+          <Avatar src={logo[0] ?? user.dealer.logoUrl} name={user.dealer.businessName} className="size-16" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold">Yard logo — {user.dealer.businessName}</p>
+            <p className="text-xs text-muted-foreground">Shows on your yard page and every listing card. Square logo works best.</p>
+            <div className="mt-1"><ImageUploader images={logo} setImages={setLogo} label="" max={1} fieldName="logo" watermark={false} emptyHint="Upload your yard logo — PNG with transparent background is ideal." /></div>
+          </div>
+        </div>
+      )}
       <div className="grid gap-3 sm:grid-cols-2">
         <div><Label htmlFor="name">Full name</Label><Input id="name" name="name" defaultValue={user.name ?? ""} required /></div>
         <div><Label htmlFor="phone">Phone / WhatsApp</Label><Input id="phone" name="phone" defaultValue={user.phone ?? ""} placeholder="0722…" /></div>

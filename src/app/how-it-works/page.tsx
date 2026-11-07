@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, ClipboardCheck, KeyRound, ShieldCheck } from "lucide-react";
+import { Search, ClipboardCheck, KeyRound, BadgeCheck } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
@@ -62,7 +62,7 @@ export default function HowItWorksPage() {
 
       <section className="bg-muted/50 py-12">
         <div className="container max-w-4xl">
-          <div className="flex items-center gap-2"><ShieldCheck className="size-5 text-gold-dark" /><h2 className="text-2xl font-extrabold">Questions, answered</h2></div>
+          <div className="flex items-center gap-2"><BadgeCheck className="size-5 text-gold-dark" /><h2 className="text-2xl font-extrabold">Questions, answered</h2></div>
           <div className="mt-6 grid gap-3 md:grid-cols-2">
             {faqs.map((f) => (
               <div key={f.q} className="rounded-2xl border bg-card p-5">

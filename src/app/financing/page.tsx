@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Banknote, ShieldCheck, Calculator, KeyRound, RefreshCcw, FileBadge } from "lucide-react";
+import { Banknote, BadgeCheck, Calculator, KeyRound, RefreshCcw, FileBadge } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { FinanceCalculator } from "@/components/finance/finance-calculator";
@@ -69,7 +69,7 @@ export default function FinancingPage() {
 
         <div className="mt-8 flex flex-col items-start justify-between gap-4 rounded-3xl bg-navy p-6 text-white md:flex-row md:items-center md:p-8">
           <div>
-            <p className="flex items-center gap-2 font-extrabold"><ShieldCheck className="size-5 text-gold-light" /> Get pre-qualified in minutes</p>
+            <p className="flex items-center gap-2 font-extrabold"><BadgeCheck className="size-5 text-gold-light" /> Get pre-qualified in minutes</p>
             <p className="mt-1 text-sm text-slate-300">Send your target car + deposit. A financing partner replies with real terms — free, no obligation.</p>
           </div>
           <div className="flex flex-wrap gap-2">

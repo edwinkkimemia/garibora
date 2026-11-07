@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { ShieldCheck, Phone, Star, MapPin, Navigation, BadgeCheck } from "lucide-react";
+import { BadgeCheck, Phone, Star, MapPin, Navigation } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { shuffle } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
@@ -21,7 +21,7 @@ export default async function DealerDetailPage({ params }: { params: Promise<{ s
         <div className="flex min-w-0 items-center gap-3">
           <Avatar src={dealer.logoUrl} name={dealer.businessName} className="size-14" />
           <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-2xl font-extrabold md:text-3xl"><span className="truncate">{dealer.businessName}</span> <ShieldCheck className="size-6 shrink-0 text-green-600" /></h1>
+            <h1 className="flex items-center gap-2 text-2xl font-extrabold md:text-3xl"><span className="truncate">{dealer.businessName}</span> <BadgeCheck className="size-6 shrink-0 text-green-600" /></h1>
             <p className="mt-1 flex items-center gap-1 text-muted-foreground"><Star className="size-4 fill-gold text-gold" /> {dealer.rating.toFixed(1)} • {dealer.location} • {dealer.cars.length} cars in stock</p>
           </div>
         </div>
@@ -47,7 +47,7 @@ export default async function DealerDetailPage({ params }: { params: Promise<{ s
           </div>
         </div>
         <div className="rounded-2xl border border-gold/40 bg-gold/5 p-5">
-          <p className="flex items-center gap-2 font-extrabold"><ShieldCheck className="size-5 text-emerald-600" /> What the Verified badge means</p>
+          <p className="flex items-center gap-2 font-extrabold"><BadgeCheck className="size-5 text-emerald-600" /> What the Verified badge means</p>
           <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
             <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-emerald-600" /> National ID and KRA PIN of the owner checked against the business name.</li>
             <li className="flex gap-2"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-emerald-600" /> Physical yard visited and geotagged — this address is real.</li>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ShieldCheck } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
           </div>
           <div className="relative">
             <p className="text-2xl font-extrabold leading-tight">Locked out?<br /><span className="text-gold-light">Back in a minute.</span></p>
-            <p className="mt-3 flex items-start gap-2 text-[13px] text-slate-200"><ShieldCheck className="mt-0.5 size-4 shrink-0 text-gold-light" /> Reset links expire in 1 hour and work once, for your security.</p>
+            <p className="mt-3 flex items-start gap-2 text-[13px] text-slate-200"><BadgeCheck className="mt-0.5 size-4 shrink-0 text-gold-light" /> Reset links expire in 1 hour and work once, for your security.</p>
           </div>
           <p className="relative text-xs text-slate-400">© {new Date().getFullYear()} {siteConfig.brandName}</p>
         </div>

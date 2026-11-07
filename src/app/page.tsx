@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ShieldCheck, BadgeCheck, Banknote, Star, ArrowRight, ClipboardCheck, KeyRound, Search, Quote } from "lucide-react";
+import { BadgeCheck, Banknote, Star, ArrowRight, ClipboardCheck, KeyRound, Search, Quote } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { SearchBar } from "@/components/home/search-bar";
 import { CarCard } from "@/components/cars/car-card";
@@ -253,7 +253,7 @@ export default async function HomePage() {
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {dealers.map((d) => (
               <Link key={d.id} href={`/dealers/${d.slug}`} className="rounded-2xl border bg-card p-5 transition hover:border-gold hover:shadow-md">
-                <p className="flex items-center gap-1 font-bold">{d.businessName} <ShieldCheck className="size-4 text-emerald-600" /></p>
+                <p className="flex items-center gap-1 font-bold">{d.businessName} <BadgeCheck className="size-4 text-emerald-600" /></p>
                 <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground"><Star className="size-3 fill-gold text-gold" /> {d.rating.toFixed(1)} • {d.location}</p>
                 <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{d.description}</p>
               </Link>
@@ -291,7 +291,7 @@ export default async function HomePage() {
           {[
             { icon: KeyRound, t: "Hire a car", d: "Verified rentals from KSh 4,000/day — self-drive or chauffeur.", href: "/rentals" },
             { icon: Banknote, t: "Finance it", d: "Estimate monthly payments and get pre-qualified in minutes.", href: "/financing" },
-            { icon: ShieldCheck, t: "Insure it", d: "Comprehensive or third-party cover, quoted in 60 seconds.", href: "/insurance" },
+            { icon: BadgeCheck, t: "Insure it", d: "Comprehensive or third-party cover, quoted in 60 seconds.", href: "/insurance" },
           ].map((m) => (
             <Link key={m.href} href={m.href} className="group rounded-2xl border bg-card p-5 transition hover:border-gold hover:shadow-md">
               <span className="grid size-11 place-items-center rounded-xl bg-navy text-gold-light"><m.icon className="size-5" /></span>

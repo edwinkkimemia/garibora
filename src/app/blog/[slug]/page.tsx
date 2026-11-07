@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, KeyRound, Banknote, ShieldCheck, Wrench } from "lucide-react";
+import { ArrowRight, KeyRound, Banknote, BadgeCheck, Wrench } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ShareButtons } from "@/components/cars/share-buttons";
@@ -96,7 +96,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           {[
             { icon: KeyRound, t: "Hire a car", d: "Verified rentals from KSh 4,000/day.", href: "/rentals" },
             { icon: Banknote, t: "Finance it", d: "Loans, logbook cash & calculator.", href: "/financing" },
-            { icon: ShieldCheck, t: "Insure it", d: "Cover in 60 seconds, from your phone.", href: "/insurance" },
+            { icon: BadgeCheck, t: "Insure it", d: "Cover in 60 seconds, from your phone.", href: "/insurance" },
             { icon: Wrench, t: "Parts & spares", d: "Tyres, batteries, brakes & more.", href: "/parts" },
           ].map((s) => (
             <Link key={s.href} href={s.href} className="group rounded-2xl border bg-card p-5 transition hover:border-gold hover:shadow-md">

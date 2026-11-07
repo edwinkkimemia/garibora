@@ -11,7 +11,7 @@ export default async function SettingsPage() {
   const session = await auth();
   const user = await prisma.user.findUnique({
     where: { id: session!.user!.id! },
-    select: { name: true, email: true, phone: true, idNumber: true, kraPin: true, image: true, idDocUrl: true, kraPinDocUrl: true, bizPermitUrl: true, role: true, idVerified: true, verified: true, verifyNote: true, dealerProfile: { select: { businessName: true, location: true, verified: true } } },
+    select: { name: true, email: true, phone: true, idNumber: true, kraPin: true, image: true, idDocUrl: true, kraPinDocUrl: true, bizPermitUrl: true, role: true, idVerified: true, verified: true, verifyNote: true, dealerProfile: { select: { businessName: true, location: true, verified: true, logoUrl: true } } },
   }).catch(() => null);
   if (!user) return <p className="text-sm text-muted-foreground">Could not load your profile.</p>;
 
@@ -52,7 +52,7 @@ export default async function SettingsPage() {
       <Card className="mt-4">
         <CardHeader><CardTitle className="text-lg">Profile & verification documents</CardTitle></CardHeader>
         <CardContent>
-          <ProfileForm user={{ name: user.name, phone: user.phone, idNumber: user.idNumber, kraPin: user.kraPin, image: user.image, idDocUrl: user.idDocUrl, kraPinDocUrl: user.kraPinDocUrl, bizPermitUrl: user.bizPermitUrl }} />
+          <ProfileForm user={{ name: user.name, phone: user.phone, idNumber: user.idNumber, kraPin: user.kraPin, image: user.image, idDocUrl: user.idDocUrl, kraPinDocUrl: user.kraPinDocUrl, bizPermitUrl: user.bizPermitUrl, dealer: user.dealerProfile ? { businessName: user.dealerProfile.businessName, logoUrl: user.dealerProfile.logoUrl } : null }} />
           <p className="mt-3 text-xs text-muted-foreground">Verified sellers get a badge on listings and rank higher in search — buyers contact you 3× more.</p>
         </CardContent>
       </Card>

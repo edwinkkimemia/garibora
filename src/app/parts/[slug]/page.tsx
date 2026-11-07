@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, MapPin, ShieldCheck, BadgeCheck, Phone, Wrench } from "lucide-react";
+import { ArrowRight, MapPin, BadgeCheck, Phone, Wrench } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ShareButtons } from "@/components/cars/share-buttons";
 import { CarCard } from "@/components/cars/car-card";
@@ -86,7 +86,7 @@ export default async function PartDetailPage({ params }: { params: Promise<{ slu
                 {part.seller.phone && <a href={`tel:${part.seller.phone}`}><Button variant="outline" className="w-full"><Phone />Call</Button></a>}
               </div>
               {(part.dealer || part.seller.verified) && (
-                <p className="mt-3 flex items-center gap-1 rounded-xl bg-emerald-50 p-2 text-xs font-semibold text-emerald-700"><ShieldCheck className="size-4" />{part.dealer ? `${part.dealer.businessName} — verified dealer` : "Verified seller"}</p>
+                <p className="mt-3 flex items-center gap-1 rounded-xl bg-emerald-50 p-2 text-xs font-semibold text-emerald-700"><BadgeCheck className="size-4" />{part.dealer ? `${part.dealer.businessName} — verified dealer` : "Verified seller"}</p>
               )}
               <p className="mt-3 text-xs text-muted-foreground">Confirm part numbers match your car before paying. Meet in person for used items.</p>
             </CardContent>
@@ -120,7 +120,7 @@ export default async function PartDetailPage({ params }: { params: Promise<{ slu
       {/* PARTS SAFETY */}
       <div className="mt-12 overflow-hidden rounded-3xl border border-gold/40 bg-gradient-to-br from-navy via-navy-800 to-navy-700 p-6 text-white md:p-8">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="size-5 text-gold-light" />
+          <BadgeCheck className="size-5 text-gold-light" />
           <h2 className="text-xl font-extrabold">Buy parts without stories</h2>
         </div>
         <ul className="mt-4 grid gap-3 text-sm text-slate-200 md:grid-cols-2">

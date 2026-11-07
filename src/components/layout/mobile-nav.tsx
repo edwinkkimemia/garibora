@@ -5,10 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  BookOpen, CarFront, ChevronDown, HelpCircle, Heart, Info, KeyRound,
-  Landmark, LayoutDashboard, LogOut, Menu, PlusCircle, ShieldCheck, Store, Tag, Wrench, X,
-} from "lucide-react";
+import { BookOpen, CarFront, ChevronDown, HelpCircle, Heart, Info, KeyRound, Landmark, LayoutDashboard, LogOut, Menu, PlusCircle, BadgeCheck, Store, Tag, Wrench, X,  } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/lib/actions";
 import { cn } from "@/lib/utils";
@@ -22,7 +19,7 @@ const primary = [
 
 const secondary = [
   { href: "/financing", label: "Financing", icon: Landmark },
-  { href: "/insurance", label: "Insurance", icon: ShieldCheck },
+  { href: "/insurance", label: "Insurance", icon: BadgeCheck },
   { href: "/pricing", label: "Pricing", icon: Tag },
   { href: "/how-it-works", label: "How it works", icon: HelpCircle },
   { href: "/blog", label: "Insights", icon: BookOpen },
