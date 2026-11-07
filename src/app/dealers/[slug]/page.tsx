@@ -21,7 +21,7 @@ export default async function DealerDetailPage({ params }: { params: Promise<{ s
         <div className="flex min-w-0 items-center gap-3">
           <Avatar src={dealer.logoUrl} name={dealer.businessName} className="size-14" />
           <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-2xl font-extrabold md:text-3xl"><span className="truncate">{dealer.businessName}</span> <BadgeCheck className="size-6 shrink-0 text-green-600" /></h1>
+            <h1 className="flex items-center gap-2 text-2xl font-extrabold md:text-3xl"><span className="truncate">{dealer.businessName}</span> <BadgeCheck className="size-6 shrink-0 text-gold-dark" /></h1>
             <p className="mt-1 flex items-center gap-1 text-muted-foreground"><Star className="size-4 fill-gold text-gold" /> {dealer.rating.toFixed(1)} • {dealer.location} • {dealer.cars.length} cars in stock</p>
           </div>
         </div>
