@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { GitCompareArrows } from "lucide-react";
+import { CompareRemove } from "@/components/compare/compare";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
@@ -55,7 +56,8 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
               <tr className="border-b">
                 <th className="w-32 p-3 text-left text-xs uppercase text-muted-foreground">Car</th>
                 {ordered.map((c) => (
-                  <th key={c.id} className="min-w-[180px] p-3 text-left align-top">
+                  <th key={c.id} className="relative min-w-[180px] p-3 pt-8 text-left align-top">
+                    <div className="absolute right-1 top-1"><CompareRemove id={c.id} /></div>
                     <Link href={`/cars/${c.slug}`} className="group">
                       <span className="relative block aspect-[16/10] overflow-hidden rounded-xl bg-muted">
                         {c.images[0] && <Image src={c.images[0].url} alt={c.title} fill className="object-cover transition group-hover:scale-105" sizes="250px" />}

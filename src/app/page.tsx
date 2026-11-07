@@ -3,6 +3,7 @@ import Image from "next/image";
 import { BadgeCheck, Banknote, Star, ArrowRight, ClipboardCheck, KeyRound, Search, Quote } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { SearchBar } from "@/components/home/search-bar";
+import { BrandsSlider, type BrandItem } from "@/components/home/brands-slider";
 import { CarCard } from "@/components/cars/car-card";
 import { PartCard } from "@/components/parts/part-card";
 import { Button } from "@/components/ui/button";
@@ -16,33 +17,36 @@ export const revalidate = 60;
 async function getHomeData() {
   try {
     const sale = { status: "ACTIVE", listingType: "SALE" } as const;
-    const [featured, newCars, recent, hireCars, partDeals, dealers, posts, total] = await Promise.all([
+    const [featured, newCars, recent, hireCars, partDeals, makeCounts, dealers, posts, total] = await Promise.all([
       prisma.car.findMany({ where: { ...sale, featured: true, OR: [{ featuredUntil: null }, { featuredUntil: { gte: new Date() } }] }, take: 8, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: { ...sale, condition: "NEW" }, take: 4, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: sale, take: 8, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: { status: "ACTIVE", listingType: "RENT" }, take: 4, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
       prisma.part.findMany({ where: { status: "ACTIVE" }, take: 4, include: { images: true }, orderBy: { createdAt: "desc" } }),
+      prisma.car.groupBy({ by: ["make"], where: { status: "ACTIVE", listingType: "SALE" }, _count: true }).catch(() => [] as { make: string; _count: number }[]),
       prisma.dealer.findMany({ where: { verified: true }, take: 3, orderBy: { rating: "desc" } }),
       prisma.post.findMany({ where: { published: true }, take: 3, orderBy: { createdAt: "desc" } }),
       prisma.car.count({ where: { status: "ACTIVE" } }),
     ]);
     return {
       featured: shuffle(featured), newCars: shuffle(newCars), recent: shuffle(recent),
-      hireCars: shuffle(hireCars), partDeals: shuffle(partDeals), dealers: shuffle(dealers), posts, total,
+      hireCars: shuffle(hireCars), partDeals: shuffle(partDeals),
+      dealers: shuffle(dealers), posts, total,
+      brandCounts: [...makeCounts].sort((a, b) => b._count - a._count).slice(0, 16),
     };
   } catch {
-    return { featured: [], newCars: [], recent: [], hireCars: [], partDeals: [], dealers: [], posts: [], total: 0 };
+    return { featured: [], newCars: [], recent: [], hireCars: [], partDeals: [], brandCounts: [] as { make: string; _count: number }[], dealers: [], posts: [], total: 0 };
   }
 }
 
-const brands = [
-  { name: "Toyota", img: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=400&auto=format&fit=crop" },
-  { name: "Nissan", img: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=400&auto=format&fit=crop" },
-  { name: "Mercedes-Benz", img: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=400&auto=format&fit=crop" },
-  { name: "BMW", img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=400&auto=format&fit=crop" },
-  { name: "Mazda", img: "https://images.unsplash.com/photo-1594502184342-2e12f877aa73?q=80&w=400&auto=format&fit=crop" },
-  { name: "Subaru", img: "https://images.unsplash.com/photo-1547038577-da80abbc4f19?q=80&w=400&auto=format&fit=crop" },
-];
+const brandPhotos: Record<string, string> = {
+  Toyota: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=400&auto=format&fit=crop",
+  Nissan: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=400&auto=format&fit=crop",
+  "Mercedes-Benz": "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=400&auto=format&fit=crop",
+  BMW: "https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=400&auto=format&fit=crop",
+  Mazda: "https://images.unsplash.com/photo-1594502184342-2e12f877aa73?q=80&w=400&auto=format&fit=crop",
+  Subaru: "https://images.unsplash.com/photo-1547038577-da80abbc4f19?q=80&w=400&auto=format&fit=crop",
+};
 
 const bodyImages: Record<string, string> = {
   SUV: "photo-1533473353331-0135ef1b58bf",
@@ -63,7 +67,7 @@ const testimonials = [
 ];
 
 export default async function HomePage() {
-  const { featured, newCars, recent, hireCars, partDeals, dealers, posts, total } = await getHomeData();
+  const { featured, newCars, recent, hireCars, partDeals, brandCounts, dealers, posts, total } = await getHomeData();
 
   return (
     <div>
@@ -153,16 +157,8 @@ export default async function HomePage() {
         <div className="container">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-dark">Loved on Kenyan roads</p>
           <h2 className="mt-1 text-2xl font-extrabold md:text-3xl">Popular brands</h2>
-          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {brands.map((b) => (
-              <Link key={b.name} href={`/cars?make=${encodeURIComponent(b.name)}`} className="group overflow-hidden rounded-2xl border bg-card transition hover:shadow-md">
-                <div className="relative h-24"><Image src={b.img} alt={b.name} fill className="object-cover transition group-hover:scale-105" sizes="200px" /></div>
-                <div className="flex items-center justify-between p-3">
-                  <p className="text-sm font-bold">{b.name}</p>
-                  <ArrowRight className="size-4 text-muted-foreground transition group-hover:text-gold-dark" />
-                </div>
-              </Link>
-            ))}
+          <div className="mt-6">
+            <BrandsSlider brands={brandCounts.map((m): BrandItem => ({ name: m.make, count: m._count, img: brandPhotos[m.make] }))} />
           </div>
         </div>
       </section>

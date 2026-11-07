@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { GitCompareArrows, X } from "lucide-react";
 
 const KEY = "motiva-compare";
@@ -15,9 +16,17 @@ export function getCompareIds(): string[] {
   }
 }
 
-function setCompareIds(ids: string[]) {
+export function setCompareIds(ids: string[]) {
   localStorage.setItem(KEY, JSON.stringify(ids));
   window.dispatchEvent(new Event("compare-changed"));
+}
+
+export function removeCompareId(id: string) {
+  setCompareIds(getCompareIds().filter((x) => x !== id));
+}
+
+export function clearCompare() {
+  setCompareIds([]);
 }
 
 export function toggleCompare(id: string): "added" | "removed" | "full" {
@@ -58,6 +67,26 @@ export function CompareButton({ id, title }: { id: string; title: string }) {
       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold transition ${active ? "bg-navy text-gold-light" : "bg-muted text-slate-600 hover:bg-navy/10"}`}
     >
       <GitCompareArrows className="size-3.5" />{active ? "Added ✓" : "Compare"}
+    </button>
+  );
+}
+
+/** Remove one car from the compare set (updates tray + page URL). */
+export function CompareRemove({ id }: { id: string }) {
+  const router = useRouter();
+  return (
+    <button
+      onClick={() => {
+        const ids = getCompareIds().filter((x) => x !== id);
+        setCompareIds(ids);
+        router.push(ids.length ? `/compare?ids=${ids.join(",")}` : "/compare");
+        router.refresh();
+      }}
+      aria-label="Remove from compare"
+      title="Remove from compare"
+      className="absolute right-1 top-1 z-10 grid size-7 place-items-center rounded-full bg-navy/70 text-white backdrop-blur-sm transition hover:bg-navy"
+    >
+      <X className="size-4" />
     </button>
   );
 }
