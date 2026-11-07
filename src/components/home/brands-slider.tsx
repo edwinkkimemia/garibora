@@ -6,7 +6,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type BrandItem = { name: string; count: number; img?: string };
+export type BrandItem = { name: string; count: number; img?: string; logo?: string };
 
 /** Horizontal snap slider for brands — photos where we have them, monograms otherwise. */
 export function BrandsSlider({ brands }: { brands: BrandItem[] }) {
@@ -39,7 +39,9 @@ export function BrandsSlider({ brands }: { brands: BrandItem[] }) {
             href={`/cars?make=${encodeURIComponent(b.name)}`}
             className="group w-40 shrink-0 snap-start overflow-hidden rounded-2xl border bg-card transition hover:border-gold hover:shadow-md"
           >
-            {b.img ? (
+            {b.logo ? (
+              <div className="relative h-24 bg-white p-2"><Image src={b.logo} alt={`${b.name} logo`} fill className="object-contain transition group-hover:scale-105" sizes="180px" /></div>
+            ) : b.img ? (
               <div className="relative h-24"><Image src={b.img} alt={b.name} fill className="object-cover transition group-hover:scale-105" sizes="180px" /></div>
             ) : (
               <div className="grid h-24 place-items-center bg-navy">

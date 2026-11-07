@@ -17,35 +17,55 @@ export const revalidate = 60;
 async function getHomeData() {
   try {
     const sale = { status: "ACTIVE", listingType: "SALE" } as const;
-    const [featured, newCars, recent, hireCars, partDeals, makeCounts, dealers, posts, total] = await Promise.all([
+    const [featured, newCars, recent, hireCars, partDeals, makeCounts, catSample, dealers, posts, total] = await Promise.all([
       prisma.car.findMany({ where: { ...sale, featured: true, OR: [{ featuredUntil: null }, { featuredUntil: { gte: new Date() } }] }, take: 8, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: { ...sale, condition: "NEW" }, take: 4, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: sale, take: 8, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
       prisma.car.findMany({ where: { status: "ACTIVE", listingType: "RENT" }, take: 4, include: { images: true, dealer: { select: { businessName: true, logoUrl: true } }, seller: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" } }),
       prisma.part.findMany({ where: { status: "ACTIVE" }, take: 4, include: { images: true }, orderBy: { createdAt: "desc" } }),
       prisma.car.groupBy({ by: ["make"], where: { status: "ACTIVE", listingType: "SALE" }, _count: true }).catch(() => [] as { make: string; _count: number }[]),
+      prisma.car.findMany({ where: { status: "ACTIVE" }, select: { bodyType: true, images: { take: 1, orderBy: { sortOrder: "asc" } } }, take: 150, orderBy: { createdAt: "desc" } }),
       prisma.dealer.findMany({ where: { verified: true }, take: 3, orderBy: { rating: "desc" } }),
       prisma.post.findMany({ where: { published: true }, take: 3, orderBy: { createdAt: "desc" } }),
       prisma.car.count({ where: { status: "ACTIVE" } }),
     ]);
+    // One real stock photo per body type for the category cards
+    const categoryImages: Record<string, string> = {};
+    for (const c of catSample as { bodyType: string; images: { url: string }[] }[]) {
+      if (!categoryImages[c.bodyType] && c.images[0]) categoryImages[c.bodyType] = c.images[0].url;
+    }
     return {
       featured: shuffle(featured), newCars: shuffle(newCars), recent: shuffle(recent),
       hireCars: shuffle(hireCars), partDeals: shuffle(partDeals),
-      dealers: shuffle(dealers), posts, total,
+      dealers: shuffle(dealers), posts, total, categoryImages,
       brandCounts: [...makeCounts].sort((a, b) => b._count - a._count).slice(0, 16),
     };
   } catch {
-    return { featured: [], newCars: [], recent: [], hireCars: [], partDeals: [], brandCounts: [] as { make: string; _count: number }[], dealers: [], posts: [], total: 0 };
+    return { featured: [], newCars: [], recent: [], hireCars: [], partDeals: [], categoryImages: {} as Record<string, string>, brandCounts: [] as { make: string; _count: number }[], dealers: [], posts: [], total: 0 };
   }
 }
 
-const brandPhotos: Record<string, string> = {
-  Toyota: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?q=80&w=400&auto=format&fit=crop",
-  Nissan: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=400&auto=format&fit=crop",
-  "Mercedes-Benz": "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=400&auto=format&fit=crop",
-  BMW: "https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=400&auto=format&fit=crop",
-  Mazda: "https://images.unsplash.com/photo-1594502184342-2e12f877aa73?q=80&w=400&auto=format&fit=crop",
-  Subaru: "https://images.unsplash.com/photo-1547038577-da80abbc4f19?q=80&w=400&auto=format&fit=crop",
+const brandLogo: Record<string, string> = {
+  Toyota: "/brands/toyota.svg",
+  Nissan: "/brands/nissan.svg",
+  "Mercedes-Benz": "/brands/mercedes.svg",
+  BMW: "/brands/bmw.svg",
+  Mazda: "/brands/mazda.png",
+  Subaru: "/brands/subaru.svg",
+  Honda: "/brands/honda.svg",
+  Volkswagen: "/brands/volkswagen.svg",
+  Audi: "/brands/audi.svg",
+  Mitsubishi: "/brands/mitsubishi.svg",
+  Lexus: "/brands/lexus.svg",
+  Hyundai: "/brands/hyundai.svg",
+  Kia: "/brands/kia.svg",
+  Ford: "/brands/ford.svg",
+  Suzuki: "/brands/suzuki.svg",
+  Isuzu: "/brands/isuzu.jpg",
+  "Land Rover": "/brands/land-rover.jpg",
+  Volvo: "/brands/volvo.svg",
+  Porsche: "/brands/porsche.jpg",
+  Jeep: "/brands/jeep.svg",
 };
 
 const bodyImages: Record<string, string> = {
@@ -67,7 +87,7 @@ const testimonials = [
 ];
 
 export default async function HomePage() {
-  const { featured, newCars, recent, hireCars, partDeals, brandCounts, dealers, posts, total } = await getHomeData();
+  const { featured, newCars, recent, hireCars, partDeals, categoryImages, brandCounts, dealers, posts, total } = await getHomeData();
 
   return (
     <div>
@@ -139,8 +159,8 @@ export default async function HomePage() {
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {siteConfig.bodyTypes.map((c) => (
             <Link key={c.value} href={`/cars?bodyType=${c.value}`} className="group overflow-hidden rounded-2xl border bg-white transition hover:border-gold hover:shadow-md">
-              <div className="relative h-32 overflow-hidden">
-                <Image src={thumb(bodyImages[c.value] ?? "photo-1503376780353-7e6692767b70")} alt={c.label} fill className="object-cover transition duration-300 group-hover:scale-105" sizes="400px" />
+              <div className="relative h-32 overflow-hidden bg-muted">
+                <Image src={categoryImages[c.value] ?? thumb(bodyImages[c.value] ?? "photo-1503376780353-7e6692767b70")} alt={`${c.label} cars for sale in Kenya`} fill className="object-cover transition duration-300 group-hover:scale-105" sizes="400px" />
                 <span className="absolute bottom-2 left-2 rounded-full bg-navy/85 px-2.5 py-1 text-[11px] font-bold text-gold-light backdrop-blur-sm">{c.label}</span>
               </div>
               <div className="flex items-center justify-between p-4">
@@ -158,7 +178,7 @@ export default async function HomePage() {
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-dark">Loved on Kenyan roads</p>
           <h2 className="mt-1 text-2xl font-extrabold md:text-3xl">Popular brands</h2>
           <div className="mt-6">
-            <BrandsSlider brands={brandCounts.map((m): BrandItem => ({ name: m.make, count: m._count, img: brandPhotos[m.make] }))} />
+            <BrandsSlider brands={brandCounts.map((m): BrandItem => ({ name: m.make, count: m._count, logo: brandLogo[m.make] }))} />
           </div>
         </div>
       </section>
