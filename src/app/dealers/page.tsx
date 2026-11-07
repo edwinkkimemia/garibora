@@ -11,6 +11,7 @@ export const metadata = baseMetadata({
   keywords: ["car dealers Nairobi", "verified car yards Kenya", "Mombasa car dealers", "buy from dealer Kenya"],
 });
 import { Card, CardContent } from "@/components/ui/card";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
 export const revalidate = 120;
@@ -26,7 +27,10 @@ export default async function DealersPage() {
       <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {dealers.map((d) => (
           <Card key={d.id}><CardContent className="pt-5">
-            <p className="flex items-center gap-1 font-bold">{d.businessName} <ShieldCheck className="size-4 text-green-600" /></p>
+            <div className="flex items-center gap-2.5">
+              <Avatar src={d.logoUrl} name={d.businessName} className="size-10" />
+              <p className="flex min-w-0 items-center gap-1 font-bold"><span className="truncate">{d.businessName}</span> <ShieldCheck className="size-4 shrink-0 text-green-600" /></p>
+            </div>
             <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="size-3.5 shrink-0 text-gold-dark" />{d.location}, Kenya • ★ {d.rating.toFixed(1)} ({d.reviewCount} reviews)</p>
             <p className="mt-2 line-clamp-2 text-sm">{d.description}</p>
             <div className="mt-3 flex gap-2">
