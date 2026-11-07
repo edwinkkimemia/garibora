@@ -12,7 +12,7 @@ export async function Navbar() {
   const session = await auth();
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
+    <header className="sticky top-0 z-40 w-full border-b bg-white">
       <div className="h-0.5 bg-gradient-to-r from-gold-dark via-gold-light to-gold-dark" />
       <div className="container flex h-16 items-center justify-between gap-3 md:h-[76px]">
         <Link href="/" className="flex shrink-0 items-center" aria-label="Motiva home">
