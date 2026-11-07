@@ -297,6 +297,10 @@ const GEN_BASES: GenBase[] = [
   { make: "Lexus", model: "RX", grades: ["RX 300", "RX 450h", "F Sport"], body: BodyType.SUV, fuel: FuelType.HYBRID, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 4950000, engineCc: 3500, drive: "AWD" },
   { make: "Hyundai", model: "Tucson", grades: ["GL", "Executive", "N Line"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 2450000, engineCc: 2000, drive: "2WD" },
   { make: "Kia", model: "Sportage", grades: ["LX", "EX", "GT-Line"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 2350000, engineCc: 2000, drive: "2WD" },
+  { make: "Volvo", model: "XC60", grades: ["T5", "D5", "Inscription"], body: BodyType.SUV, fuel: FuelType.DIESEL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 3950000, engineCc: 2000, drive: "AWD" },
+  { make: "Peugeot", model: "3008", grades: ["Active", "Allure", "GT"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 2350000, engineCc: 1600, drive: "2WD" },
+  { make: "Jeep", model: "Compass", grades: ["Sport", "Longitude", "Limited"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2017, 2018, 2019], basePrice: 2650000, engineCc: 1400, drive: "4WD" },
+  { make: "Porsche", model: "Cayenne", grades: ["Base", "S", "GTS"], body: BodyType.SUV, fuel: FuelType.PETROL, gear: Transmission.AUTOMATIC, condition: CarCondition.FOREIGN_USED, years: [2016, 2017, 2018], basePrice: 8900000, engineCc: 3000, drive: "AWD" },
 ];
 
 GEN_BASES.forEach((b, bi) => {

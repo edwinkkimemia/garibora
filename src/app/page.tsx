@@ -38,7 +38,7 @@ async function getHomeData() {
       featured: shuffle(featured), newCars: shuffle(newCars), recent: shuffle(recent),
       hireCars: shuffle(hireCars), partDeals: shuffle(partDeals),
       dealers: shuffle(dealers), posts, total, categoryImages,
-      brandCounts: [...makeCounts].sort((a, b) => b._count - a._count).slice(0, 16),
+      brandCounts: [...makeCounts].sort((a, b) => b._count - a._count),
     };
   } catch {
     return { featured: [], newCars: [], recent: [], hireCars: [], partDeals: [], categoryImages: {} as Record<string, string>, brandCounts: [] as { make: string; _count: number }[], dealers: [], posts: [], total: 0 };
