@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, BarChart3, CarFront, ChevronDown, HelpCircle, Heart, Info, KeyRound, Landmark, LayoutDashboard, LogOut, Menu, PlusCircle, BadgeCheck, Store, Tag, Wrench, X,  } from "lucide-react";
+import { BookOpen, BarChart3, Bell, CarFront, ChevronDown, HelpCircle, Heart, Info, KeyRound, Landmark, LayoutDashboard, LogOut, Menu, PlusCircle, BadgeCheck, Store, Tag, Wrench, X,  } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/lib/actions";
 import { cn } from "@/lib/utils";
@@ -33,11 +33,22 @@ export function MobileNav({ authed }: { authed: boolean }) {
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [counts, setCounts] = useState({ saved: 0, unread: 0 });
   const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    let live = true;
+    fetch("/api/nav-counts", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (live && d) setCounts({ saved: d.saved ?? 0, unread: d.unread ?? 0 }); })
+      .catch(() => {});
+    return () => { live = false; };
+  }, [open]);
 
   useEffect(() => {
     setOpen(false);
@@ -122,9 +133,23 @@ export function MobileNav({ authed }: { authed: boolean }) {
                       <span className="grid size-8 place-items-center rounded-lg bg-navy/5 text-gold-dark"><LayoutDashboard className="size-4" /></span>
                       Dashboard
                     </Link>
+                    <Link href="/dashboard/notifications" onClick={close} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition hover:bg-muted">
+                      <span className="grid size-8 place-items-center rounded-lg bg-navy/5 text-gold-dark"><Bell className="size-4" /></span>
+                      Notifications
+                      {counts.unread > 0 && (
+                        <span className="ml-auto grid min-h-5 min-w-5 place-items-center rounded-full bg-navy px-1.5 text-[11px] font-extrabold text-gold-light">
+                          {counts.unread > 9 ? "9+" : counts.unread}
+                        </span>
+                      )}
+                    </Link>
                     <Link href="/favorites" onClick={close} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition hover:bg-muted">
                       <span className="grid size-8 place-items-center rounded-lg bg-navy/5 text-gold-dark"><Heart className="size-4" /></span>
                       Saved cars
+                      {counts.saved > 0 && (
+                        <span className="ml-auto grid min-h-5 min-w-5 place-items-center rounded-full bg-navy px-1.5 text-[11px] font-extrabold text-gold-light">
+                          {counts.saved > 9 ? "9+" : counts.saved}
+                        </span>
+                      )}
                     </Link>
                     <form action={signOutAction}>
                       <button type="submit" className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50">

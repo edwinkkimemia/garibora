@@ -7,9 +7,11 @@ import { MobileNav } from "@/components/layout/mobile-nav";
 import { UserMenu } from "@/components/layout/user-menu";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { auth } from "@/lib/auth";
+import { getNavCounts } from "@/lib/queries";
 
 export async function Navbar() {
   const session = await auth();
+  const counts = await getNavCounts().catch(() => ({ saved: 0, unread: 0 }));
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-white">
@@ -34,8 +36,13 @@ export async function Navbar() {
             />
           </form>
 
-          <Link href="/favorites" aria-label="Saved cars" title="Saved cars" className="hidden size-10 place-items-center rounded-xl text-slate-600 transition hover:bg-muted hover:text-navy sm:grid">
+          <Link href="/favorites" aria-label={`Saved cars${counts.saved > 0 ? ` (${counts.saved})` : ""}`} title="Saved cars" className="relative hidden size-10 place-items-center rounded-xl text-slate-600 transition hover:bg-muted hover:text-navy sm:grid">
             <Heart className="size-5" />
+            {counts.saved > 0 && (
+              <span className="absolute right-0.5 top-0.5 grid min-h-5 min-w-5 place-items-center rounded-full bg-navy px-1 text-[10px] font-extrabold text-gold-light">
+                {counts.saved > 9 ? "9+" : counts.saved}
+              </span>
+            )}
           </Link>
 
           {session?.user ? (

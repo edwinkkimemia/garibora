@@ -18,6 +18,17 @@ export const getSavedCarIds = cache(async (): Promise<Set<string>> => {
   return new Set(favs.map((f) => f.carId));
 });
 
+/** Navbar badges: wishlist size + unread notifications (0s when logged out). */
+export const getNavCounts = cache(async (): Promise<{ saved: number; unread: number }> => {
+  const session = await auth().catch(() => null);
+  if (!session?.user?.id) return { saved: 0, unread: 0 };
+  const [saved, unread] = await Promise.all([
+    prisma.favorite.count({ where: { userId: session.user.id } }).catch(() => 0),
+    prisma.notification.count({ where: { userId: session.user.id, read: false } }).catch(() => 0),
+  ]);
+  return { saved, unread };
+});
+
 /** Shared where-builder for cars (used by search, facets, saved-search matching). */
 export function buildCarWhere(filters: CarFilters, opts?: { rentalOnly?: boolean }) {
   const where: Prisma.CarWhereInput = { status: "ACTIVE" };
