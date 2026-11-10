@@ -1,10 +1,22 @@
 import prisma from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { cache } from "react";
 import { shuffle } from "@/lib/utils";
 import { expandQuery, rankCarIds } from "@/lib/search";
 import type { CarFilters } from "@/lib/validations";
 import type { Prisma } from "@prisma/client";
 
 const PAGE_SIZE = 12;
+
+/** IDs of cars the current user has wishlisted — request-cached, so cards can each read it with zero extra queries. */
+export const getSavedCarIds = cache(async (): Promise<Set<string>> => {
+  const session = await auth().catch(() => null);
+  if (!session?.user?.id) return new Set<string>();
+  const favs = await prisma.favorite
+    .findMany({ where: { userId: session.user.id }, select: { carId: true } })
+    .catch(() => []);
+  return new Set(favs.map((f) => f.carId));
+});
 
 /** Shared where-builder for cars (used by search, facets, saved-search matching). */
 export function buildCarWhere(filters: CarFilters, opts?: { rentalOnly?: boolean }) {

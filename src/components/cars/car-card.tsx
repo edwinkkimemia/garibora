@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/card";
 import { Watermark } from "@/components/ui/watermark";
 import { Avatar } from "@/components/ui/avatar";
 import { CompareButton } from "@/components/compare/compare";
+import { FavoriteButton } from "@/components/cars/favorite-button";
+import { getSavedCarIds } from "@/lib/queries";
 
 type CarCardCar = {
   id: string; slug: string; title: string; make: string; model: string; year: number;
@@ -42,8 +44,14 @@ function SellerMark({ car }: { car: CarCardCar }) {
   return null;
 }
 
-export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid" | "list" }) {
+export async function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid" | "list" }) {
   const photo = car.images[0]?.url ?? "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=800&auto=format&fit=crop";
+  const savedIds = await getSavedCarIds().catch(() => new Set<string>());
+  const heart = (
+    <div className="absolute right-2 top-2 z-10">
+      <FavoriteButton carId={car.id} saved={savedIds.has(car.id)} />
+    </div>
+  );
   const perks = (
     <>
       {car.tradeInAccepted ? <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700"><ArrowLeftRight className="size-3" />Trade-in</span> : null}
@@ -52,7 +60,9 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
   );
   if (view === "list") {
     return (
-      <Link href={`/cars/${car.slug}`} className="flex gap-4 rounded-2xl border bg-white p-3 text-slate-900 shadow-sm transition hover:shadow-md">
+      <div className="relative rounded-2xl border bg-white text-slate-900 shadow-sm transition hover:shadow-md">
+        {heart}
+        <Link href={`/cars/${car.slug}`} className="flex gap-4 p-3">
         <div className="relative h-28 w-40 shrink-0 overflow-hidden rounded-xl sm:h-36 sm:w-56">
           <Image src={photo} alt={car.title} fill className="object-cover" sizes="300px" />
           <Watermark url={photo} size="sm" />
@@ -74,10 +84,13 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
           </div>
         </div>
       </Link>
+      </div>
     );
   }
   return (
-    <Link href={`/cars/${car.slug}`} className="group overflow-hidden rounded-2xl border bg-white text-slate-900 shadow-sm transition hover:shadow-lg">
+    <div className="group relative overflow-hidden rounded-2xl border bg-white text-slate-900 shadow-sm transition hover:shadow-lg">
+      {heart}
+      <Link href={`/cars/${car.slug}`} className="block">
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image src={photo} alt={car.title} fill className="object-cover transition duration-300 group-hover:scale-105" sizes="(max-width:768px) 100vw, 400px" />
         <div className="absolute left-3 top-3 flex gap-1.5">
@@ -108,6 +121,7 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
           <CompareButton id={car.id} title={car.title} />
         </div>
       </div>
-    </Link>
+      </Link>
+    </div>
   );
 }
