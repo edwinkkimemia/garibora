@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Gauge, Fuel, Cog, Calendar, BadgeCheck, Phone, ArrowRight, Star } from "lucide-react";
+import { MapPin, Gauge, Fuel, Cog, Calendar, BadgeCheck, Phone, ArrowRight, Star, ArrowLeftRight, Landmark } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { CarGallery } from "@/components/cars/car-gallery";
 import { FavoriteButton } from "@/components/cars/favorite-button";
@@ -88,6 +88,8 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
             { car.verified && <Badge variant="success"><BadgeCheck className="size-3" /> Inspected & verified</Badge> }
             {car.status === "SOLD" && <Badge variant="secondary">SOLD</Badge>}
             <Badge variant="outline">{car.condition.replace("_", " ")}</Badge>
+            {car.tradeInAccepted && <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700"><ArrowLeftRight className="size-3" />Trade-in accepted</Badge>}
+            {car.financingAvailable && <Badge variant="outline" className="border-sky-200 bg-sky-50 text-sky-700"><Landmark className="size-3" />Asset financing available</Badge>}
           </div>
           <h1 className="mt-2 text-2xl font-extrabold md:text-3xl">{car.title}</h1>
           <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="size-4" />{car.location}, Kenya • {car.views} views</p>
@@ -170,6 +172,16 @@ export default async function CarDetailPage({ params }: { params: Promise<{ id: 
                     </div>
                   </div>
                   <p className="flex items-center gap-1 px-3 py-2 text-xs text-muted-foreground"><MapPin className="size-3.5 shrink-0" />{car.location}, Kenya — arrange viewing in a public place</p>
+                </div>
+              )}
+              {(car.tradeInAccepted || car.financingAvailable) && (
+                <div className="mt-3 space-y-2 rounded-xl border border-dashed p-3 text-xs leading-relaxed">
+                  {car.tradeInAccepted && (
+                    <p className="flex gap-1.5"><ArrowLeftRight className="mt-0.5 size-4 shrink-0 text-emerald-600" /><span><b>Trade-in accepted.</b> Offer your current car as part-payment — ask the seller for a valuation over WhatsApp.</span></p>
+                  )}
+                  {car.financingAvailable && (
+                    <p className="flex gap-1.5"><Landmark className="mt-0.5 size-4 shrink-0 text-sky-600" /><span><b>Asset financing available.</b> Pay pole-pole via bank/SACCO finance arranged with the seller. <Link href="/financing" className="font-bold underline">Estimate payments →</Link></span></p>
+                  )}
                 </div>
               )}
               <div className="mt-3 flex items-start gap-1.5 rounded-xl bg-gold/10 p-3 text-xs leading-relaxed text-navy">

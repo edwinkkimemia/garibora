@@ -11,6 +11,7 @@ const links = [
   { href: "/financing", label: "Financing" },
   { href: "/insurance", label: "Insurance" },
   { href: "/dealers", label: "Dealers" },
+  { href: "/data", label: "Market data" },
 ];
 
 export function DesktopNav() {

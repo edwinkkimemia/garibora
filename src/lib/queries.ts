@@ -25,6 +25,8 @@ export function buildCarWhere(filters: CarFilters, opts?: { rentalOnly?: boolean
   if (filters.minYear || filters.maxYear)
     where.year = { gte: filters.minYear, lte: filters.maxYear };
   if (filters.maxMileage) where.mileage = { lte: filters.maxMileage };
+  if (filters.tradeIn === "1" || filters.tradeIn === "true") where.tradeInAccepted = true;
+  if (filters.financing === "1" || filters.financing === "true") where.financingAvailable = true;
   return where;
 }
 

@@ -80,6 +80,11 @@ const bodyImages: Record<string, string> = {
   COMMERCIAL: "photo-1559416523-140ddc511d3a",
   COUPE: "photo-1555215695-3004980ad54e",
   CONVERTIBLE: "photo-1503376780353-7e6692767b70",
+  MOTORCYCLE: "photo-1558981403-c5f9899a28bc",
+  TUKTUK: "photo-1558981403-c5f9899a28bc",
+  BUS: "photo-1570125909232-eb263c188f7e",
+  TRACTOR: "photo-1530267981375-f0de937f5f13",
+  WAGON: "photo-1621007947382-bb3c3994e3fb",
 };
 const thumb = (id: string) => `https://images.unsplash.com/${id}?q=80&w=600&auto=format&fit=crop`;
 

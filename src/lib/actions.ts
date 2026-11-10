@@ -44,6 +44,8 @@ export async function listCarAction(prev: unknown, formData: FormData) {
   const raw = {
     title: formData.get("title"), make: formData.get("make"), model: formData.get("model"),
     year: formData.get("year"), price: formData.get("price"), negotiable: formData.get("negotiable") === "on",
+    tradeInAccepted: formData.get("tradeInAccepted") === "on",
+    financingAvailable: formData.get("financingAvailable") === "on",
     listingType: formData.get("listingType") || "SALE",
     dailyRate: formData.get("dailyRate") || undefined,
     mileage: formData.get("mileage"), transmission: formData.get("transmission"), fuelType: formData.get("fuelType"),

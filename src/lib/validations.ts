@@ -14,6 +14,8 @@ export const carFilterSchema = z.object({
   bodyType: z.string().optional(),
   condition: z.string().optional(),
   location: z.string().optional(),
+  tradeIn: z.string().optional(), // "1" = trade-in accepted only
+  financing: z.string().optional(), // "1" = asset finance available only
   sort: z.enum(["newest", "price-asc", "price-desc", "year-desc", "mileage-asc"]).default("newest"),
   page: z.coerce.number().min(1).default(1),
 });
@@ -32,10 +34,12 @@ export const listCarSchema = z.object({
   mileage: z.coerce.number().min(0).max(1_000_000),
   transmission: z.enum(["AUTOMATIC", "MANUAL", "CVT"]),
   fuelType: z.enum(["PETROL", "DIESEL", "HYBRID", "ELECTRIC", "LPG"]),
-  bodyType: z.enum(["SUV", "SEDAN", "HATCHBACK", "PICKUP", "COUPE", "CONVERTIBLE", "WAGON", "VAN", "TRUCK", "COMMERCIAL"]),
+  bodyType: z.enum(["SUV", "SEDAN", "HATCHBACK", "PICKUP", "COUPE", "CONVERTIBLE", "WAGON", "VAN", "TRUCK", "COMMERCIAL", "MOTORCYCLE", "TUKTUK", "BUS", "TRACTOR"]),
   condition: z.enum(["NEW", "FOREIGN_USED", "LOCALLY_USED"]),
   location: z.string().min(1),
   description: z.string().min(30, "Describe the car in at least 30 characters"),
+  tradeInAccepted: z.boolean().default(false),
+  financingAvailable: z.boolean().default(false),
   engineCc: z.coerce.number().optional(),
   drive: z.string().optional(),
   color: z.string().optional(),

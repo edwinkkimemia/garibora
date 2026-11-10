@@ -43,6 +43,7 @@ export function Footer() {
               <li><Link href="/cars?condition=NEW" className="hover:text-gold-light">New cars</Link></li>
               <li><Link href="/rentals" className="hover:text-gold-light">Hire a car</Link></li>
               <li><Link href="/parts" className="hover:text-gold-light">Car parts</Link></li>
+              <li><Link href="/data" className="hover:text-gold-light">Market data & prices</Link></li>
               <li><Link href="/dealers" className="hover:text-gold-light">Verified dealers</Link></li>
             </ul>
           </div>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Gauge, Fuel, Cog, BadgeCheck, Heart } from "lucide-react";
+import { MapPin, Gauge, Fuel, Cog, BadgeCheck, Heart, ArrowLeftRight, Landmark } from "lucide-react";
 import { formatKES, formatMileage } from "@/lib/utils";
 import { Badge } from "@/components/ui/card";
 import { Watermark } from "@/components/ui/watermark";
@@ -11,6 +11,7 @@ type CarCardCar = {
   id: string; slug: string; title: string; make: string; model: string; year: number;
   price: number; mileage: number; fuelType: string; transmission: string; location: string;
   verified: boolean; featured: boolean; negotiable: boolean;
+  tradeInAccepted?: boolean | null; financingAvailable?: boolean | null;
   dailyRate?: number | null; listingType?: string;
   dealer?: { businessName: string; logoUrl: string | null } | null;
   seller?: { name: string | null; image: string | null } | null;
@@ -43,6 +44,12 @@ function SellerMark({ car }: { car: CarCardCar }) {
 
 export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid" | "list" }) {
   const photo = car.images[0]?.url ?? "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=800&auto=format&fit=crop";
+  const perks = (
+    <>
+      {car.tradeInAccepted ? <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700"><ArrowLeftRight className="size-3" />Trade-in</span> : null}
+      {car.financingAvailable ? <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-bold text-sky-700"><Landmark className="size-3" />Finance</span> : null}
+    </>
+  );
   if (view === "list") {
     return (
       <Link href={`/cars/${car.slug}`} className="flex gap-4 rounded-2xl border bg-white p-3 text-slate-900 shadow-sm transition hover:shadow-md">
@@ -55,6 +62,7 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
           <h3 className="truncate font-semibold text-slate-900">{car.title}</h3>
           <SellerMark car={car} />
           <p className="mt-1 text-lg font-extrabold text-navy">{formatKES(car.price)}{car.negotiable && <span className="ml-1 text-xs font-normal text-slate-500">neg</span>}</p>
+          {(car.tradeInAccepted || car.financingAvailable) && <p className="mt-1.5 flex flex-wrap gap-1.5">{perks}</p>}
           <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1"><Gauge className="size-3" />{formatMileage(car.mileage)}</span>
             <span className="inline-flex items-center gap-1"><Fuel className="size-3" />{car.fuelType}</span>
@@ -95,6 +103,7 @@ export function CarCard({ car, view = "grid" }: { car: CarCardCar; view?: "grid"
         <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
           <span>{car.year}</span><span>•</span><span>{formatMileage(car.mileage)}</span><span>•</span><span>{car.transmission}</span><span>•</span><span>{car.location}</span>
         </p>
+        {(car.tradeInAccepted || car.financingAvailable) && <p className="mt-1.5 flex flex-wrap gap-1.5">{perks}</p>}
         <div className="mt-2">
           <CompareButton id={car.id} title={car.title} />
         </div>

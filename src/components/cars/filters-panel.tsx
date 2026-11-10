@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 const transmissions = ["AUTOMATIC", "MANUAL", "CVT"];
 const fuels = ["PETROL", "DIESEL", "HYBRID", "ELECTRIC"];
-const bodies = ["SUV", "SEDAN", "HATCHBACK", "PICKUP", "COUPE", "CONVERTIBLE", "WAGON", "VAN", "COMMERCIAL"];
+const bodies = ["SUV", "SEDAN", "HATCHBACK", "PICKUP", "COUPE", "CONVERTIBLE", "MOTORCYCLE", "TUKTUK", "WAGON", "VAN", "BUS", "TRUCK", "TRACTOR", "COMMERCIAL"];
 const conditions = ["NEW", "FOREIGN_USED", "LOCALLY_USED"];
 const sorts = [
   { v: "newest", l: "Newest first" },
@@ -86,6 +86,12 @@ export function FiltersPanel({ facets }: { facets?: { makes: FacetList; bodyType
         </Select>
         <Input placeholder="Min year" inputMode="numeric" defaultValue={get("minYear")} onBlur={(e) => set("minYear", e.target.value)} aria-label="Min year" />
         <Input placeholder="Max price (KES)" inputMode="numeric" defaultValue={get("maxPrice")} onBlur={(e) => set("maxPrice", e.target.value)} aria-label="Max price" />
+        <label className="col-span-2 flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold">
+          <input type="checkbox" checked={sp.get("tradeIn") === "1"} onChange={(e) => set("tradeIn", e.target.checked ? "1" : "")} className="size-4" /> Trade-in accepted
+        </label>
+        <label className="col-span-2 flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold">
+          <input type="checkbox" checked={sp.get("financing") === "1"} onChange={(e) => set("financing", e.target.checked ? "1" : "")} className="size-4" /> Asset financing available
+        </label>
         <Select value={get("sort") || "newest"} onChange={(e) => set("sort", e.target.value)} aria-label="Sort" className="col-span-2">
           {sorts.map((s) => <option key={s.v} value={s.v}>{s.l}</option>)}
         </Select>

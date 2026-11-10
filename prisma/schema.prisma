@@ -51,6 +51,10 @@ enum BodyType {
   VAN
   TRUCK
   COMMERCIAL
+  MOTORCYCLE
+  TUKTUK
+  BUS
+  TRACTOR
 }
 
 enum CarCondition {
@@ -228,6 +232,9 @@ model Car {
   // Listing type: sale, hire, or both (monetization: rentals)
   listingType ListingType @default(SALE)
   dailyRate   Int? // KES per day, when rentable
+  // Dealer options: buyer perks shown as badges + filters
+  tradeInAccepted    Boolean @default(false) // seller accepts your old car as part-payment
+  financingAvailable Boolean @default(false) // asset finance arranged through seller/lender
   // Featuring (monetization: paid boosts)
   featuredUntil DateTime? // paid boost expiry; null = organic/staff pick
 
@@ -253,6 +260,8 @@ model Car {
   @@index([transmission])
   @@index([condition])
   @@index([listingType])
+  @@index([tradeInAccepted])
+  @@index([financingAvailable])
   @@index([createdAt])
   // Full-text: use Postgres tsvector via raw query in lib/search.ts; keep composite index for prefix search
   @@index([title, make, model])

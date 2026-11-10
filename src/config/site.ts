@@ -61,16 +61,23 @@ export const siteConfig = {
     "Volkswagen", "Audi", "Mitsubishi", "Suzuki", "Land Rover", "Ford", "Isuzu",
     "Lexus", "Volvo", "Porsche", "Jeep", "Peugeot", "Hyundai", "Kia", "Jaguar",
     "Mini", "Daihatsu", "Hino", "UD Trucks", "Tata",
+    "Yamaha", "Bajaj", "TVS", "Haojue", "Hero", "Massey Ferguson", "New Holland", "Scania", "MAN",
   ],
   bodyTypes: [
     { value: "SUV", label: "SUVs", blurb: "Prado, RAV4, CX-5" },
     { value: "SEDAN", label: "Sedans", blurb: "Axio, Note, C-Class" },
     { value: "PICKUP", label: "Pickups", blurb: "Hilux, D-Max, Ranger" },
     { value: "HATCHBACK", label: "Hatchbacks", blurb: "Fit, Demio, Swift" },
+    { value: "MOTORCYCLE", label: "Motorbikes", blurb: "Boxer, CB125F, HLX" },
+    { value: "TUKTUK", label: "Tuk-tuks", blurb: "TVS King, Bajaj RE" },
     { value: "VAN", label: "Vans", blurb: "Hiace, NV350" },
+    { value: "BUS", label: "Buses", blurb: "Coaster, NQR" },
+    { value: "TRUCK", label: "Trucks & Lorries", blurb: "FH, Fuso, Dyna" },
+    { value: "TRACTOR", label: "Tractors", blurb: "MF 375, TT75" },
     { value: "COMMERCIAL", label: "Commercial", blurb: "Canter, FH" },
     { value: "COUPE", label: "Coupes", blurb: "420i, 4 Series" },
     { value: "CONVERTIBLE", label: "Convertibles", blurb: "MX-5 RF, Z4" },
+    { value: "WAGON", label: "Wagons", blurb: "Fielder, Legacy" },
   ] as const,
 };
 
